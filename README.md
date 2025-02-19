@@ -1,39 +1,37 @@
-# frontend
+# 🌟 SiSPA Frontend
 
-This template should help get you started developing with Vue 3 in Vite.
+SiSPA adalah solusi sistem informasi untuk mengelola dokumentasi event, data administrasi, klien, vendor, dan inventaris secara efisien. Repository ini berisi backend dari SiSPA yang dikembangkan menggunakan **Spring Boot** dengan database **PostgreSQL**.
 
-## Recommended IDE Setup
+---
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+## 🚀 **Fitur Utama**
+- 🎨 **Komponen Reusable** untuk pengembangan yang lebih cepat dan efisien.
+- 📦 **Manajemen State dengan Pinia** untuk pengelolaan data yang optimal.
+- 📡 **Integrasi API Backend** untuk sinkronisasi data yang lancar.
+- 🎯 **Routing Dinamis** menggunakan Vue Router.
 
-## Type Support for `.vue` Imports in TS
+---
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vite.dev/config/).
-
-## Project Setup
-
-```sh
-npm install
+## 🛠 **Setup & Instalasi**
+### 1️⃣ **Clone Repository**
+```bash
+git clone https://github.com/username/sispa-frontend.git
+cd sispa-frontend
 ```
 
-### Compile and Hot-Reload for Development
-
-```sh
-npm run dev
+### 2️⃣ **Instalasi Dependensi**
+Gunakan **npm** atau **yarn** untuk menginstal semua package yang dibutuhkan:
+```bash
+npm install  # atau yarn install
 ```
 
-### Type-Check, Compile and Minify for Production
-
-```sh
-npm run build
+### 3️⃣ **Menjalankan Aplikasi**
+Jalankan proyek dalam mode pengembangan:
+```bash
+npm run dev  # atau yarn dev
 ```
+Aplikasi akan berjalan di `http://localhost:5173` secara default.
 
-### Lint with [ESLint](https://eslint.org/)
+---
+🌸 _Made with luv, Radiant_ 
 
-```sh
-npm run lint
-```
