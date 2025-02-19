@@ -1,6 +1,6 @@
 # 🌟 SiSPA Frontend
 
-SiSPA adalah solusi sistem informasi untuk mengelola dokumentasi event, data administrasi, klien, vendor, dan inventaris secara efisien. Repository ini berisi backend dari SiSPA yang dikembangkan menggunakan **Spring Boot** dengan database **PostgreSQL**.
+SiSPA adalah solusi sistem informasi untuk mengelola dokumentasi event, data administrasi, klien, vendor, dan inventaris. Repository ini berisi frontend dari SiSPA yang dikembangkan menggunakan **Vue.js** dengan manajemen state menggunakan **Pinia**.
 
 ---
 
