@@ -15,7 +15,7 @@ SiSPA adalah solusi sistem informasi untuk mengelola dokumentasi event, data adm
 ## 🛠 **Setup & Instalasi**
 ### 1️⃣ **Clone Repository**
 ```bash
-git clone https://github.com/username/sispa-frontend.git
+git clone https://github.com/PROPENSI-RADIANT/SiSPA-frontend.git
 cd sispa-frontend
 ```
 
