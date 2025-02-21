@@ -1,4 +1,4 @@
-# 🌟 SiSPA Frontend
+# 🌟 B01 - Radiant - FE
 
 SiSPA adalah solusi sistem informasi untuk mengelola dokumentasi event, data administrasi, klien, vendor, dan inventaris. Repository ini berisi frontend dari SiSPA yang dikembangkan menggunakan **Vue.js** dengan manajemen state menggunakan **Pinia**.
 
