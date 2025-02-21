@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
 @theme {
     --color-red-400: #3E1011;
     --color-red-300: #5D1D1E;
@@ -21,4 +23,76 @@
     --color-white-300: #F7F8FA;
     --color-white-200: #FBFCFF;
     --color-white-100: #FFFFFF;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+}
+
+h1 {
+    font-size: 64px;
+    font-weight: 700;
+}
+
+h2 {
+    font-size: 32px;
+    font-weight: 700;
+}
+
+h3 {
+    font-size: 24px;
+    font-weight: 700;
+}
+
+h4 {
+    font-size: 20px;
+    font-weight: 700;
+}
+
+/* Large Text */
+.large-text-bold {
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.large-text-semibold {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.large-text-normal {
+    font-size: 18px;
+    font-weight: 400;
+}
+
+/* Normal Text */
+.text-bold {
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.text-semibold {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.text-normal {
+    font-size: 14px;
+    font-weight: 400;
+}
+
+/* Small Text */
+.small-text-bold {
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.small-text-semibold {
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.small-text-normal {
+    font-size: 12px;
+    font-weight: 400;
 }
