@@ -12,10 +12,16 @@ defineProps({
 
 <template>
   <div class="fixed top-0 left-64 right-0 h-16 bg-red-400 flex items-center px-6 justify-between">
-    <h4 class="text-white-200">{{ title }}</h4>
-    <ul class="text-normal text-white-200 flex space-x-4 mt-1">
-      <li v-for="submodule in submodules" :key="submodule" class="cursor-pointer hover:text-black-grey-200">{{ submodule }}</li>
-    </ul>
+    <!-- Container untuk Title & Submodules -->
+    <div class="flex items-center space-x-6">
+      <h4 class="text-white">{{ title }}</h4>
+      <ul class="text-normal text-white flex space-x-4">
+        <li v-for="submodule in submodules" :key="submodule" class="cursor-pointer hover:text-gray-300">
+          {{ submodule }}
+        </li>
+      </ul>
+    </div>
+
     <div class="relative">
       <button @click="showDropdown = !showDropdown" class="text-white-200 text-semibold flex items-center text-m ">
         Nama
@@ -29,9 +35,6 @@ defineProps({
           <div class="bg-transparent space-y-2">
             <div class="bg-transparent text-normal text-white-200 p-3 pl-4 cursor-pointer hover:bg-red-300 flex items-center">
               <span>Profil</span>
-            </div>
-            <div class="bg-transparent text-normal text-white-200 p-3 pl-4 cursor-pointer hover:bg-red-300 flex items-center">
-              <span>Pengaturan</span>
             </div>
             <div class="bg-transparent text-normal text-white-200 p-3 pl-4 cursor-pointer hover:bg-red-300 flex items-center">
               <span>Keluar</span>

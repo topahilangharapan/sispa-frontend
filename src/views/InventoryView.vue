@@ -1,20 +1,11 @@
 <script setup lang="ts">
 import VNavbar from '../components/VNavbar.vue'
-import { onMounted, ref } from 'vue'
+import { ref } from 'vue'
 import VLoading from '../components/VLoading.vue'
 
-const title = ref("Home");
+const title = ref("Inventory");
 const submodules = ref([""]);
-
-const isLoaded = ref(false);
-
-// onMounted(() => {
-//   setTimeout(() => {
-//     isLoaded.value = true;
-//   }, 2000);
-// });
 </script>
-
 
 <template>
   <VNavbar :title="title" :submodules="submodules"></VNavbar>/
