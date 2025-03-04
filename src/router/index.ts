@@ -7,6 +7,7 @@ import ClientView from '../views/ClientView.vue'
 import VendorView from '../views/VendorView.vue'
 import StaffAndFreelancerView from '../views/StaffAndFreelancerView.vue'
 import DashboardView from '../views/DashboardView.vue'
+import { roleGuard } from './guards/auth.ts'
 
 const routes = [
   {
@@ -18,36 +19,42 @@ const routes = [
     path: '/dashboard',
     name: 'Dashboard',
     component: DashboardView,
+    beforeEnter: roleGuard
   },
   {
     path: '/inventory',
     name: 'Inventory',
     component: InventoryView,
+    beforeEnter: roleGuard
   },
   {
     path: '/finance',
     name: 'Finance',
     component: FinanceView,
+    beforeEnter: roleGuard
   },
   {
     path: '/client',
     name: 'Client',
     component: ClientView,
+    beforeEnter: roleGuard
   },
   {
     path: '/vendor',
     name: 'Vendor',
     component: VendorView,
+    beforeEnter: roleGuard
   },
   {
     path: '/staff-freelancer',
     name: 'Staff and Freelancer',
     component: StaffAndFreelancerView,
+    beforeEnter: roleGuard
   },
   {
     path: '/design-system',
     name: 'DesignSystem',
-    component: DesignSystemView,
+    component: DesignSystemView
   },
 ]
 
