@@ -2,6 +2,7 @@
 import { computed, reactive, ref } from 'vue'
 import VInputField from '../components/VInputField.vue'
 import VButton from '../components/VButton.vue'
+import VDropdown from '../components/VDropdown.vue'
 
 const colors = reactive({
   'Red 400': { bg: 'bg-red-400', text: 'text-white' },
@@ -28,7 +29,8 @@ const hasErrors = ref({
   numberOnly: false,
   positiveNumberOnly: false,
   minLength: true,
-  maxLength: false
+  maxLength: false,
+  role: true
 });
 
 // Fungsi untuk update status error tiap input
@@ -52,6 +54,14 @@ const errorToast = () => {
 const infoToast = () => {
   window.$toast('info', 'Ini contoh Info Toast!');
 };
+
+const options = [
+  { value: 'option1', label: 'Opsi 1' },
+  { value: 'option2', label: 'Opsi 2' },
+  { value: 'option3', label: 'Opsi 3' }
+];
+
+const selectedOptions = ref('')
 </script>
 
 <template>
@@ -160,6 +170,33 @@ const infoToast = () => {
               Masih terdapat error = {{ !isFormValid }}
             </div>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dropdown Preview -->
+    <div class="w-full max-w-8xl mb-12">
+      <div class="bg-white p-6 rounded-2xl shadow-lg">
+        <h2 class="mb-2 heading-2">Dropdown</h2>
+        <hr class="border-gray-300 border-t-2 mb-4" />
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <VDropdown
+              v-model="selectedOptions"
+              label="Pilih Opsi"
+              :options="options"
+              placeholder="Silakan pilih"
+              :isEmpty="true"
+              @update:hasError="updateErrorStatus('role', $event)"
+            />
+          </div>
+
+          <div class="flex items-center justify-end mt-4 h-16">
+            <div class="text-normal text-black-grey-700">
+              Masih terdapat error = {{ !isFormValid }}
+            </div>
+          </div>
+
         </div>
       </div>
     </div>
