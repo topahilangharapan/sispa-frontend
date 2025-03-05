@@ -6,7 +6,9 @@ import VSidebar from './components/VSidebar.vue';
 const route = useRoute();
 
 // Cek apakah halaman mengandung "auth"
-const hideSidebar = computed(() => route.path.includes('/auth'));
+const hideSidebar = computed(() =>
+  route.path.includes('/auth') || route.path.includes('/design-system')
+);
 </script>
 
 <template>
