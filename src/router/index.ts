@@ -9,6 +9,7 @@ import StaffAndFreelancerView from '../views/StaffAndFreelancerView.vue'
 import DashboardView from '../views/DashboardView.vue'
 import { roleGuard } from './guards/auth.ts'
 import RegisterView from '../views/auth/RegisterView.vue'
+import LoginView from '../views/auth/LoginView.vue'
 
 const routes = [
   {
@@ -20,6 +21,11 @@ const routes = [
     path: '/auth/register',
     name: 'Register',
     component: RegisterView,
+  },
+  {
+    path: '/auth/login',
+    name: 'Login',
+    component: LoginView,
   },
   {
     path: '/dashboard',

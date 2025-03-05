@@ -40,6 +40,18 @@ const updateErrorStatus = (field: string, isError: boolean) => {
 const isFormValid = computed(() => {
   return Object.values(hasErrors.value).every(error => error === false);
 });
+
+const successToast = () => {
+  window.$toast('success', 'Ini contoh Success Toast!');
+};
+
+const errorToast = () => {
+  window.$toast('error', 'Ini contoh Error Toast!');
+};
+
+const infoToast = () => {
+  window.$toast('info', 'Ini contoh Info Toast!');
+};
 </script>
 
 <template>
@@ -180,6 +192,20 @@ const isFormValid = computed(() => {
           <VButton variant="primary" size="md" :disabled="!isFormValid">
             Submit
           </VButton>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast Section -->
+    <div class="w-full max-w-8xl mb-12">
+      <div class="bg-white p-6 rounded-2xl shadow-lg">
+        <h2 class="mb-2 heading-2">Toast</h2>
+        <hr class="border-gray-300 border-t-2 mb-4" />
+
+        <div class="grid grid-cols-3 gap-4 mt-6 place-items-center">
+          <VButton @click="successToast" variant="primary" class="bg-green-700 text-white-100 hover:bg-green-500" size="md">Success</VButton>
+          <VButton @click="errorToast" variant="primary" class="bg-red-200 text-white-100 hover:bg-red-175" size="md">Error</VButton>
+          <VButton @click="infoToast" variant="primary" class="bg-brown-200 text-white-100 hover:bg-yellow-700" size="md">Info</VButton>
         </div>
       </div>
     </div>

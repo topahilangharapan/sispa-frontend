@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router';
 import VSidebar from './components/VSidebar.vue';
+import VToast from './components/VToast.vue'
 
 const route = useRoute();
 
@@ -9,6 +10,14 @@ const route = useRoute();
 const hideSidebar = computed(() =>
   route.path.includes('/auth') || route.path.includes('/design-system')
 );
+
+const toastRef = ref(null);
+
+onMounted(() => {
+  window.$toast = (type, message) => {
+    toastRef.value?.addToast(type, message);
+  };
+});
 </script>
 
 <template>
@@ -17,7 +26,8 @@ const hideSidebar = computed(() =>
     <VSidebar v-if="!hideSidebar" />
 
     <!-- Konten utama -->
-    <div :class="hideSidebar ? 'w-full p-4 min-h-screen' : 'ml-64 p-4 min-h-screen'">
+    <div :class="hideSidebar ? 'w-full min-h-screen' : 'ml-64 p-4 min-h-screen'">
+      <VToast ref="toastRef" />
       <router-view />
     </div>
   </div>

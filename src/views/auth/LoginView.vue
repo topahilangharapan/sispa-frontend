@@ -1,21 +1,18 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref } from 'vue';
 import VInputField from '../../components/VInputField.vue';
 import VButton from '../../components/VButton.vue';
 import { useRouter } from 'vue-router';
-import VToast from '../../components/VToast.vue'
 
 const router = useRouter();
 
 const formData = ref({
   username: '',
-  email: '',
   password: ''
 });
 
 const hasErrors = ref({
   username: true,
-  email: true,
   password: true
 });
 
@@ -23,19 +20,32 @@ const updateErrorStatus = (field: string, isError: boolean) => {
   hasErrors.value[field] = isError;
 };
 
-const isFormValid = computed(() =>
-  Object.values(hasErrors.value).every(error => !error)
-);
+const isFormValid = ref(false);
+
+const validateForm = () => {
+  isFormValid.value = !Object.values(hasErrors.value).some(error => error);
+};
 
 const submitForm = () => {
   if (!isFormValid.value) return;
 
-  // Simulasi API call
+  // Simulasi verifikasi kredensial
   setTimeout(() => {
-    // alert('Akun berhasil dibuat! Silakan login.');
-    // router.push('/login');
-    window.$toast('success', 'Login gagal, periksa kembali kredensial Anda!');
+    if (formData.value.username === 'admin' && formData.value.password === 'password123') {
+      alert('Login berhasil!');
+      router.push('/dashboard/admin');
+    } else if (formData.value.username === 'user' && formData.value.password === 'password123') {
+      alert('Login berhasil!');
+      router.push('/dashboard/user');
+    } else {
+      alert('Username atau password salah!');
+    }
   }, 1000);
+};
+
+const loginAsGuest = () => {
+  alert('Login sebagai tamu berhasil!');
+  router.push('/dashboard/guest');
 };
 </script>
 
@@ -43,7 +53,7 @@ const submitForm = () => {
   <div class="relative w-full h-screen flex items-center justify-center bg-cover bg-center"
        style="background-image: url('/background-auth.jpg'); background-size: cover; background-position: center; background-repeat: no-repeat; background-attachment: fixed;">
     <div class="pl-12 pr-12 pt-8 pb-8 bg-white-100/80 rounded-2xl shadow-lg w-[36rem] backdrop-blur-md">
-      <h2 class="text-xl  mb-4 text-center">Daftar Akun</h2>
+      <h2 class="text-xl mb-4 text-center">Login</h2>
       <form @submit.prevent="submitForm" class="space-y-4">
         <VInputField
           v-model="formData.username"
@@ -51,14 +61,7 @@ const submitForm = () => {
           placeholder="Masukkan username"
           :isEmpty="true"
           @update:hasError="updateErrorStatus('username', $event)"
-        />
-        <VInputField
-          v-model="formData.email"
-          label="Email"
-          placeholder="Masukkan email"
-          :isEmpty="true"
-          :minLength="5"
-          @update:hasError="updateErrorStatus('email', $event)"
+          @input="validateForm"
         />
         <VInputField
           v-model="formData.password"
@@ -66,16 +69,19 @@ const submitForm = () => {
           type="password"
           placeholder="Masukkan password"
           :isEmpty="true"
-          :minLength="6"
           @update:hasError="updateErrorStatus('password', $event)"
+          @input="validateForm"
         />
 
-        <VButton variant="primary" @click="submitForm" :disabled="!isFormValid" class="w-full mt-6"  size="md">
-          Daftar
+        <VButton variant="primary" @click="submitForm" :disabled="!isFormValid" class="w-full mt-6" size="md">
+          Login
+        </VButton>
+        <VButton variant="secondary" @click="loginAsGuest" class="w-full mt-2" size="md">
+          Login As Guest
         </VButton>
       </form>
-      <p class="text-normal text-center mt-4">Sudah punya akun?
-        <span @click="router.push('/auth/login')" class="text-blue-500 cursor-pointer text-normal">Masuk di sini</span>
+      <p class="text-normal text-center mt-4">Ingin mendaftarkan akun?
+        <span @click="router.push('/auth/register')" class="text-blue-500 cursor-pointer text-normal">Daftar di sini</span>
       </p>
     </div>
   </div>
