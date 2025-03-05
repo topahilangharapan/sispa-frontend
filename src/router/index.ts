@@ -8,12 +8,18 @@ import VendorView from '../views/VendorView.vue'
 import StaffAndFreelancerView from '../views/StaffAndFreelancerView.vue'
 import DashboardView from '../views/DashboardView.vue'
 import { roleGuard } from './guards/auth.ts'
+import RegisterView from '../views/auth/RegisterView.vue'
 
 const routes = [
   {
     path: '/',
     name: 'Home',
     component: HomeView,
+  },
+  {
+    path: '/auth/register',
+    name: 'Register',
+    component: RegisterView,
   },
   {
     path: '/dashboard',

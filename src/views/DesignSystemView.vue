@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import { reactive } from 'vue'
+import { computed, reactive, ref } from 'vue'
+import VInputField from '../components/VInputField.vue'
+import VButton from '../components/VButton.vue'
 
 const colors = reactive({
   'Red 400': { bg: 'bg-red-400', text: 'text-white' },
@@ -20,6 +22,24 @@ const colors = reactive({
   'White 200': { bg: 'bg-white-200', text: 'text-black' },
   'White 100': { bg: 'bg-white-100', text: 'text-black' },
 })
+
+const hasErrors = ref({
+  noInput: true,
+  numberOnly: false,
+  positiveNumberOnly: false,
+  minLength: true,
+  maxLength: false
+});
+
+// Fungsi untuk update status error tiap input
+const updateErrorStatus = (field: string, isError: boolean) => {
+  hasErrors.value[field] = isError;
+};
+
+// Tombol bisa ditekan jika semua input tidak error
+const isFormValid = computed(() => {
+  return Object.values(hasErrors.value).every(error => error === false);
+});
 </script>
 
 <template>
@@ -54,7 +74,7 @@ const colors = reactive({
     </div>
 
     <!-- Color Palette Preview -->
-    <div class="w-full max-w-8xl">
+    <div class="w-full max-w-8xl mb-12">
       <div class="bg-white p-6 rounded-2xl shadow-lg">
         <h2 class="mb-2 heading-2">Color Palette</h2>
         <hr class="border-gray-300 border-t-2 mb-4" />
@@ -67,6 +87,99 @@ const colors = reactive({
           >
             <p :class="color.text" class="font-semibold">{{ name }}</p>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Input Field Preview -->
+    <div class="w-full max-w-8xl mb-12">
+      <div class="bg-white p-6 rounded-2xl shadow-lg">
+        <h2 class="mb-2 heading-2">Input Field</h2>
+        <hr class="border-gray-300 border-t-2 mb-4" />
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <VInputField
+              v-model="inputValue"
+              label="No Empty Input"
+              placeholder="Enter text here"
+              :isEmpty="true"
+              @update:hasError="updateErrorStatus('noInput', $event)"
+            />
+          </div>
+          <div>
+            <VInputField
+              v-model="inputValue"
+              label="Number Only"
+              placeholder="Enter numbers"
+              :isNumberOnly="true"
+              @update:hasError="updateErrorStatus('numberOnly', $event)"
+            />
+          </div>
+          <div>
+            <VInputField
+              v-model="inputValue"
+              label="Positive Number Only"
+              placeholder="Enter numbers"
+              :isNumberOnly="true"
+              :isNegative="false"
+              @update:hasError="updateErrorStatus('positiveNumberOnly', $event)"
+            />
+          </div>
+          <div>
+            <VInputField
+              v-model="inputValue"
+              label="Min-Length"
+              placeholder="Enter text here"
+              :minLength="5"
+              @update:hasError="updateErrorStatus('minLength', $event)"
+            />
+          </div>
+          <div>
+            <VInputField
+              v-model="inputValue"
+              label="Max-Length"
+              placeholder="Enter text here"
+              :maxLength="5"
+              @update:hasError="updateErrorStatus('maxLength', $event)"
+            />
+          </div>
+          <div class="flex items-center justify-end mt-4 h-16">
+            <div class="text-normal text-black-grey-700">
+              Masih terdapat error = {{ !isFormValid }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Button Section -->
+    <div class="w-full max-w-8xl mb-12">
+      <div class="bg-white p-6 rounded-2xl shadow-lg">
+        <h2 class="mb-2 heading-2">Button</h2>
+        <hr class="border-gray-300 border-t-2 mb-4" />
+
+        <div class="grid grid-cols-3 gap-4 mt-6 place-items-center">
+          <VButton variant="primary" size="sm">Small</VButton>
+          <VButton variant="primary" size="md">Medium</VButton>
+          <VButton variant="primary" size="lg">Large</VButton>
+        </div>
+
+        <div class="grid grid-cols-3 gap-4 mt-4 place-items-center">
+          <VButton variant="delete" size="sm">Delete Small</VButton>
+          <VButton variant="delete" size="md">Delete Medium</VButton>
+          <VButton variant="delete" size="lg">Delete Large</VButton>
+        </div>
+
+        <div class="grid grid-cols-3 gap-4 mt-4 place-items-center">
+          <VButton variant="disabled" size="sm" disabled>Disabled Small</VButton>
+          <VButton variant="disabled" size="md" disabled>Disabled Medium</VButton>
+          <VButton variant="disabled" size="lg" disabled>Disabled Large</VButton>
+        </div>
+
+        <div class="flex justify-center mt-6">
+          <VButton variant="primary" size="md" :disabled="!isFormValid">
+            Submit
+          </VButton>
         </div>
       </div>
     </div>
