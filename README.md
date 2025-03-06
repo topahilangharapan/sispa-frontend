@@ -25,7 +25,20 @@ Gunakan **npm** atau **yarn** untuk menginstal semua package yang dibutuhkan:
 npm install  # atau yarn install
 ```
 
-### 3️⃣ **Menjalankan Aplikasi**
+### 3️⃣ **Konfigurasi Environment**
+Buat file `.env` berdasarkan contoh `env.example`:
+
+#### **📌 macOS & Linux**
+```bash
+cp .env.example .env
+```
+
+#### **📌 Windows (Git Bash, WSL, atau PowerShell)**
+```bash
+copy .env.example .env
+```
+
+### 4️⃣ **Menjalankan Aplikasi**
 Jalankan proyek dalam mode pengembangan:
 ```bash
 npm run dev  # atau yarn dev
