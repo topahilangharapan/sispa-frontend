@@ -16,11 +16,13 @@ const routes = [
     path: '/',
     name: 'Home',
     component: HomeView,
+    beforeEnter: roleGuard
   },
   {
     path: '/auth/register',
     name: 'Register',
     component: RegisterView,
+    beforeEnter: roleGuard
   },
   {
     path: '/auth/login',

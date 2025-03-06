@@ -2,17 +2,21 @@
 import VNavbar from '../components/VNavbar.vue'
 import { onMounted, ref } from 'vue'
 import VLoading from '../components/VLoading.vue'
+import { useAuthStore } from '../stores/auth.ts'
 
 const title = ref("Home");
 const submodules = ref([""]);
 
-const isLoaded = ref(false);
+const isLoaded = ref(true);
 
-// onMounted(() => {
-//   setTimeout(() => {
-//     isLoaded.value = true;
-//   }, 2000);
-// });
+onMounted(async () => {
+    const authStore = useAuthStore()
+    const savedAuth = localStorage.getItem('auth')
+
+    if (savedAuth) {
+      authStore.$patch(JSON.parse(savedAuth))
+    }
+});
 </script>
 
 

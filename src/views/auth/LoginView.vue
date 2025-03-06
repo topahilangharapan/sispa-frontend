@@ -3,10 +3,18 @@ import { ref } from 'vue';
 import VInputField from '../../components/VInputField.vue';
 import VButton from '../../components/VButton.vue';
 import { useRouter } from 'vue-router';
+import { useAuthStore } from '../../stores/auth.ts';
+import VLoading from '../../components/VLoading.vue'
+
+interface LoginRequestInterface {
+  username: string;
+  password: string;
+}
 
 const router = useRouter();
+const authStore = useAuthStore();
 
-const formData = ref({
+const formData = ref<LoginRequestInterface>({
   username: '',
   password: ''
 });
@@ -16,7 +24,7 @@ const hasErrors = ref({
   password: true
 });
 
-const updateErrorStatus = (field: string, isError: boolean) => {
+const updateErrorStatus = (field: keyof LoginRequestInterface, isError: boolean) => {
   hasErrors.value[field] = isError;
 };
 
@@ -26,64 +34,68 @@ const validateForm = () => {
   isFormValid.value = !Object.values(hasErrors.value).some(error => error);
 };
 
-const submitForm = () => {
+const submitForm = async () => {
   if (!isFormValid.value) return;
 
-  // Simulasi verifikasi kredensial
-  setTimeout(() => {
-    if (formData.value.username === 'admin' && formData.value.password === 'password123') {
-      alert('Login berhasil!');
-      router.push('/dashboard/admin');
-    } else if (formData.value.username === 'user' && formData.value.password === 'password123') {
-      alert('Login berhasil!');
-      router.push('/dashboard/user');
-    } else {
-      alert('Username atau password salah!');
-    }
-  }, 1000);
+  const isSuccess = await authStore.login(formData.value);
+
+  if (isSuccess) {
+    await router.push('/');
+  }
 };
 
-const loginAsGuest = () => {
-  alert('Login sebagai tamu berhasil!');
-  router.push('/dashboard/guest');
+const loginAsGuest = async () => {
+  await authStore.loginAsAGuest()
+  await router.push('/');
 };
 </script>
 
 <template>
   <div class="relative w-full h-screen flex items-center justify-center bg-cover bg-center"
        style="background-image: url('/background-auth.jpg'); background-size: cover; background-position: center; background-repeat: no-repeat; background-attachment: fixed;">
-    <div class="pl-12 pr-12 pt-8 pb-8 bg-white-100/80 rounded-2xl shadow-lg w-[36rem] backdrop-blur-md">
-      <h2 class="text-xl mb-4 text-center">Login</h2>
-      <form @submit.prevent="submitForm" class="space-y-4">
-        <VInputField
-          v-model="formData.username"
-          label="Username"
-          placeholder="Masukkan username"
-          :isEmpty="true"
-          @update:hasError="updateErrorStatus('username', $event)"
-          @input="validateForm"
-        />
-        <VInputField
-          v-model="formData.password"
-          label="Password"
-          type="password"
-          placeholder="Masukkan password"
-          :isEmpty="true"
-          @update:hasError="updateErrorStatus('password', $event)"
-          @input="validateForm"
-        />
 
-        <VButton variant="primary" @click="submitForm" :disabled="!isFormValid" class="w-full mt-6" size="md">
-          Login
-        </VButton>
-        <VButton variant="secondary" @click="loginAsGuest" class="w-full mt-2" size="md">
-          Login As Guest
-        </VButton>
-      </form>
-      <p class="text-normal text-center mt-4">Ingin mendaftarkan akun?
-        <span @click="router.push('/auth/register')" class="text-blue-500 cursor-pointer text-normal">Daftar di sini</span>
-      </p>
+    <!-- Card -->
+    <div class="pl-12 pr-12 pt-8 pb-8 bg-white-100/80 rounded-2xl shadow-lg w-[36rem] backdrop-blur-md flex items-center justify-center min-h-[16rem]">
+
+      <!-- Jika masih loading, hanya tampilkan loading -->
+      <VLoading v-if="authStore.loading" class="flex mr-64"/>
+
+      <!-- Jika loading selesai, tampilkan form login -->
+      <div v-else class="w-full">
+        <h2 class="text-xl mb-4 text-center">Login</h2>
+        <form @submit.prevent="submitForm" class="space-y-4">
+          <VInputField
+            v-model="formData.username"
+            label="Username"
+            placeholder="Masukkan username"
+            :isEmpty="true"
+            @update:hasError="updateErrorStatus('username', $event)"
+            @input="validateForm"
+          />
+          <VInputField
+            v-model="formData.password"
+            label="Password"
+            type="password"
+            placeholder="Masukkan password"
+            :isEmpty="true"
+            @update:hasError="updateErrorStatus('password', $event)"
+            @input="validateForm"
+          />
+
+          <VButton variant="primary" @click="submitForm" :disabled="!isFormValid" class="w-full mt-6" size="md">
+            Login
+          </VButton>
+          <VButton variant="secondary" @click="loginAsGuest" class="w-full mt-2" size="md">
+            Login As Guest
+          </VButton>
+        </form>
+<!--        <p class="text-normal text-center mt-4">Ingin mendaftarkan akun?-->
+<!--          <span @click="router.push('/auth/register')" class="text-blue-500 cursor-pointer text-normal">Daftar di sini</span>-->
+<!--        </p>-->
+      </div>
+
     </div>
+
   </div>
 </template>
 

@@ -1,23 +1,42 @@
 import type { NavigationGuardNext, RouteLocationNormalized } from "vue-router";
+import { useAuthStore } from '../../stores/auth.ts'
 
-// Simulasi role user (diambil dari localStorage atau Vuex/Pinia dalam real case)
-const getUserRole = () => localStorage.getItem("userRole") || "guest";
-
-// Daftar akses per role
-const rolePermissions: Record<string, string[]> = {
-  admin: ["/dashboard", "/inventory", "/finance", "/client", "/vendor", "/staff-freelancer"],
-  staff: ["/dashboard", "/inventory"],
-  guest: ["/"]
-};
-
-// Guard untuk mengecek akses berdasarkan role
 export const roleGuard = (to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) => {
-  const userRole = getUserRole();
-  const allowedRoutes = rolePermissions[userRole] || [];
+  const authStore = useAuthStore();
 
-  if (allowedRoutes.includes(to.path)) {
-    next();
-  } else {
-    next("/"); // Redirect ke home jika tidak punya akses
+  const savedAuth = localStorage.getItem("auth");
+  if (savedAuth) {
+    authStore.$patch(JSON.parse(savedAuth));
   }
+
+  const userRole = authStore.user?.role?.toLowerCase() ?? null;
+  const userToken = authStore.token ?? null;
+
+  // Jika tidak ada token, arahkan ke login
+  if (!userToken || !userRole) {
+    next("/auth/login");
+    return;
+  }
+
+  // Daftar akses per role
+  const rolePermissions: Record<string, string[]> = {
+    staff: ["/dashboard", "/inventory"],
+    guest: ["/"]
+  };
+
+  const allowedRoutes = rolePermissions[userRole.toLowerCase()] || [];
+
+  if (userRole === "admin") {
+    next();
+    return;
+  }
+
+  // Jika role tidak memiliki izin untuk halaman yang dituju, arahkan ke home
+  if (!allowedRoutes.includes(to.path)) {
+    next("/");
+    return;
+  }
+
+  // Jika semua aman, lanjutkan ke halaman tujuan
+  next();
 };
