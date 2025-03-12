@@ -21,7 +21,8 @@ export const roleGuard = (to: RouteLocationNormalized, from: RouteLocationNormal
   // Daftar akses per role
   const rolePermissions: Record<string, string[]> = {
     staff: ["/dashboard", "/inventory"],
-    guest: ["/"]
+    guest: ["/"],
+    marketing: ["/marketing"],
   };
 
   const allowedRoutes = rolePermissions[userRole.toLowerCase()] || [];

@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { jwtDecode } from 'jwt-decode';
-import type {CommonResponseInterface} from "@/interfaces/common.interface";
+import type { CommonResponseInterface } from "@/interfaces/common.interface";
 
 import { nextTick, reactive } from 'vue'
 

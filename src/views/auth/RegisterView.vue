@@ -19,10 +19,13 @@ const formData = ref({
 });
 
 const hasErrors = ref({
-  username: true,
-  email: true,
-  password: true,
-  role: true
+  companyName: false,
+  companyAddress: false,
+  terms: false,
+  placeSigned: false,
+  dateCreated: false,
+  dateSigned: false,
+  signee: false
 });
 
 const roleOption = ref<{ value: string; label: string }[]>([]);

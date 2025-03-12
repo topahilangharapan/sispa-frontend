@@ -16,6 +16,7 @@ const menuItems = [
   { label: "Dashboard", path: "/dashboard", roles: ["admin", "staff", "inventory", "finance", "hr", "guest"] },
   { label: "Inventaris", path: "/inventory", roles: ["admin", "inventory"] },
   { label: "Keuangan", path: "/finance", roles: ["admin", "finance"] },
+  { label: "Marketing", path: "/marketing", roles: ["admin", "staff", "marketing"] },
   { label: "Klien", path: "/client", roles: ["admin", "staff"] },
   { label: "Vendor", path: "/vendor", roles: ["admin", "staff"] },
   { label: "Staf dan Freelancer", path: "/staff-freelancer", roles: ["admin", "hr"] },

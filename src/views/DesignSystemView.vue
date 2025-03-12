@@ -3,6 +3,8 @@ import { computed, reactive, ref } from 'vue'
 import VInputField from '../components/VInputField.vue'
 import VButton from '../components/VButton.vue'
 import VDropdown from '../components/VDropdown.vue'
+import VLoading from '../components/VLoading.vue'
+import { usePurchaseOrderStore } from '../stores/purchaseOrder.ts'
 
 const colors = reactive({
   'Red 400': { bg: 'bg-red-400', text: 'text-white' },
@@ -65,6 +67,7 @@ const selectedOptions = ref('')
 </script>
 
 <template>
+  <VLoading :isDone="usePurchaseOrderStore.loading" />
   <div class="p-8 bg-white-100 min-h-screen flex flex-col items-center">
     <h1 class="text-center mb-8 heading-1">Design System Preview</h1>
 

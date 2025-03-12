@@ -21,7 +21,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="flex">
+  <div >
     <!-- Tampilkan Sidebar jika tidak di halaman auth -->
     <VSidebar v-if="!hideSidebar" />
 

@@ -38,7 +38,8 @@ watch(inputValue, () => {
 const preventNonNumeric = (event: KeyboardEvent) => {
   const char = event.key;
   if (props.isNumberOnly) {
-    if (!/[\d-]/.test(char) || (char === '-' && inputValue.value.length > 0)) {
+    if (!/[\d-]/.test(char) ||
+      (char === '-' && (inputValue.value.length > 0 || inputValue.value.includes('-')))) {
       event.preventDefault();
     }
   }

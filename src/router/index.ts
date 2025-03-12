@@ -10,6 +10,8 @@ import DashboardView from '../views/DashboardView.vue'
 import { roleGuard } from './guards/auth.ts'
 import RegisterView from '../views/auth/RegisterView.vue'
 import LoginView from '../views/auth/LoginView.vue'
+import CreatePurchaseOrderView from '../views/purchase order/CreatePurchaseOrderView.vue'
+import MarketingView from '../views/MarketingView.vue'
 
 const routes = [
   {
@@ -67,8 +69,20 @@ const routes = [
   },
   {
     path: '/design-system',
-    name: 'DesignSystem',
+    name: 'Design System',
     component: DesignSystemView
+  },
+  {
+    path: '/marketing',
+    name: 'Marketing',
+    component: MarketingView,
+    beforeEnter: roleGuard
+  },
+  {
+    path: '/marketing/purchase-order/create',
+    name: 'Create Purchase Order',
+    component: CreatePurchaseOrderView,
+    beforeEnter: roleGuard
   },
 ]
 
