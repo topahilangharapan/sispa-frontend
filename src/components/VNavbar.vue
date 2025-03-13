@@ -58,9 +58,9 @@ const logout = async () => {
       <transition name="dropdown">
         <div v-if="showDropdown" class="absolute right-0 mt-5 w-48 bg-red-400 overflow-hidden rounded-bl-md rounded-br-md">
           <div class="bg-transparent space-y-2">
-            <div class="bg-transparent text-normal text-white-200 p-3 pl-4 cursor-pointer hover:bg-red-300 flex items-center">
+            <router-link to="/profile" class="bg-transparent text-normal text-white-200 p-3 pl-4 cursor-pointer hover:bg-red-300 flex items-center">
               <span>Profil</span>
-            </div>
+            </router-link>
             <div @click="logout()" class="bg-transparent text-normal text-white-200 p-3 pl-4 cursor-pointer hover:bg-red-300 flex items-center">
               <span>Keluar</span>
             </div>

@@ -12,6 +12,7 @@ import RegisterView from '../views/auth/RegisterView.vue'
 import LoginView from '../views/auth/LoginView.vue'
 import CreatePurchaseOrderView from '../views/purchase order/CreatePurchaseOrderView.vue'
 import MarketingView from '../views/MarketingView.vue'
+import ProfileView from '../views/ProfileView.vue'
 
 const routes = [
   {
@@ -83,6 +84,12 @@ const routes = [
     name: 'Create Purchase Order',
     component: CreatePurchaseOrderView,
     beforeEnter: roleGuard
+  },
+
+  {
+    path: '/profile',
+    name: 'Profile',
+    component: ProfileView
   },
 ]
 
