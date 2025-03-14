@@ -119,7 +119,7 @@ const submitPurchaseOrder = async () => {
   const isSuccess = await purchaseOrderStore.create(formattedPurchaseOrder, authStore.token);
 
   if (isSuccess) {
-    router.push('/marketing'); // Redirect ke /marketing setelah sukses
+    router.push('/marketing/purchase-order'); // Redirect ke /marketing setelah sukses
   }
 
 };

@@ -68,5 +68,96 @@ export const usePurchaseOrderStore = defineStore('purchaseOrder', {
           this.loading = false;
         }
       },
+      async fetchAll(token: string): Promise<boolean> {
+        this.loading = true;
+        this.error = null;
+  
+        try {
+          const response = await fetch(`${apiUrl}/purchase-order/all`, {
+            method: "GET",
+            headers: {
+              "Authorization": `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          });
+  
+          const data: CommonResponseInterface<PurchaseOrderInterface[]> = await response.json();
+  
+          if (response.ok) {
+            // data.data is presumably an array of purchase orders
+            this.purchaseOrders = data.data || [];
+            return true; // success
+          } else {
+            this.error = data.message || "Failed to fetch purchase orders.";
+            return false;
+          }
+        } catch (err) {
+          this.error = (err as Error).message;
+          return false;
+        } finally {
+          this.loading = false;
+        }
+      },
+      async fetchDetail(id: number, token: string): Promise<boolean> {
+        this.loading = true;
+        this.error = null;
+        this.selectedPurchaseOrder = null;
+  
+        try {
+          const response = await fetch(`${apiUrl}/purchase-order/${id}`, {
+            method: "GET",
+            headers: {
+              "Authorization": `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          });
+  
+          const data: CommonResponseInterface<PurchaseOrderInterface> = await response.json();
+  
+          if (response.ok) {
+            // data.data presumably the single purchase order
+            this.selectedPurchaseOrder = data.data;
+            return true;
+          } else {
+            this.error = data.message || "Failed to fetch purchase order detail.";
+            return false;
+          }
+        } catch (err) {
+          this.error = (err as Error).message;
+          return false;
+        } finally {
+          this.loading = false;
+        }
+      },
+      async deletePurchaseOrder(id: number, token: string): Promise<boolean> {
+        this.loading = true;
+        this.error = null;
+  
+        try {
+          const response = await fetch(`${apiUrl}/purchase-order/${id}`, {
+            method: "DELETE",
+            headers: {
+              "Authorization": `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          });
+  
+          const data = await response.json();
+          if (response.ok) {
+            // Possibly remove from local array if needed
+            this.purchaseOrders = this.purchaseOrders.filter(po => po.id !== id);
+            return true;
+          } else {
+            this.error = data.message || "Failed to delete purchase order.";
+            return false;
+          }
+        } catch (err) {
+          this.error = (err as Error).message;
+          return false;
+        } finally {
+          this.loading = false;
+        }
+      },
+
 }
 })

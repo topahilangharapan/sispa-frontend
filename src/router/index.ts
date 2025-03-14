@@ -15,7 +15,8 @@ import VendorDetail from '../views/VendorDetail.vue'
 import CreatePurchaseOrderView from '../views/purchase order/CreatePurchaseOrderView.vue'
 import MarketingView from '../views/MarketingView.vue'
 import ProfileView from '../views/ProfileView.vue'
-import UpdateVendorView from '../views/UpdateVendorView.vue'
+import PurchaseOrderList from '../views/purchase order/PurchaseOrderList.vue'
+import PurchaseOrderDetail from '../views/purchase order/PurchaseOrderDetail.vue'
 
 const routes = [
   {
@@ -94,7 +95,17 @@ const routes = [
     component: CreatePurchaseOrderView,
     beforeEnter: roleGuard
   },
-
+  {
+    path: '/marketing/purchase-order',
+    name: 'PurchaseOrderList',
+    component: PurchaseOrderList
+  },
+  {
+    path: '/marketing/purchase-order/:id',
+    name: 'PurchaseOrderDetail',
+    component: PurchaseOrderDetail,
+    props: true
+  },
   {
     path: '/profile',
     name: 'Profile',

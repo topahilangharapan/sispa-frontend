@@ -6,134 +6,108 @@
 
       <div class="profile-field">
         <label>Name</label>
-        <p v-if="!isEditing">{{ profile.name }}</p>
-        <VInputField v-else v-model="profile.name" />
+        <p v-if="!isEditing">{{ userStore.profile.name }}</p>
+        <VInputField v-else v-model="userStore.profile.name" />
       </div>
 
       <div class="profile-field">
         <label>Email address</label>
-        <p v-if="!isEditing">{{ profile.email }}</p>
-        <VInputField v-else v-model="profile.email" />
+        <p v-if="!isEditing">{{ userStore.profile.email }}</p>
+        <VInputField v-else v-model="userStore.profile.email" />
       </div>
 
       <div class="profile-field">
         <label>Address</label>
-        <p v-if="!isEditing">{{ profile.address }}</p>
-        <VInputField v-else v-model="profile.address" />
+        <p v-if="!isEditing">{{ userStore.profile.address }}</p>
+        <VInputField v-else v-model="userStore.profile.address" />
       </div>
 
       <div class="profile-field">
         <label>Phone Number</label>
-        <p v-if="!isEditing">{{ profile.phoneNumber }}</p>
-        <VInputField v-else v-model="profile.phoneNumber" />
+        <p v-if="!isEditing">{{ userStore.profile.phoneNumber }}</p>
+        <VInputField v-else v-model="userStore.profile.phoneNumber" />
+      </div>
+
+      <div class="profile-field">
+        <label>Place of Birth</label>
+        <p v-if="!isEditing">{{ userStore.profile.placeOfBirth }}</p>
+        <VInputField v-else v-model="userStore.profile.placeOfBirth" />
+      </div>
+
+      <div class="profile-field">
+        <label>Date of Birth</label>
+        <p v-if="!isEditing">{{ userStore.profile.dateOfBirth }}</p>
+        <VInputField v-else v-model="userStore.profile.dateOfBirth" type="date" />
+      </div>
+
+      <div class="profile-field">
+        <label>Role</label>
+        <p v-if="!isEditing">{{ userStore.profile.role }}</p>
+        <VInputField v-else v-model="userStore.profile.role" />
       </div>
 
       <div class="actions">
-        <VButton 
-          v-if="!isEditing" 
-          size="md" 
-          @click="isEditing = true"
+        <VButton
+          v-if="!isEditing"
+          @click="startEditing"
         >
           Edit Profile
         </VButton>
-        <VButton 
-          v-if="isEditing" 
-          size="md" 
-          @click="updateProfile"
+
+        <VButton
+          v-if="isEditing"
+          @click="saveProfile"
         >
           Save
         </VButton>
-        <VButton 
-          v-if="isEditing" 
-          size="md" 
-          @click="resetProfile"
+
+        <VButton
+          v-if="isEditing"
+          @click="cancelEditing"
         >
           Cancel
         </VButton>
       </div>
 
-      <p v-if="loading">Loading...</p>
-      <p v-if="error">{{ error }}</p>
+      <p v-if="userStore.loading">Loading...</p>
+      <p v-if="userStore.error" style="color:red;">{{ userStore.error }}</p>
     </div>
   </div>
 </template>
 
-<script setup>
-import { ref, onMounted } from 'vue';
-import apiClient from '../services/apiClient'; // Updated import path
-import VNavbar from '../components/VNavbar.vue';
-import VButton from '../components/VButton.vue';
-import VInputField from '../components/VInputField.vue';
+<script setup lang="ts">
+import { ref, onMounted } from 'vue'
+import { useUserStore } from '../stores/user.ts' // adjust path
+import VNavbar from '../components/VNavbar.vue'
+import VButton from '../components/VButton.vue'
+import VInputField from '../components/VInputField.vue'
 
-// User profile state
-const profile = ref({
-  name: '',
-  email: '',
-  address: '',
-  phoneNumber: '',
-});
+const userStore = useUserStore()
+const isEditing = ref(false)
+const originalProfile = ref({})
 
-const originalProfile = ref({});
-const isEditing = ref(false);
-const loading = ref(false);
-const error = ref(null);
+onMounted(async () => {
+  // example: user #1
+  await userStore.fetchUser(1)
+  originalProfile.value = { ...userStore.profile }
+})
 
-// Fetch user profile data
-const fetchProfile = async () => {
-  loading.value = true;
-  error.value = null;
+function startEditing() {
+  isEditing.value = true
+}
 
-  try {
-    const response = await axios.post('/api/user/get', { id: 1 }); // Replace with logged-in user ID
-    if (response.data.data.length > 0) {
-      profile.value = response.data.data[0]; // API response structure
-      originalProfile.value = { ...profile.value };
-    }
-  } catch (err) {
-    error.value = "Failed to load profile data";
-    console.error('Error fetching profile:', err);
-  } finally {
-    loading.value = false;
+async function saveProfile() {
+  const success = await userStore.updateUserProfile()
+  if (success) {
+    isEditing.value = false
+    originalProfile.value = { ...userStore.profile }
   }
-};
+}
 
-// Update user profile
-const updateProfile = async () => {
-  loading.value = true;
-  error.value = null;
-
-  try {
-    await apiClient.put('/api/user/update-profile', {
-      // First RequestBody - UserRequestDTO
-      userRequestDTO: {
-        id: profile.value.id  // or however you store the user ID
-      },
-      // Second RequestBody - UserProfileRequestDTO
-      profileRequestDTO: {
-        name: profile.value.name,
-        email: profile.value.email,
-        address: profile.value.address,
-        phoneNumber: profile.value.phoneNumber,
-      }
-    });
-
-    isEditing.value = false;
-  } catch (err) {
-    error.value = "Failed to update profile";
-    console.error('Error updating profile:', err);
-  } finally {
-    loading.value = false;
-  }
-};
-
-// Reset form if user cancels edit
-const resetProfile = () => {
-  profile.value = { ...originalProfile.value };
-  isEditing.value = false;
-};
-
-// Fetch profile data on page load
-onMounted(fetchProfile);
+function cancelEditing() {
+  userStore.profile = { ...originalProfile.value }
+  isEditing.value = false
+}
 </script>
 
 <style scoped>
@@ -141,7 +115,7 @@ onMounted(fetchProfile);
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh; /* Vertically centered */
+  height: 100vh;
   width: 1200px;
 }
 
@@ -173,7 +147,6 @@ onMounted(fetchProfile);
 .actions {
   margin-top: 20px;
   display: flex;
-  justify-content: start;
   gap: 15px;
 }
 </style>
