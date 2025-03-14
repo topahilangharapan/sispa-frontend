@@ -45,8 +45,7 @@ watch(inputValue, () => {
 const preventNonNumeric = (event: KeyboardEvent) => {
   const char = event.key;
   if (props.isNumberOnly) {
-    if (!/[\d-]/.test(char) ||
-      (char === '-' && (inputValue.value.length > 0 || inputValue.value.includes('-')))) {
+    if (!/[\d-]/.test(char) || (char === '-' && inputValue.value.length > 0)) {
       event.preventDefault();
     }
   }
@@ -56,14 +55,13 @@ const preventNonNumeric = (event: KeyboardEvent) => {
 <template>
   <div class="flex flex-col">
     <label v-if="label" class="mb-1 text-black-grey-700 text-semibold">{{ label }}</label>
-    <input
-      :type="type === 'numberOnly' ? 'text' : type"
+    <textarea
       v-model="inputValue"
       :placeholder="placeholder"
       :maxlength="maxLength"
       class="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-brown-100"
       @keypress="preventNonNumeric"
-    />
+    ></textarea>
     <p v-if="errorMessage" class="text-red-175 small-text-normal mt-1">{{ errorMessage }}</p>
   </div>
 </template>

@@ -5,14 +5,17 @@ import InventoryView from '../views/InventoryView.vue'
 import FinanceView from '../views/FinanceView.vue'
 import ClientView from '../views/ClientView.vue'
 import VendorView from '../views/VendorView.vue'
+import AddVendorView from '../views/AddVendorView.vue'
 import StaffAndFreelancerView from '../views/StaffAndFreelancerView.vue'
 import DashboardView from '../views/DashboardView.vue'
 import { roleGuard } from './guards/auth.ts'
 import RegisterView from '../views/auth/RegisterView.vue'
 import LoginView from '../views/auth/LoginView.vue'
+import VendorDetail from '../views/VendorDetail.vue'
 import CreatePurchaseOrderView from '../views/purchase order/CreatePurchaseOrderView.vue'
 import MarketingView from '../views/MarketingView.vue'
 import ProfileView from '../views/ProfileView.vue'
+import UpdateVendorView from '../views/UpdateVendorView.vue'
 
 const routes = [
   {
@@ -63,6 +66,12 @@ const routes = [
     beforeEnter: roleGuard
   },
   {
+    path: '/vendor/:id',
+    name: 'Vendor Detail',
+    component: VendorDetail,
+    beforeEnter: roleGuard
+  },
+  {
     path: '/staff-freelancer',
     name: 'Staff and Freelancer',
     component: StaffAndFreelancerView,
@@ -90,6 +99,18 @@ const routes = [
     path: '/profile',
     name: 'Profile',
     component: ProfileView
+  },
+  {
+    path: '/vendor/add',
+    name: 'Add Vendor',
+    component: AddVendorView,
+    beforeEnter: roleGuard
+  },
+  {
+    path: '/vendor/:id/update',
+    name: 'Update Vendor',
+    component: UpdateVendorView,
+    beforeEnter: roleGuard
   },
 ]
 

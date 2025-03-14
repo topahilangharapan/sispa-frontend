@@ -22,6 +22,7 @@ export const roleGuard = (to: RouteLocationNormalized, from: RouteLocationNormal
   const rolePermissions: Record<string, string[]> = {
     staff: ["/dashboard", "/inventory"],
     guest: ["/"],
+    // marketing: ["/vendor"],
     marketing: ["/marketing"],
   };
 
