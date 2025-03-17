@@ -18,6 +18,9 @@ import ProfileView from '../views/ProfileView.vue'
 import UpdateVendorView from '../views/UpdateVendorView.vue'
 import ClientDetailView from '../views/ClientDetailView.vue'
 import UpdateClientView from '../views/UpdateClientView.vue'
+import AddClientView from '../views/AddClientView.vue'
+import PurchaseOrderList from '../views/purchase order/PurchaseOrderList.vue'
+import PurchaseOrderDetail from '../views/purchase order/PurchaseOrderDetail.vue'
 
 const routes = [
   {
@@ -134,6 +137,12 @@ const routes = [
     path: '/client/:id/update',
     name: 'Update Client',
     component: UpdateClientView,
+    beforeEnter: roleGuard
+  },
+  {
+    path: '/client/add',
+    name: 'Add Client',
+    component: AddClientView,
     beforeEnter: roleGuard
   },
 ]
