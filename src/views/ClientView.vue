@@ -63,7 +63,7 @@ const reloadTable = async () => {
     <div class="w-full max-w-screen-xl mb-12 mt-16">
       <div class="bg-white p-6 rounded-2xl shadow-lg w-full">
         <div class="flex items-center justify-between mb-2">
-        <h2 class="heading-2">Daftar Client</h2>
+        <h2 class="heading-2">Daftar Klien</h2>
         <div class="flex space-x-2">
           <div class="relative">
             <input
@@ -88,9 +88,9 @@ const reloadTable = async () => {
                 ></path>
               </svg>
             </span>
-          </div> 
+          </div>
           <RouterLink :to="`/client/add`">
-            <VButton variant="primary" size="md">Add</VButton>
+            <VButton variant="primary" size="md">+ Tambah Klien Baru</VButton>
           </RouterLink>
         </div>
       </div>

@@ -62,9 +62,9 @@ export const useClientStore = defineStore ('client', {
     async updateClient(body: ClientRequestInterface) {
       this.loading = true
       this.error = null
-    
+
       try {
-        
+
         const response = await fetch(`${apiUrl}/client/update`, {
           method: 'PUT',
           headers: {
@@ -73,12 +73,12 @@ export const useClientStore = defineStore ('client', {
           },
           body: JSON.stringify(body),
         })
-        
+
         const data: CommonResponseInterface<ClientInterface> = await response.json()
-        
+
         if (response.ok) {
           window.$toast('success', `Berhasil mengupdate client dengan ID ${data.data.id}`)
-          await this.getClients(useAuthStore().token) 
+          await this.getClients(useAuthStore().token)
           return true
         } else {
           window.$toast('error', `Gagal mengupdate client: ${data.message}`)
@@ -91,6 +91,69 @@ export const useClientStore = defineStore ('client', {
       } finally {
         this.loading = false
       }
-    }
+    },
+
+    async deleteClient(id: string){
+      this.loading = true
+      this.error = null
+
+      try {
+        const response = await fetch(apiUrl + `/client/${id}/delete`, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${useAuthStore().token}`,
+            'Content-Type': 'application/json'
+          },
+        });
+
+        if (response.ok) {
+          this.clients = this.clients.filter((client) => client.id !== id);
+          window.$toast('success', `Berhasil menghapus klien dengan ID ${id}`);
+          await router.push("/client");
+        } else {
+          const data = await response.json();
+          window.$toast('error', `Gagal menghapus klien: ${data.message}`);
+        }
+      } catch (err) {
+        this.error = `Gagal menghapus klien: ${(err as Error).message}`;
+        window.$toast(this.error);
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    async addClient(body: ClientRequestInterface) {
+      this.loading = true
+      this.error = null
+
+      try {
+        const response = await fetch(apiUrl + '/client/add', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${useAuthStore().token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(body),
+        })
+        const data: CommonResponseInterface<ClientInterface> =
+          await response.json()
+        if (response.ok) {
+          window.$toast('success', "Berhasil menambahkan klien dengan ID " + data.data.id);
+          await router.push("/client")
+          return true;
+        } else {
+          window.$toast('error', "Gagal menambahkan klien: " + data.message);
+          return false;
+        }
+
+      } catch (err) {
+        this.error = `Gagal menambahkan klien: ${(err as Error).message}`
+
+        window.$toast(this.error);
+      } finally {
+        this.loading = false
+      }
+    },
+
   }
 })
