@@ -95,9 +95,9 @@ export const useVendorStore = defineStore ('vendor', {
     async updateVendor(body: VendorRequestInterface) {
       this.loading = true
       this.error = null
-    
+
       try {
-        
+
         const response = await fetch(`${apiUrl}/vendor/update`, {
           method: 'PUT',
           headers: {
@@ -106,9 +106,9 @@ export const useVendorStore = defineStore ('vendor', {
           },
           body: JSON.stringify(body),
         })
-        
+
         const data: CommonResponseInterface<VendorInterface> = await response.json()
-        
+
         if (response.ok) {
           window.$toast('success', `Berhasil mengupdate vendor dengan ID ${data.data.id}`)
           await this.getVendors(useAuthStore().token) // Refresh vendor list
@@ -123,6 +123,35 @@ export const useVendorStore = defineStore ('vendor', {
         return false
       } finally {
         this.loading = false
+      }
+    },
+
+    async deleteVendor(id: string){
+      this.loading = true
+      this.error = null
+
+      try {
+        const response = await fetch(apiUrl + `/vendor/${id}/delete`, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${useAuthStore().token}`,
+            'Content-Type': 'application/json'
+          },
+        });
+
+        if (response.ok) {
+          this.vendors = this.vendors.filter((vendor) => vendor.id !== id);
+          window.$toast('success', `Berhasil menghapus vendor dengan ID ${id}`);
+          await router.push("/vendor");
+        } else {
+          const data = await response.json();
+          window.$toast('error', `Gagal menghapus vendor: ${data.message}`);
+        }
+      } catch (err) {
+        this.error = `Gagal menghapus vendor: ${(err as Error).message}`;
+        window.$toast(this.error);
+      } finally {
+        this.loading = false;
       }
     }
 

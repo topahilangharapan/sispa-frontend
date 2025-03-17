@@ -7,6 +7,7 @@ import { useVendorStore } from '../stores/vendor.ts'
 import { useAuthStore } from '../stores/auth.ts'
 import { useRoute } from 'vue-router';
 import router from '../router'
+import ConfirmationDialog from '../components/ConfirmationDialog.vue'
 
 const title = ref("Vendor");
 const submodules = ref([""]);
@@ -14,6 +15,13 @@ const vendorStore = useVendorStore()
 const authStore = useAuthStore()
 const route = useRoute();
 const vendorId = route.params.id as string;
+
+const showDialog = ref(false);
+
+const deleteVendor = async () => {
+  await vendorStore.deleteVendor(vendorId);
+  showDialog.value = false;
+};
 
 onMounted(async () => {
   const savedAuth = localStorage.getItem('auth');
@@ -36,17 +44,23 @@ onMounted(async () => {
     <div class="bg-white p-6 rounded-2xl shadow-lg">
       <div class="flex items-center justify-between mb-2">
         <h2 class="heading-2">Detail Vendor</h2>
-        <div class="flex space-x-2"> 
+        <div class="flex space-x-2">
           <RouterLink :to="`/vendor/${vendorId}/update`">
             <VButton size="sm" variant="primary">
               Ubah
             </VButton>
           </RouterLink>
-          <RouterLink :to="`/vendor/${vendorId}/delete`">
-            <VButton size="sm" variant="delete">
-              Hapus
-            </VButton>
-          </RouterLink>
+          <VButton @click="() => (showDialog = true)" size="sm" variant="delete">
+            Hapus
+          </VButton>
+
+          <ConfirmationDialog
+            :visible="showDialog"
+            title="Hapus Vendor"
+            message="Apakah Anda yakin ingin menghapus vendor?"
+            @confirm="deleteVendor"
+            @cancel="() => (showDialog = false)"
+          />
         </div>
       </div>
       <hr class="border-gray-300 border-t-2 mb-4" />
