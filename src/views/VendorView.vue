@@ -11,6 +11,14 @@ const title = ref("Vendor");
 const submodules = ref([""]);
 const vendorStore = useVendorStore()
 const authStore = useAuthStore()
+const dataTableInstance = ref<DataTable | null>(null);
+
+const handleSearch = (event: Event) => {
+  const searchValue = (event.target as HTMLInputElement).value;
+  if (dataTableInstance.value) {
+    dataTableInstance.value.search(searchValue);
+  }
+};
 
 onMounted(async () => {
   const savedAuth = localStorage.getItem('auth');
@@ -23,8 +31,8 @@ onMounted(async () => {
     document.getElementById('default-table') &&
     typeof DataTable != 'undefined'
   ) {
-    new DataTable('#default-table', {
-      searchable: true,
+    dataTableInstance.value = new DataTable('#default-table', {
+      searchable: false,
       sortable: true,
       paging: true,
     })
@@ -56,7 +64,31 @@ const reloadTable = async () => {
       <div class="bg-white p-6 rounded-2xl shadow-lg w-full">
         <div class="flex items-center justify-between mb-2">
         <h2 class="heading-2">Daftar Vendor</h2>
-        <div class="flex space-x-2"> 
+        <div class="flex space-x-2">
+          <div class="relative">
+            <input
+              type="text"
+              placeholder="Cari vendor..."
+              class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              @input="handleSearch"
+            />
+            <span class="absolute inset-y-0 right-0 flex items-center pr-3">
+              <svg
+                class="w-5 h-5 text-gray-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                ></path>
+              </svg>
+            </span>
+          </div> 
           <RouterLink :to="`/vendor/add`">
             <VButton variant="primary" size="md">Add</VButton>
           </RouterLink>
@@ -70,7 +102,7 @@ const reloadTable = async () => {
                 <th class="px-4 py-2 text-center">No</th>
                 <th class="px-4 py-2 text-left">ID Vendor</th>
                 <th class="px-4 py-2 text-left">Nama</th>
-                <th class="px-4 py-2 text-left">Layanan</th>
+                <th class="px-4 py-2 text-left">Industri</th>
                 <th class="px-4 py-2 text-center">Aksi</th>
               </tr>
             </thead>
