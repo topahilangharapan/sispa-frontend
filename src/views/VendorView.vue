@@ -38,19 +38,6 @@ onMounted(async () => {
     })
   }
 });
-
-const reloadTable = async () => {
-  if (
-    document.getElementById('default-table') &&
-    typeof DataTable != 'undefined'
-  ) {
-    new DataTable('#default-table', {
-      searchable: false,
-      sortable: true,
-      paging: true,
-    })
-  }
-}
 </script>
 
 <template>
@@ -88,9 +75,9 @@ const reloadTable = async () => {
                 ></path>
               </svg>
             </span>
-          </div> 
+          </div>
           <RouterLink :to="`/vendor/add`">
-            <VButton variant="primary" size="md">Add</VButton>
+            <VButton variant="primary" size="md">+ Tambah Vendor</VButton>
           </RouterLink>
         </div>
       </div>
@@ -102,7 +89,7 @@ const reloadTable = async () => {
                 <th class="px-4 py-2 text-center">No</th>
                 <th class="px-4 py-2 text-left">ID Vendor</th>
                 <th class="px-4 py-2 text-left">Nama</th>
-                <th class="px-4 py-2 text-left">Industri</th>
+                <th class="px-4 py-2 text-left">Layanan</th>
                 <th class="px-4 py-2 text-center">Aksi</th>
               </tr>
             </thead>
