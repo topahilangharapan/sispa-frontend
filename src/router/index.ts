@@ -118,6 +118,17 @@ const routes = [
     props: true
   },
   {
+    path: '/marketing/purchase-order',
+    name: 'PurchaseOrderList',
+    component: PurchaseOrderList
+  },
+  {
+    path: '/marketing/purchase-order/:id',
+    name: 'PurchaseOrderDetail',
+    component: PurchaseOrderDetail,
+    props: true
+  },
+  {
     path: '/profile',
     name: 'Profile',
     component: ProfileView
