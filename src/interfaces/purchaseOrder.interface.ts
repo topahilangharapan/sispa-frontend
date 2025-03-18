@@ -10,6 +10,7 @@ export interface PurchaseOrderItemInterface {
 export interface PurchaseOrderInterface {
   companyName: string;
   companyAddress: string;
+  receiver: string;
   items: PurchaseOrderItemInterface[];
   terms: string;
   placeSigned: string;

@@ -27,6 +27,7 @@ const today = new Date().toISOString().split('T')[0];
 const purchaseOrder = ref<PurchaseOrderInterface>({
   companyName: "",
   companyAddress: "",
+  receiver: "",
   items: [],
   terms: "",
   placeSigned: "",
@@ -38,6 +39,7 @@ const purchaseOrder = ref<PurchaseOrderInterface>({
 const hasErrors = ref({
   companyName: true,
   companyAddress: true,
+  receiver: true,
   terms: true,
   placeSigned: true,
   dateCreated: false,
@@ -119,7 +121,7 @@ const submitPurchaseOrder = async () => {
   const isSuccess = await purchaseOrderStore.create(formattedPurchaseOrder, authStore.token);
 
   if (isSuccess) {
-    router.push('/marketing/purchase-order'); // Redirect ke /marketing setelah sukses
+    router.push('/marketing/purchase-order');
   }
 
 };
@@ -148,6 +150,14 @@ const submitPurchaseOrder = async () => {
         placeholder="Masukkan alamat perusahaan"
         :isEmpty="true"
         @update:hasError="updateErrorStatus('companyAddress', $event)"
+      />
+
+      <VInputField
+        label="Nama Penerima"
+        v-model="purchaseOrder.receiver"
+        placeholder="Masukkan nama penerima"
+        :isEmpty="true"
+        @update:hasError="updateErrorStatus('receiver', $event)"
       />
 
       <VInputField

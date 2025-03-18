@@ -16,7 +16,6 @@ import CreatePurchaseOrderView from '../views/purchase order/CreatePurchaseOrder
 import MarketingView from '../views/MarketingView.vue'
 import ProfileView from '../views/ProfileView.vue'
 import UpdateVendorView from '../views/UpdateVendorView.vue'
-import UpdateVendorView from '../views/UpdateVendorView.vue'
 import ClientDetailView from '../views/ClientDetailView.vue'
 import UpdateClientView from '../views/UpdateClientView.vue'
 import AddClientView from '../views/AddClientView.vue'
