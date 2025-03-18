@@ -1,50 +1,60 @@
 <script setup lang="ts">
-import { computed, nextTick, onMounted, ref, toRaw } from 'vue'
+import { computed, onMounted, ref, toRaw } from 'vue'
 import VInputField from '../../components/VInputField.vue'
 import VNavbar from '../../components/VNavbar.vue'
 import VButton from '../../components/VButton.vue'
-import type { PurchaseOrderInterface } from '../../interfaces/purchaseOrder.interface.ts'
+import VLoading from '../../components/VLoading.vue'
+import VDropdown from '../../components/VDropdown.vue'
 import { useAuthStore } from '../../stores/auth.ts'
 import { usePurchaseOrderStore } from '../../stores/purchaseOrder.ts'
+import { useInvoiceStore } from '../../stores/invoice.ts'
+import type { InvoiceInterface } from '../../interfaces/invoice.interface.ts'
 import { useRouter } from 'vue-router'
 
-const title = ref("Marketing");
-const submodules = ref([""]);
 const authStore = useAuthStore();
 const purchaseOrderStore = usePurchaseOrderStore();
-const router = useRouter(); // Inisialisasi router
-
-onMounted(async () => {
-  const savedAuth = localStorage.getItem('auth')
-
-  if (savedAuth) {
-    authStore.$patch(JSON.parse(savedAuth))
-  }
-});
+const invoiceStore = useInvoiceStore();
+const router = useRouter();
 
 const today = new Date().toISOString().split('T')[0];
 
-const purchaseOrder = ref<PurchaseOrderInterface>({
-  companyName: "",
-  companyAddress: "",
+const purchaseOrderOption = ref<{ value: string; label: string }[]>([]);
+const selectedPurchaseOrder = ref(null);
+
+onMounted(async () => {
+  await purchaseOrderStore.fetchAll(authStore.token);
+  if (purchaseOrderStore.purchaseOrders) {
+    purchaseOrderOption.value = purchaseOrderStore.purchaseOrders.map(po => ({
+      value: po.id,
+      label: po.noPo,
+    }));
+  }
+});
+
+const invoice = ref<InvoiceInterface>({
   receiver: "",
-  items: [],
-  terms: "",
   placeSigned: "",
   dateCreated: today,
   dateSigned: today,
   signee: "",
+  purchaseOrderId: "",
+  datePaid: today,
+  ppnPercentage: "",
+  bankName: "",
+  accountNumber: "",
+  onBehalf: "",
+  event: ""
 });
 
 const hasErrors = ref({
-  companyName: true,
-  companyAddress: true,
   receiver: true,
-  terms: true,
   placeSigned: true,
-  dateCreated: false,
-  dateSigned: false,
-  signee: true
+  signee: true,
+  ppnPercentage: true,
+  bankName: true,
+  accountNumber: true,
+  onBehalf: true,
+  event: true
 });
 
 const updateErrorStatus = (field, status) => {
@@ -55,231 +65,159 @@ const isFormValid = computed(() =>
   Object.values(hasErrors.value).every(error => !error)
 );
 
-const addItem = () => {
-  const newItem = {
-    tempId: crypto.randomUUID(), // ID unik untuk tiap item
-    title: "",
-    volume: "",
-    unit: "",
-    pricePerUnit: "",
-    description: "",
-  };
-
-  purchaseOrder.value.items.push(newItem);
-
-  // Tambahkan error status berdasarkan ID unik
-  updateErrorStatus(`title-${newItem.tempId}`, true);
-  updateErrorStatus(`volume-${newItem.tempId}`, true);
-  updateErrorStatus(`unit-${newItem.tempId}`, true);
-  updateErrorStatus(`pricePerUnit-${newItem.tempId}`, true);
-};
-
-
-const removeItem = (tempId) => {
-  const index = purchaseOrder.value.items.findIndex(item => item.tempId === tempId);
-  if (index === -1) return;
-
-  // Hapus item dari daftar
-  purchaseOrder.value.items.splice(index, 1);
-
-  // Hapus error status berdasarkan tempId
-  delete hasErrors.value[`title-${tempId}`];
-  delete hasErrors.value[`volume-${tempId}`];
-  delete hasErrors.value[`unit-${tempId}`];
-  delete hasErrors.value[`pricePerUnit-${tempId}`];
-  delete hasErrors.value[`description-${tempId}`];
-
-  // Hapus error status berdasarkan tempId
-  delete hasErrors.value[`title-undefined`];
-  delete hasErrors.value[`volume-undefined`];
-  delete hasErrors.value[`unit-undefined`];
-  delete hasErrors.value[`pricePerUnit-undefined`];
-  delete hasErrors.value[`description-undefined`];
-
-  console.log(hasErrors.value)
-};
-
-
 const formatDate = (dateString: string) => {
   const date = new Date(dateString);
   return date.toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' });
 };
 
-// Fungsi Submit setelah konfirmasi modal
-const submitPurchaseOrder = async () => {
-
-  purchaseOrder.value.items.forEach((item) => {
-    if (!item.description.trim()) item.description = "-";
-  });
-
-  const formattedPurchaseOrder = {
-    ...toRaw(purchaseOrder.value),
-    dateCreated: formatDate(purchaseOrder.value.dateCreated),
-    dateSigned: formatDate(purchaseOrder.value.dateSigned),
+const submitInvoice = async () => {
+  const formattedInvoice = {
+    ...toRaw(invoice.value),
+    dateCreated: formatDate(invoice.value.dateCreated),
+    dateSigned: formatDate(invoice.value.dateSigned),
+    datePaid: formatDate(invoice.value.datePaid),
   };
 
-  const isSuccess = await purchaseOrderStore.create(formattedPurchaseOrder, authStore.token);
-
-  if (isSuccess) {
-    router.push('/marketing/purchase-order');
-  }
-
+  const isSuccess = await invoiceStore.create(formattedInvoice, authStore.token);
+  if (isSuccess) router.push('/finance/invoice');
 };
 
+const onSelectPurchaseOrder = (poId: string) => {
+  invoice.value.purchaseOrderId = poId;
+  selectedPurchaseOrder.value = purchaseOrderStore.purchaseOrders.find(po => po.id === poId);
+  console.log(selectedPurchaseOrder.value);
+};
 </script>
 
 <template>
-  <VNavbar :title="title" :submodules="submodules" class="fixed top-0 left-0 w-full z-50"></VNavbar>
+  <VNavbar :title="{ 'Keuangan': '/finance' }" :submodules="{ 'Invoice': '/finance/invoice' }" class="fixed top-0 left-0 w-full z-50" />
+  <VLoading v-if="purchaseOrderStore.loading || invoiceStore.loading" class="flex mr-64" />
 
-  <div class="flex gap-4 h-screen mt-12 p-4">
-    <!-- Card Tambah Purchase Order (1/3 Lebar Page) -->
-    <div class="w-1/3 bg-white p-4 rounded-lg flex flex-col gap-4">
-      <h2 class="mb-4">Tambah Purchase Order</h2>
+  <div class="p-8 mt-12 w-full min-h-screen">
+    <h2 class="mb-6">Tambah Invoice</h2>
 
-      <VInputField
-        label="Nama Perusahaan"
-        v-model="purchaseOrder.companyName"
-        placeholder="Masukkan nama perusahaan"
+    <!-- Section: Pilih Purchase Order -->
+    <div class="mb-6 bg-white p-6 rounded-lg shadow-sm">
+      <h3 class="mb-4 font-semibold">Pilih Purchase Order</h3>
+      <VDropdown
+        v-model="invoice.purchaseOrderId"
+        label="Purchase Order"
+        :options="purchaseOrderOption"
+        placeholder="Silakan pilih"
         :isEmpty="true"
-        @update:hasError="updateErrorStatus('companyName', $event)"
+        @update:modelValue="onSelectPurchaseOrder"
       />
 
-      <VInputField
-        label="Alamat Perusahaan"
-        v-model="purchaseOrder.companyAddress"
-        placeholder="Masukkan alamat perusahaan"
-        :isEmpty="true"
-        @update:hasError="updateErrorStatus('companyAddress', $event)"
-      />
-
-      <VInputField
-        label="Nama Penerima"
-        v-model="purchaseOrder.receiver"
-        placeholder="Masukkan nama penerima"
-        :isEmpty="true"
-        @update:hasError="updateErrorStatus('receiver', $event)"
-      />
-
-      <VInputField
-        label="Ketentuan"
-        v-model="purchaseOrder.terms"
-        placeholder="Masukkan ketentuan"
-        :isEmpty="true"
-        @update:hasError="updateErrorStatus('terms', $event)"
-      />
-
-      <VInputField
-        label="Tempat Ditandatangani"
-        v-model="purchaseOrder.placeSigned"
-        placeholder="Masukkan tempat penandatanganan"
-        :isEmpty="true"
-        @update:hasError="updateErrorStatus('placeSigned', $event)"
-      />
-
-      <VInputField
-        label="Tanggal Dibuat"
-        v-model="purchaseOrder.dateCreated"
-        type="date"
-        placeholder="Pilih tanggal dibuat"
-        @update:hasError="updateErrorStatus('dateCreated', $event)"
-      />
-
-      <VInputField
-        label="Tanggal Ditandatangani"
-        v-model="purchaseOrder.dateSigned"
-        type="date"
-        placeholder="Pilih tanggal ditandatangani"
-        @update:hasError="updateErrorStatus('dateSigned', $event)"
-      />
-
-      <VInputField
-        label="Penandatangan"
-        v-model="purchaseOrder.signee"
-        placeholder="Masukkan nama penandatangan"
-        :isEmpty="true"
-        @update:hasError="updateErrorStatus('signee', $event)"
-      />
-
-      <VButton variant="primary" :disabled="!isFormValid" @click="submitPurchaseOrder" class="w-full mt-4" size="md">
-        Simpan Purchase Order
-      </VButton>
+      <!-- Detail PO yang dipilih -->
+      <div v-if="invoice.purchaseOrderId" class="mt-4 p-4 bg-white rounded-lg shadow-sm border">
+        <p><strong>No PO:</strong> {{ selectedPurchaseOrder.noPo }}</p>
+        <p><strong>Company:</strong> {{ selectedPurchaseOrder.companyName }}</p>
+        <p><strong>Total Harga:</strong> Rp{{ selectedPurchaseOrder.total.toLocaleString('us-US') }}</p>
+        <p><strong>Date Created:</strong> {{ selectedPurchaseOrder.dateCreated }}</p>
+      </div>
     </div>
 
-    <!-- Card Daftar Item (2/3 Lebar Page) -->
-    <div class="w-2/3 bg-white p-4 rounded-lg flex flex-col h-full overflow-auto gap-4">
-      <div class="flex justify-between items-center mb-4">
-        <h2 class="text-lg font-semibold">Daftar Item</h2>
+    <!-- Section: Form Invoice -->
+    <div class="bg-white p-6 rounded-lg shadow-sm">
+      <h3 class="mb-4 font-semibold">Detail Invoice</h3>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <VInputField
+          label="Nama Penerima"
+          v-model="invoice.receiver"
+          placeholder="Masukkan nama penerima"
+          :isEmpty="true"
+          @update:hasError="updateErrorStatus('receiver', $event)"
+        />
+
+        <VInputField
+          label="Tempat Ditandatangani"
+          v-model="invoice.placeSigned"
+          placeholder="Masukkan tempat penandatanganan"
+          :isEmpty="true"
+          @update:hasError="updateErrorStatus('placeSigned', $event)"
+        />
+
+        <VInputField
+          label="Tanggal Dibuat"
+          v-model="invoice.dateCreated"
+          type="date"
+        />
+
+        <VInputField
+          label="Tanggal Ditandatangani"
+          v-model="invoice.dateSigned"
+          type="date"
+        />
+
+        <VInputField
+          label="Penandatangan"
+          v-model="invoice.signee"
+          placeholder="Masukkan nama penandatangan"
+          :isEmpty="true"
+          @update:hasError="updateErrorStatus('signee', $event)"
+        />
+
+        <VInputField
+          label="Tanggal Pembayaran"
+          v-model="invoice.datePaid"
+          type="date"
+        />
+
+        <VInputField
+          label="PPN (%)"
+          v-model="invoice.ppnPercentage"
+          placeholder="Masukkan persentase PPN"
+          :isEmpty="true"
+          :isNumberOnly="true"
+          :isNegative="false"
+          :maxLength="3"
+          @update:hasError="updateErrorStatus('ppnPercentage', $event)"
+        />
+
+        <VInputField
+          label="Nama Bank"
+          v-model="invoice.bankName"
+          placeholder="Masukkan nama bank"
+          :isEmpty="true"
+          @update:hasError="updateErrorStatus('bankName', $event)"
+        />
+
+        <VInputField
+          label="Nomor Rekening"
+          v-model="invoice.accountNumber"
+          placeholder="Masukkan nomor rekening"
+          :isEmpty="true"
+          @update:hasError="updateErrorStatus('accountNumber', $event)"
+        />
+
+        <VInputField
+          label="Atas Nama"
+          v-model="invoice.onBehalf"
+          placeholder="Masukkan nama pemilik rekening"
+          :isEmpty="true"
+          @update:hasError="updateErrorStatus('onBehalf', $event)"
+        />
+
+        <VInputField
+          label="Acara/Keterangan"
+          v-model="invoice.event"
+          placeholder="Masukkan keterangan acara"
+          :isEmpty="true"
+          @update:hasError="updateErrorStatus('event', $event)"
+        />
+      </div>
+
+      <div class="flex justify-end mt-6">
         <VButton
           variant="primary"
-          @click="addItem"
-          class="bg-green-800 text-white px-2 py-1 rounded-full hover:bg-green-700 transition text-semibold"
+          :disabled="!isFormValid"
+          @click="submitInvoice"
+          size="lg"
         >
-          Tambah Item
+          Simpan Invoice
         </VButton>
-      </div>
-
-      <div v-if="purchaseOrder.items.length === 0" class="text-black-grey-400 text-normal italic text-center">
-        Belum ada item ditambahkan
-      </div>
-
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        <div
-          v-for="(item, index) in purchaseOrder.items" :key="item.tempId"
-          class="relative border border-gray-200 p-4 rounded-lg flex flex-col shadow-md gap-4 bg-white transition-all hover:shadow-lg h-auto flex-grow min-h-[200px]"
-        >
-          <VButton
-            variant="primary"
-            @click="removeItem(item.tempId)"
-            class="absolute top-4 right-4 bg-red-200 text-white px-2 py-1 rounded-full hover:bg-red-175 transition text-xs"
-          >
-            ✕
-          </VButton>
-
-          <h3 class="font-semibold text-gray-700">Item {{ index + 1 }}</h3>
-
-          <VInputField
-            label="Nama Item"
-            v-model="item.title"
-            placeholder="Masukkan nama item"
-            :isEmpty="true"
-            @update:hasError="updateErrorStatus(`title-${item.tempId}`, $event)"
-          />
-          <VInputField
-            label="Volume"
-            v-model="item.volume"
-            type="number"
-            placeholder="Masukkan volume"
-            :isEmpty="true"
-            :isNumberOnly="true"
-            :isNegative="false"
-            @update:hasError="updateErrorStatus(`volume-${item.tempId}`, $event)"
-          />
-          <VInputField
-            label="Satuan"
-            v-model="item.unit"
-            placeholder="Masukkan satuan"
-            :isEmpty="true"
-            @update:hasError="updateErrorStatus(`unit-${item.tempId}`, $event)"
-          />
-          <VInputField
-            label="Harga per Satuan"
-            v-model="item.pricePerUnit"
-            type="number"
-            placeholder="Masukkan harga per satuan"
-            :isEmpty="true"
-            :isNumberOnly="true"
-            :isNegative="false"
-            @update:hasError="updateErrorStatus(`pricePerUnit-${item.tempId}`, $event)"
-          />
-          <VInputField
-            label="Deskripsi"
-            v-model="item.description"
-            placeholder="Masukkan deskripsi"
-            @update:hasError="updateErrorStatus(`description-${item.tempId}`, $event)"
-          />
-        </div>
       </div>
     </div>
   </div>
 </template>
-

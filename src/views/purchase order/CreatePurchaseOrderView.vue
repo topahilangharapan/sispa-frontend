@@ -7,6 +7,7 @@ import type { PurchaseOrderInterface } from '../../interfaces/purchaseOrder.inte
 import { useAuthStore } from '../../stores/auth.ts'
 import { usePurchaseOrderStore } from '../../stores/purchaseOrder.ts'
 import { useRouter } from 'vue-router'
+import VLoading from '../../components/VLoading.vue'
 
 const title = ref({ 'Marketing': '/marketing' });
 const submodules = ref({
@@ -132,8 +133,9 @@ const submitPurchaseOrder = async () => {
 
 <template>
   <VNavbar :title="title" :submodules="submodules" class="fixed top-0 left-0 w-full z-50"></VNavbar>
+  <VLoading v-if="purchaseOrderStore.loading" class="flex mr-64"/>
 
-  <div class="flex gap-4 h-screen mt-12 p-4">
+  <div v-else class="flex gap-4 h-screen mt-12 p-4">
     <!-- Card Tambah Purchase Order (1/3 Lebar Page) -->
     <div class="w-1/3 bg-white p-4 rounded-lg flex flex-col gap-4">
       <h2 class="mb-4">Tambah Purchase Order</h2>
@@ -249,7 +251,6 @@ const submitPurchaseOrder = async () => {
           <VInputField
             label="Volume"
             v-model="item.volume"
-            type="number"
             placeholder="Masukkan volume"
             :isEmpty="true"
             :isNumberOnly="true"
@@ -266,7 +267,6 @@ const submitPurchaseOrder = async () => {
           <VInputField
             label="Harga per Satuan"
             v-model="item.pricePerUnit"
-            type="number"
             placeholder="Masukkan harga per satuan"
             :isEmpty="true"
             :isNumberOnly="true"

@@ -1,6 +1,6 @@
 <template>
     <div class="purchaseorder-container">
-      <VNavbar :title="title" :submodules="submodules"></VNavbar>/
+      <VNavbar :title="title" :submodules="submodules"></VNavbar>
 
       <div class="purchaseorder-card">
         <h2>Purchase Order</h2>

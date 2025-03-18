@@ -12,6 +12,8 @@ export const usePurchaseOrderStore = defineStore('purchaseOrder', {
     state: () => ({
       loading: false,
       error: null as null | string,
+      purchaseOrders: [] as PurchaseOrderInterface[],
+      selectedPurchaseOrders: [] as PurchaseOrderInterface[],
     }),
     actions: {
       async create(body: PurchaseOrderInterface, token: string): Promise<boolean> {
