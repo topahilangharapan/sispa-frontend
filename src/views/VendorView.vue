@@ -7,8 +7,7 @@ import { useVendorStore } from '../stores/vendor.ts'
 import { useAuthStore } from '../stores/auth.ts'
 import { DataTable } from 'simple-datatables'
 
-const title = ref("Vendor");
-const submodules = ref([""]);
+const title = ref({ 'Vendor': '/vendor' });
 const vendorStore = useVendorStore()
 const authStore = useAuthStore()
 const dataTableInstance = ref<DataTable | null>(null);

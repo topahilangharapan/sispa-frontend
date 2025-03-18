@@ -1,6 +1,6 @@
 <template>
     <div class="purchaseorder-container">
-      <VNavbar title="Purchase Order Detail" />
+      <VNavbar :title="title" :submodules="submodules"></VNavbar>/
 
       <div class="purchaseorder-card">
         <h2>Purchase Order</h2>
@@ -99,19 +99,22 @@
   </template>
 
   <script setup lang="ts">
-  import { onMounted } from 'vue'
+  import { onMounted, ref } from 'vue'
   import { useRoute, useRouter } from 'vue-router'
   import { usePurchaseOrderStore } from '../../stores/purchaseOrder.ts'
   import { useAuthStore } from '../../stores/auth'
   import VNavbar from '../../components/VNavbar.vue'
   import VButton from '../../components/VButton.vue'
-  import VInputField from '@/components/VInputField.vue' // If needed
   // etc.
 
   const purchaseOrderStore = usePurchaseOrderStore()
   const authStore = useAuthStore()
   const router = useRouter()
   const route = useRoute()
+  const title = ref({ 'Marketing': '/marketing' });
+  const submodules = ref({
+    "Purchase Order": "/marketing/purchase-order",
+  });
 
   onMounted(async () => {
     if (!authStore.token) {

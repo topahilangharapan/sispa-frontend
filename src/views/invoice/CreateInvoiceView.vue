@@ -8,10 +8,8 @@ import { useAuthStore } from '../../stores/auth.ts'
 import { usePurchaseOrderStore } from '../../stores/purchaseOrder.ts'
 import { useRouter } from 'vue-router'
 
-const title = ref({ 'Marketing': '/marketing' });
-const submodules = ref({
-  "Purchase Order": "/marketing/purchase-order",
-});
+const title = ref("Marketing");
+const submodules = ref([""]);
 const authStore = useAuthStore();
 const purchaseOrderStore = usePurchaseOrderStore();
 const router = useRouter(); // Inisialisasi router
