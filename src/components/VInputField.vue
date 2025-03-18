@@ -17,25 +17,25 @@ const emit = defineEmits(['update:modelValue', 'update:hasError']);
 
 const inputValue = ref(props.modelValue || '');
 
-// **Computed untuk format angka dengan thousand separator jika `isNumberOnly` true**
+// **Format angka jika isNumberOnly = true**
 const formattedValue = computed({
   get: () => {
+    if (props.type === 'date') return inputValue.value;
     if (props.isNumberOnly && inputValue.value !== '') {
-      return Number(inputValue.value).toLocaleString('us-US'); // Format angka ribuan
+      return Number(inputValue.value).toLocaleString('us-US');
     }
-    return inputValue.value; // Jika bukan angka, tampilkan biasa
+    return inputValue.value;
   },
   set: (newValue) => {
     if (props.isNumberOnly) {
-      const rawValue = newValue.replace(/\D/g, ''); // Hapus semua karakter kecuali angka
-      inputValue.value = rawValue; // Simpan angka tanpa separator
+      inputValue.value = newValue.replace(/\D/g, '');
     } else {
-      inputValue.value = newValue; // Jika bukan angka, biarkan sesuai input
+      inputValue.value = newValue;
     }
   }
 });
 
-// **Menghitung error**
+// **Validasi error**
 const errorMessage = computed(() => {
   if (props.isEmpty && !inputValue.value) return 'Field tidak boleh kosong!';
   if (props.isNumberOnly) {
@@ -47,18 +47,22 @@ const errorMessage = computed(() => {
   return '';
 });
 
-// **Update ke parent dalam bentuk angka murni jika `isNumberOnly` true**
+// **Watch perubahan value & emit ke parent**
 watch(inputValue, () => {
-  const valueToEmit = props.isNumberOnly ? Number(inputValue.value) || 0 : inputValue.value;
+  let valueToEmit = inputValue.value;
+  if (props.type === 'date' && valueToEmit) {
+    valueToEmit = new Date(valueToEmit).toISOString().split('T')[0]; // Format YYYY-MM-DD
+  } else if (props.isNumberOnly) {
+    valueToEmit = Number(inputValue.value) || 0;
+  }
   emit('update:modelValue', valueToEmit);
   emit('update:hasError', !!errorMessage.value);
 });
 
-// **Prevent non-numeric input jika `isNumberOnly` true**
+// **Prevent non-numeric input jika isNumberOnly true**
 const preventNonNumeric = (event: KeyboardEvent) => {
   if (props.isNumberOnly) {
-    const char = event.key;
-    if (!/[\d]/.test(char)) {
+    if (!/[\d]/.test(event.key)) {
       event.preventDefault();
     }
   }
@@ -69,7 +73,7 @@ const preventNonNumeric = (event: KeyboardEvent) => {
   <div class="flex flex-col">
     <label v-if="label" class="mb-1 text-black-grey-700 text-semibold">{{ label }}</label>
     <input
-      type="text"
+      :type="type"
       v-model="formattedValue"
       :placeholder="placeholder"
       :maxlength="maxLength"
