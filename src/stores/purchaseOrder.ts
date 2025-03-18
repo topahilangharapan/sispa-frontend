@@ -12,6 +12,8 @@ export const usePurchaseOrderStore = defineStore('purchaseOrder', {
     state: () => ({
       loading: false,
       error: null as null | string,
+      purchaseOrders: [] as PurchaseOrderInterface[],
+      selectedPurchaseOrders: [] as PurchaseOrderInterface[],
     }),
     actions: {
       async create(body: PurchaseOrderInterface, token: string): Promise<boolean> {
@@ -71,7 +73,7 @@ export const usePurchaseOrderStore = defineStore('purchaseOrder', {
       async fetchAll(token: string): Promise<boolean> {
         this.loading = true;
         this.error = null;
-  
+
         try {
           const response = await fetch(`${apiUrl}/purchase-order/all`, {
             method: "GET",
@@ -80,9 +82,9 @@ export const usePurchaseOrderStore = defineStore('purchaseOrder', {
               "Content-Type": "application/json",
             },
           });
-  
+
           const data: CommonResponseInterface<PurchaseOrderInterface[]> = await response.json();
-  
+
           if (response.ok) {
             // data.data is presumably an array of purchase orders
             this.purchaseOrders = data.data || [];
@@ -102,7 +104,7 @@ export const usePurchaseOrderStore = defineStore('purchaseOrder', {
         this.loading = true;
         this.error = null;
         this.selectedPurchaseOrder = null;
-  
+
         try {
           const response = await fetch(`${apiUrl}/purchase-order/${id}`, {
             method: "GET",
@@ -111,11 +113,12 @@ export const usePurchaseOrderStore = defineStore('purchaseOrder', {
               "Content-Type": "application/json",
             },
           });
-  
+
           const data: CommonResponseInterface<PurchaseOrderInterface> = await response.json();
-  
+
           if (response.ok) {
             // data.data presumably the single purchase order
+            console.log(data.data)
             this.selectedPurchaseOrder = data.data;
             return true;
           } else {
@@ -132,7 +135,7 @@ export const usePurchaseOrderStore = defineStore('purchaseOrder', {
       async deletePurchaseOrder(id: number, token: string): Promise<boolean> {
         this.loading = true;
         this.error = null;
-  
+
         try {
           const response = await fetch(`${apiUrl}/purchase-order/${id}`, {
             method: "DELETE",
@@ -141,7 +144,7 @@ export const usePurchaseOrderStore = defineStore('purchaseOrder', {
               "Content-Type": "application/json",
             },
           });
-  
+
           const data = await response.json();
           if (response.ok) {
             // Possibly remove from local array if needed

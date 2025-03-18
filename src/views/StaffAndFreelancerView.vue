@@ -3,8 +3,8 @@ import VNavbar from '../components/VNavbar.vue'
 import { ref } from 'vue'
 import VLoading from '../components/VLoading.vue'
 
-const title = ref("Staff and Freelancer");
-const submodules = ref([""]);
+
+const title = ref({ 'Staff and Freelancer': '/staff-freelancer' });
 </script>
 
 <template>

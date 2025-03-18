@@ -3,14 +3,16 @@ import VNavbar from '../components/VNavbar.vue'
 import { ref } from 'vue'
 import VLoading from '../components/VLoading.vue'
 
-const title = ref("Finance");
-const submodules = ref([""]);
+const title = ref({ 'Keuangan': '/finance' });
+const submodules = ref({
+  "Invoice": "/finance/invoice",
+});
 </script>
 
 <template>
   <VNavbar :title="title" :submodules="submodules"></VNavbar>/
   <div>
-    <VLoading :isDone="isLoaded" />
+    <VLoading :isDone="true" />
   </div>
 </template>
 

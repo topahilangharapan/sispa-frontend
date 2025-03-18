@@ -1,10 +1,10 @@
 <template>
     <div class="purchaseorder-container">
-      <VNavbar title="Purchase Order List" />
-  
+      <VNavbar :title="title" :submodules="submodules"></VNavbar>
+
       <div class="purchaseorder-card">
         <h2>Purchase Orders</h2>
-  
+
         <!-- Example: possibly a search filter using VInputField -->
         <div class="search-bar">
           <VInputField
@@ -16,12 +16,12 @@
             Search
           </VButton>
         </div>
-  
+
         <p v-if="purchaseOrderStore.loading">Loading...</p>
         <p v-if="purchaseOrderStore.error" style="color:red;">
           {{ purchaseOrderStore.error }}
         </p>
-  
+
         <!-- Table of all purchase orders -->
         <table v-if="!purchaseOrderStore.loading && !purchaseOrderStore.error">
           <thead>
@@ -59,7 +59,7 @@
             </tr>
           </tbody>
         </table>
-  
+
         <div class="actions">
           <!-- Example: a button to go to create new purchase order page -->
           <VButton @click="goToCreate" size="md">
@@ -69,7 +69,7 @@
       </div>
     </div>
   </template>
-  
+
   <script setup lang="ts">
   import { ref, onMounted, computed } from 'vue'
   import { useRouter } from 'vue-router'
@@ -78,13 +78,17 @@
   import VNavbar from '../../components/VNavbar.vue'
   import VButton from '../../components/VButton.vue'
   import VInputField from '../../components/VInputField.vue'
-  
+
   const purchaseOrderStore = usePurchaseOrderStore()
   const authStore = useAuthStore()
   const router = useRouter()
-  
+
   const searchTerm = ref('')
-  
+  const title = ref({ 'Marketing': '/marketing' });
+  const submodules = ref({
+    "Purchase Order": "/marketing/purchase-order",
+  });
+
   // On mount, fetch the list
   onMounted(async () => {
     if (!authStore.token) {
@@ -93,7 +97,7 @@
     }
     await purchaseOrderStore.fetchAll(authStore.token)
   })
-  
+
   // Computed for basic local filtering
   const filteredPurchaseOrders = computed(() => {
     if (!searchTerm.value) {
@@ -103,24 +107,24 @@
       order.companyName.toLowerCase().includes(searchTerm.value.toLowerCase())
     )
   })
-  
+
   function searchPurchaseOrders() {
     // If you want a local search, it's already done by filteredPurchaseOrders.
     // If you want an API-based search, you can implement it in the store.
   }
-  
+
   function goToDetail(orderId: number) {
     router.push(`/marketing/purchase-order/${orderId}`)
   }
-  
+
   function goToCreate() {
     router.push('/marketing/purchase-order/create')
   }
-  
+
   async function deleteOrder(orderId: number) {
     const confirmed = confirm('Are you sure you want to delete this purchase order?')
     if (!confirmed) return
-  
+
     if (!authStore.token) return
     const success = await purchaseOrderStore.deletePurchaseOrder(orderId, authStore.token)
     if (success) {
@@ -129,7 +133,7 @@
     }
   }
   </script>
-  
+
   <style scoped>
   .purchaseorder-container {
     display: flex;
@@ -138,7 +142,7 @@
     height: 100vh; /* match ProfileView */
     width: 1200px; /* match ProfileView */
   }
-  
+
   .purchaseorder-card {
     background: white;
     width: 70%;
@@ -148,14 +152,14 @@
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     text-align: left;
   }
-  
+
   .search-bar {
     display: flex;
     gap: 10px;
     margin: 10px 0 20px;
     align-items: flex-end;
   }
-  
+
   table {
     width: 100%;
     border-collapse: collapse;
@@ -166,7 +170,7 @@
     padding: 10px;
     text-align: left;
   }
-  
+
   .actions {
     margin-top: 20px;
     display: flex;
@@ -174,4 +178,3 @@
     gap: 15px;
   }
   </style>
-  

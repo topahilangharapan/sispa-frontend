@@ -3,8 +3,7 @@ import VNavbar from '../components/VNavbar.vue'
 import { ref } from 'vue'
 import VLoading from '../components/VLoading.vue'
 
-const title = ref("Dashboard");
-const submodules = ref([""]);
+const title = ref({ 'Dashboard': '/dashboard' });
 </script>
 
 <template>

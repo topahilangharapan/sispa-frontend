@@ -14,16 +14,28 @@ const props = defineProps({
 });
 
 const emit = defineEmits(['update:modelValue', 'update:hasError']);
+
 const inputValue = ref(props.modelValue || '');
 
-watch(
-  () => props.modelValue,
-  (newValue) => {
-    inputValue.value = newValue || '';
+// **Format angka jika isNumberOnly = true**
+const formattedValue = computed({
+  get: () => {
+    if (props.type === 'date') return inputValue.value;
+    if (props.isNumberOnly && inputValue.value !== '') {
+      return Number(inputValue.value).toLocaleString('us-US');
+    }
+    return inputValue.value;
+  },
+  set: (newValue) => {
+    if (props.isNumberOnly) {
+      inputValue.value = newValue.replace(/\D/g, '');
+    } else {
+      inputValue.value = newValue;
+    }
   }
-);
+});
 
-// Menghitung error
+// **Validasi error**
 const errorMessage = computed(() => {
   if (props.isEmpty && !inputValue.value) return 'Field tidak boleh kosong!';
   if (props.isNumberOnly) {
@@ -35,18 +47,22 @@ const errorMessage = computed(() => {
   return '';
 });
 
-// Update ke parent
+// **Watch perubahan value & emit ke parent**
 watch(inputValue, () => {
-  emit('update:modelValue', inputValue.value);
+  let valueToEmit = inputValue.value;
+  if (props.type === 'date' && valueToEmit) {
+    valueToEmit = new Date(valueToEmit).toISOString().split('T')[0]; // Format YYYY-MM-DD
+  } else if (props.isNumberOnly) {
+    valueToEmit = Number(inputValue.value) || 0;
+  }
+  emit('update:modelValue', valueToEmit);
   emit('update:hasError', !!errorMessage.value);
 });
 
-// Mencegah karakter non-angka, kecuali tanda minus (-) hanya di awal
+// **Prevent non-numeric input jika isNumberOnly true**
 const preventNonNumeric = (event: KeyboardEvent) => {
-  const char = event.key;
   if (props.isNumberOnly) {
-    if (!/[\d-]/.test(char) ||
-      (char === '-' && (inputValue.value.length > 0 || inputValue.value.includes('-')))) {
+    if (!/[\d]/.test(event.key)) {
       event.preventDefault();
     }
   }
@@ -57,8 +73,8 @@ const preventNonNumeric = (event: KeyboardEvent) => {
   <div class="flex flex-col">
     <label v-if="label" class="mb-1 text-black-grey-700 text-semibold">{{ label }}</label>
     <input
-      :type="type === 'numberOnly' ? 'text' : type"
-      v-model="inputValue"
+      :type="type"
+      v-model="formattedValue"
       :placeholder="placeholder"
       :maxlength="maxLength"
       class="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-brown-100"
