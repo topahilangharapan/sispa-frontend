@@ -99,13 +99,13 @@
   </template>
 
   <script setup lang="ts">
-  import { onMounted, ref } from 'vue'
+
+  import { usePurchaseOrderStore } from '../../../stores/purchaseOrder.ts'
+  import { useAuthStore } from '../../../stores/auth.ts'
   import { useRoute, useRouter } from 'vue-router'
-  import { usePurchaseOrderStore } from '../../stores/purchaseOrder.ts'
-  import { useAuthStore } from '../../stores/auth'
-  import VNavbar from '../../components/VNavbar.vue'
-  import VButton from '../../components/VButton.vue'
-  // etc.
+  import { onMounted, ref } from 'vue'
+  import VButton from '../../../components/VButton.vue'
+  import VNavbar from '../../../components/VNavbar.vue'
 
   const purchaseOrderStore = usePurchaseOrderStore()
   const authStore = useAuthStore()
@@ -114,6 +114,8 @@
   const title = ref({ 'Marketing': '/marketing' });
   const submodules = ref({
     "Purchase Order": "/marketing/purchase-order",
+    "Final Report": "/marketing/final-report",
+    "Klien": "/marketing/client"
   });
 
   onMounted(async () => {

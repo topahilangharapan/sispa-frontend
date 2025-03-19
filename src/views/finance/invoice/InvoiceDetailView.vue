@@ -117,12 +117,13 @@
   </template>
 
   <script setup lang="ts">
-  import { onMounted } from 'vue'
+
+  import { useInvoiceStore } from '../../../stores/invoice.ts'
+  import { useAuthStore } from '../../../stores/auth.ts'
   import { useRoute, useRouter } from 'vue-router'
-  import { useInvoiceStore } from '../../stores/invoice.ts'
-  import { useAuthStore } from '../../stores/auth'
-  import VNavbar from '../../components/VNavbar.vue'
-  import VButton from '../../components/VButton.vue'
+  import { onMounted } from 'vue'
+  import VButton from '../../../components/VButton.vue'
+  import VNavbar from '../../../components/VNavbar.vue'
 
   const invoiceStore = useInvoiceStore()
   const authStore = useAuthStore()

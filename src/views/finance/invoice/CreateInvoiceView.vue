@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, toRaw } from 'vue'
-import VInputField from '../../components/VInputField.vue'
-import VNavbar from '../../components/VNavbar.vue'
-import VButton from '../../components/VButton.vue'
-import VLoading from '../../components/VLoading.vue'
-import VDropdown from '../../components/VDropdown.vue'
-import { useAuthStore } from '../../stores/auth.ts'
-import { usePurchaseOrderStore } from '../../stores/purchaseOrder.ts'
-import { useInvoiceStore } from '../../stores/invoice.ts'
-import type { InvoiceInterface } from '../../interfaces/invoice.interface.ts'
+import { useAuthStore } from '../../../stores/auth.ts'
+import { usePurchaseOrderStore } from '../../../stores/purchaseOrder.ts'
+import { useInvoiceStore } from '../../../stores/invoice.ts'
 import { useRouter } from 'vue-router'
+import type { InvoiceInterface } from '../../../interfaces/invoice.interface.ts'
+import VNavbar from '../../../components/VNavbar.vue'
+import VLoading from '../../../components/VLoading.vue'
+import VDropdown from '../../../components/VDropdown.vue'
+import VInputField from '../../../components/VInputField.vue'
+import VButton from '../../../components/VButton.vue'
 
 const authStore = useAuthStore();
 const purchaseOrderStore = usePurchaseOrderStore();
@@ -20,8 +20,18 @@ const today = new Date().toISOString().split('T')[0];
 
 const purchaseOrderOption = ref<{ value: string; label: string }[]>([]);
 const selectedPurchaseOrder = ref(null);
+const title = ref({ 'Keuangan': '/finance' });
+const submodules = ref({
+  "Invoice": "/finance/invoice",
+});
 
 onMounted(async () => {
+  const savedAuth = localStorage.getItem('auth')
+
+  if (savedAuth) {
+    authStore.$patch(JSON.parse(savedAuth))
+  }
+
   await purchaseOrderStore.fetchAll(authStore.token);
   if (purchaseOrderStore.purchaseOrders) {
     purchaseOrderOption.value = purchaseOrderStore.purchaseOrders.map(po => ({
@@ -85,13 +95,12 @@ const submitInvoice = async () => {
 const onSelectPurchaseOrder = (poId: string) => {
   invoice.value.purchaseOrderId = poId;
   selectedPurchaseOrder.value = purchaseOrderStore.purchaseOrders.find(po => po.id === poId);
-  console.log(selectedPurchaseOrder.value);
 };
 </script>
 
 <template>
-  <VNavbar :title="{ 'Keuangan': '/finance' }" :submodules="{ 'Invoice': '/finance/invoice' }" class="fixed top-0 left-0 w-full z-50" />
-  <VLoading v-if="purchaseOrderStore.loading || invoiceStore.loading" class="flex mr-64" />
+  <VNavbar :title=title :submodules=submodules class="fixed top-0 left-0 w-full z-50" />
+  <VLoading v-if="purchaseOrderStore.loading || invoiceStore.loading" class="flex" />
 
   <div class="p-8 mt-12 w-full min-h-screen">
     <h2 class="mb-6">Tambah Invoice</h2>
