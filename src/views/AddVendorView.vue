@@ -9,6 +9,10 @@ import VTextArea from '../components/VTextArea.vue'
 import VInputField from '../components/VInputField.vue'
 import VButton from '../components/VButton.vue'
 
+const title = ref({ 'Purchasing': '/purchasing' });
+const submodules = ref({
+  "Vendor": "/purchasing/vendor",
+});
 const vendorStore = useVendorStore()
 const authStore = useAuthStore()
 
@@ -95,7 +99,7 @@ const submitForm = async () => {
               v-model="formData.contact"
               label="Kontak"
               placeholder="Masukkan kontak disini"
-              :isNumberOnly="true"
+              :isEmpty="true"
               @update:hasError="updateErrorStatus('contact', $event)"
             />
           </div>

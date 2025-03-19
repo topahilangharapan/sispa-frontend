@@ -76,7 +76,7 @@ export const useVendorStore = defineStore ('vendor', {
           await response.json()
         if (response.ok) {
           window.$toast('success', "Berhasil menambahkan vendor dengan ID " + data.data.id);
-          await router.push("/vendor")
+          await router.push("/purchasing/vendor")
           return true;
         } else {
           window.$toast('error', "Gagal menambahkan vendor: " + data.message);
@@ -142,7 +142,7 @@ export const useVendorStore = defineStore ('vendor', {
         if (response.ok) {
           this.vendors = this.vendors.filter((vendor) => vendor.id !== id);
           window.$toast('success', `Berhasil menghapus vendor dengan ID ${id}`);
-          await router.push("/vendor");
+          await router.push("/purchasing/vendor");
         } else {
           const data = await response.json();
           window.$toast('error', `Gagal menghapus vendor: ${data.message}`);

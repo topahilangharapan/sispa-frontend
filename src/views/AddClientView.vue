@@ -12,6 +12,11 @@ import VButton from '../components/VButton.vue'
 const clientStore = useClientStore()
 const authStore = useAuthStore()
 
+const title = ref({ 'Marketing': '/marketing' });
+const submodules = ref({
+  "Klien": "/marketing/client",
+});
+
 const formData = ref({
   name: '',
   contact: '',
@@ -95,7 +100,7 @@ const submitForm = async () => {
               v-model="formData.contact"
               label="Kontak"
               placeholder="Masukkan kontak disini"
-              :isNumberOnly="true"
+              :isEmpty="true"
               @update:hasError="updateErrorStatus('contact', $event)"
             />
           </div>

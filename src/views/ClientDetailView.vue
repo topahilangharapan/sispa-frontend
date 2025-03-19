@@ -9,8 +9,12 @@ import { useRoute } from 'vue-router';
 import router from '../router'
 import ConfirmationDialog from '../components/ConfirmationDialog.vue'
 
-const title = ref("Client");
-const submodules = ref([""]);
+const title = ref({ 'Marketing': '/marketing' });
+const submodules = ref({
+  "Purchase Order": "/marketing/purchase-order",
+  "Klien": "/marketing/client",
+});
+
 const clientStore = useClientStore()
 const authStore = useAuthStore()
 const route = useRoute();
@@ -45,7 +49,7 @@ onMounted(async () => {
       <div class="flex items-center justify-between mb-2">
         <h2 class="heading-2">Detail Client</h2>
         <div class="flex space-x-2">
-          <RouterLink :to="`/client/${clientId}/update`">
+          <RouterLink :to="`/marketing/client/${clientId}/update`">
             <VButton size="sm" variant="primary">
               Ubah
             </VButton>

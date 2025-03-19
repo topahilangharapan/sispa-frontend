@@ -7,7 +7,12 @@ import { useClientStore } from '../stores/client.ts'
 import { useAuthStore } from '../stores/auth.ts'
 import { DataTable } from 'simple-datatables'
 
-const title = ref({ 'Client': '/client' });
+const title = ref({ 'Marketing': '/marketing' });
+const submodules = ref({
+  "Purchase Order": "/marketing/purchase-order",
+  "Klien": "/marketing/client",
+});
+
 const clientStore = useClientStore()
 const authStore = useAuthStore()
 const dataTableInstance = ref<DataTable | null>(null);
@@ -88,8 +93,8 @@ const reloadTable = async () => {
               </svg>
             </span>
           </div>
-          <RouterLink :to="`/client/add`">
-            <VButton variant="primary" size="md">+ Tambah Klien Baru</VButton>
+          <RouterLink :to="`/marketing/client/add`">
+            <VButton variant="primary" size="md">+ Tambah Klien</VButton>
           </RouterLink>
         </div>
       </div>
@@ -112,7 +117,7 @@ const reloadTable = async () => {
                 <td class="px-4 py-2 text-left">{{ client.name }}</td>
                 <td class="px-4 py-2 text-left">{{ client.industry }}</td>
                 <td class="px-4 py-2 text-center">
-                  <RouterLink :to="`/client/${client.id}`">
+                  <RouterLink :to="`/marketing/client/${client.id}`">
                     <VButton variant="primary" size="sm">Detail</VButton>
                   </RouterLink>
                 </td>
