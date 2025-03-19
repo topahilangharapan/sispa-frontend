@@ -139,7 +139,7 @@
   })
 
   function goBack() {
-    router.push('/marketing/invoice')
+    router.push('/finance/invoice')
   }
 
   async function deleteInvoice() {
