@@ -92,7 +92,8 @@ async function deleteInvoice(invId: number) {
               <td class="px-4 py-2 text-left">{{ inv.dateCreated }}</td>
               <td class="px-4 py-2 text-center">
                 <VButton variant="primary" size="sm" @click="goToDetail(inv.id)">Detail</VButton>
-                <VButton variant="danger" size="sm" @click="deleteInvoice(inv.id)">Delete</VButton>
+                <VButton variant="delete" size="sm" @click="deleteInvoice(inv.id)">Delete</VButton>
+                <VButton variant="secondary" size="sm" @click="deleteInvoice(inv.id)">Download PDF</VButton>
               </td>
             </tr>
             </tbody>
