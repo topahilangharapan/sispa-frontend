@@ -143,6 +143,16 @@ const selectedOptions = ref('')
           <div>
             <VInputField
               v-model="inputValue"
+              label="Number and Use Thousand Separator"
+              placeholder="Enter numbers"
+              :isNumberOnly="true"
+              :useThousandSeparator="true"
+              @update:hasError="updateErrorStatus('numberOnly', $event)"
+            />
+          </div>
+          <div>
+            <VInputField
+              v-model="inputValue"
               label="Positive Number Only"
               placeholder="Enter numbers"
               :isNumberOnly="true"

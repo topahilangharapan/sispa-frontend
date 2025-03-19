@@ -9,6 +9,7 @@ const props = defineProps({
   isEmpty: { type: Boolean, default: false },
   isNegative: { type: Boolean, default: false },
   isNumberOnly: { type: Boolean, default: false },
+  useThousandSeparator: { type: Boolean, default: false }, // ✅ Tambahkan props ini
   minLength: { type: Number, default: 0 },
   maxLength: { type: Number, default: 255 }
 });
@@ -17,12 +18,12 @@ const emit = defineEmits(['update:modelValue', 'update:hasError']);
 
 const inputValue = ref(props.modelValue || '');
 
-// **Format angka jika isNumberOnly = true**
+// **Format angka jika isNumberOnly = true & useThousandSeparator = true**
 const formattedValue = computed({
   get: () => {
     if (props.type === 'date') return inputValue.value;
-    if (props.isNumberOnly && inputValue.value !== '') {
-      return Number(inputValue.value).toLocaleString('us-US');
+    if (props.isNumberOnly && props.useThousandSeparator && inputValue.value !== '') {
+      return Number(inputValue.value).toLocaleString('en-US'); // ✅ Gunakan format ribuan jika diaktifkan
     }
     return inputValue.value;
   },
