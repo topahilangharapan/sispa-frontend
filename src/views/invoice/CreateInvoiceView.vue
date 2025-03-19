@@ -79,7 +79,7 @@ const submitInvoice = async () => {
   };
 
   const isSuccess = await invoiceStore.create(formattedInvoice, authStore.token);
-  if (isSuccess) router.push('/finance/invoice');
+  if (isSuccess) await router.push('/finance/invoice');
 };
 
 const onSelectPurchaseOrder = (poId: string) => {
@@ -188,6 +188,7 @@ const onSelectPurchaseOrder = (poId: string) => {
           v-model="invoice.accountNumber"
           placeholder="Masukkan nomor rekening"
           :isEmpty="true"
+          :isNumberOnly="true"
           @update:hasError="updateErrorStatus('accountNumber', $event)"
         />
 
