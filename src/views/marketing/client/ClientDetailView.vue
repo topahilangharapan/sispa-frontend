@@ -1,18 +1,20 @@
 <script setup lang="ts">
-import VNavbar from '../components/VNavbar.vue'
+
+
 import { onMounted, ref } from 'vue'
-import VLoading from '../components/VLoading.vue'
-import VButton from '../components/VButton.vue'
-import { useClientStore } from '../stores/client.ts'
-import { useAuthStore } from '../stores/auth.ts'
-import { useRoute } from 'vue-router';
-import router from '../router'
-import ConfirmationDialog from '../components/ConfirmationDialog.vue'
+import { useClientStore } from '../../../stores/client.ts'
+import { useAuthStore } from '../../../stores/auth.ts'
+import { useRoute } from 'vue-router'
+import VNavbar from '../../../components/VNavbar.vue'
+import VButton from '../../../components/VButton.vue'
+import VLoading from '../../../components/VLoading.vue'
+import ConfirmationDialog from '../../../components/ConfirmationDialog.vue'
 
 const title = ref({ 'Marketing': '/marketing' });
 const submodules = ref({
   "Purchase Order": "/marketing/purchase-order",
-  "Klien": "/marketing/client",
+  "Final Report": "/marketing/final-report",
+  "Klien": "/marketing/client"
 });
 
 const clientStore = useClientStore()

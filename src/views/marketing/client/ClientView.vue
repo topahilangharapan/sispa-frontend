@@ -1,16 +1,18 @@
 <script setup lang="ts">
-import VNavbar from '../components/VNavbar.vue'
+
 import { onMounted, ref } from 'vue'
-import VLoading from '../components/VLoading.vue'
-import VButton from '../components/VButton.vue'
-import { useClientStore } from '../stores/client.ts'
-import { useAuthStore } from '../stores/auth.ts'
-import { DataTable } from 'simple-datatables'
+import { useClientStore } from '../../../stores/client.ts'
+import { useAuthStore } from '../../../stores/auth.ts'
+import type { DataTable } from 'simple-datatables'
+import VNavbar from '../../../components/VNavbar.vue'
+import VLoading from '../../../components/VLoading.vue'
+import VButton from '../../../components/VButton.vue'
 
 const title = ref({ 'Marketing': '/marketing' });
 const submodules = ref({
   "Purchase Order": "/marketing/purchase-order",
-  "Klien": "/marketing/client",
+  "Final Report": "/marketing/final-report",
+  "Klien": "/marketing/client"
 });
 
 const clientStore = useClientStore()

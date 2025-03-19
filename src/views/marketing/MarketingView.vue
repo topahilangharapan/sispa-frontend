@@ -1,12 +1,14 @@
 <script setup lang="ts">
-import VNavbar from '../components/VNavbar.vue'
+
 import { ref } from 'vue'
-import VLoading from '../components/VLoading.vue'
+import VNavbar from '../../components/VNavbar.vue'
+import VLoading from '../../components/VLoading.vue'
 
 const title = ref({ 'Marketing': '/marketing' });
 const submodules = ref({
   "Purchase Order": "/marketing/purchase-order",
-  "Klien": "/marketing/client",
+  "Final Report": "/marketing/final-report",
+  "Klien": "/marketing/client"
 });
 </script>
 

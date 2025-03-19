@@ -1,13 +1,14 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
-import { useInvoiceStore } from '../../stores/invoice.ts'
-import { useAuthStore } from '../../stores/auth.ts'
-import VNavbar from '../../components/VNavbar.vue'
-import VButton from '../../components/VButton.vue'
-import { DataTable } from 'simple-datatables'
 
-const title = ref({ 'Finance': '/finance' });
+import { onMounted, ref } from 'vue'
+import { useInvoiceStore } from '../../../stores/invoice.ts'
+import { useAuthStore } from '../../../stores/auth.ts'
+import { useRouter } from 'vue-router'
+import type { DataTable } from 'simple-datatables'
+import VNavbar from '../../../components/VNavbar.vue'
+import VButton from '../../../components/VButton.vue'
+
+const title = ref({ 'Keuangan': '/finance' });
 const submodules = ref({ "Invoice": "/finance/invoice" });
 const invoiceStore = useInvoiceStore()
 const authStore = useAuthStore()

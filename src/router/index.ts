@@ -2,8 +2,6 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import DesignSystemView from '../views/DesignSystemView.vue'
 import InventoryView from '../views/InventoryView.vue'
-import FinanceView from '../views/FinanceView.vue'
-import ClientView from '../views/ClientView.vue'
 import VendorView from '../views/VendorView.vue'
 import AddVendorView from '../views/AddVendorView.vue'
 import StaffAndFreelancerView from '../views/StaffAndFreelancerView.vue'
@@ -12,19 +10,22 @@ import { roleGuard } from './guards/auth.ts'
 import RegisterView from '../views/auth/RegisterView.vue'
 import LoginView from '../views/auth/LoginView.vue'
 import VendorDetail from '../views/VendorDetail.vue'
-import CreatePurchaseOrderView from '../views/purchase order/CreatePurchaseOrderView.vue'
-import MarketingView from '../views/MarketingView.vue'
 import ProfileView from '../views/ProfileView.vue'
 import UpdateVendorView from '../views/UpdateVendorView.vue'
-import ClientDetailView from '../views/ClientDetailView.vue'
-import UpdateClientView from '../views/UpdateClientView.vue'
-import AddClientView from '../views/AddClientView.vue'
-import PurchaseOrderList from '../views/purchase order/PurchaseOrderList.vue'
-import PurchaseOrderDetail from '../views/purchase order/PurchaseOrderDetail.vue'
-import InvoiceDetailView from '../views/invoice/InvoiceDetail.vue'
-import InvoiceListView from '../views/invoice/InvoiceList.vue'
-import CreateInvoiceView from '../views/invoice/CreateInvoiceView.vue'
 import PurchasingView from '../views/PurchasingView.vue'
+import FinanceView from '../views/finance/FinanceView.vue'
+import CreateInvoiceView from '../views/finance/invoice/CreateInvoiceView.vue'
+import MarketingView from '../views/marketing/MarketingView.vue'
+import CreatePurchaseOrderView from '../views/marketing/purchase order/CreatePurchaseOrderView.vue'
+import CreateFinalReportView from '../views/marketing/final report/CreateFinalReportView.vue'
+import InvoiceDetailView from '../views/finance/invoice/InvoiceDetailView.vue'
+import InvoiceListView from '../views/finance/invoice/InvoiceListView.vue'
+import PurchaseOrderDetailView from '../views/marketing/purchase order/PurchaseOrderDetailView.vue'
+import PurchaseOrderListView from '../views/marketing/purchase order/PurchaseOrderListView.vue'
+import AddClientView from '../views/marketing/client/AddClientView.vue'
+import ClientView from '../views/marketing/client/ClientView.vue'
+import ClientDetailView from '../views/marketing/client/ClientDetailView.vue'
+import UpdateClientView from '../views/marketing/client/UpdateClientView.vue'
 
 const routes = [
   {
@@ -118,13 +119,21 @@ const routes = [
   {
     path: '/marketing/purchase-order',
     name: 'Purchase Order List',
-    component: PurchaseOrderList
+    component: PurchaseOrderListView,
+    beforeEnter: roleGuard
   },
   {
     path: '/marketing/purchase-order/:id',
     name: 'Purchase Order Detail',
-    component: PurchaseOrderDetail,
+    beforeEnter: roleGuard,
+    component: PurchaseOrderDetailView,
     props: true
+  },
+  {
+    path: '/marketing/final-report/create',
+    name: 'Create Final Report',
+    component: CreateFinalReportView,
+    beforeEnter: roleGuard
   },
   {
     path: '/finance',
@@ -141,17 +150,20 @@ const routes = [
   {
     path: '/finance/invoice',
     name: 'InvoiceList',
-    component: InvoiceListView
+    component: InvoiceListView,
+    beforeEnter: roleGuard
   },
   {
     path: '/finance/invoice/:id',
     name: 'InvoiceDetail',
     component: InvoiceDetailView,
+    beforeEnter: roleGuard
   },
   {
     path: '/profile',
     name: 'Profile',
-    component: ProfileView
+    component: ProfileView,
+    beforeEnter: roleGuard
   },
   {
     path: '/purchasing/vendor/add',

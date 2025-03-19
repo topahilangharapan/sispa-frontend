@@ -4,6 +4,7 @@ import { useRoute } from 'vue-router';
 import VSidebar from './components/VSidebar.vue';
 import VToast from './components/VToast.vue'
 
+
 const route = useRoute();
 
 // Cek apakah halaman mengandung "auth"

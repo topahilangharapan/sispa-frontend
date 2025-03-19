@@ -1,17 +1,20 @@
 <script setup lang="ts">
-import { computed, nextTick, onMounted, ref, toRaw } from 'vue'
-import VInputField from '../../components/VInputField.vue'
-import VNavbar from '../../components/VNavbar.vue'
-import VButton from '../../components/VButton.vue'
-import type { PurchaseOrderInterface } from '../../interfaces/purchaseOrder.interface.ts'
-import { useAuthStore } from '../../stores/auth.ts'
-import { usePurchaseOrderStore } from '../../stores/purchaseOrder.ts'
+
+import { useAuthStore } from '../../../stores/auth.ts'
+import { computed, onMounted, ref, toRaw } from 'vue'
+import { usePurchaseOrderStore } from '../../../stores/purchaseOrder.ts'
 import { useRouter } from 'vue-router'
-import VLoading from '../../components/VLoading.vue'
+import type { PurchaseOrderInterface } from '../../../interfaces/purchaseOrder.interface.ts'
+import VNavbar from '../../../components/VNavbar.vue'
+import VLoading from '../../../components/VLoading.vue'
+import VInputField from '../../../components/VInputField.vue'
+import VButton from '../../../components/VButton.vue'
 
 const title = ref({ 'Marketing': '/marketing' });
 const submodules = ref({
   "Purchase Order": "/marketing/purchase-order",
+  "Final Report": "/marketing/final-report",
+  "Klien": "/marketing/client"
 });
 const authStore = useAuthStore();
 const purchaseOrderStore = usePurchaseOrderStore();
@@ -133,7 +136,7 @@ const submitPurchaseOrder = async () => {
 
 <template>
   <VNavbar :title="title" :submodules="submodules" class="fixed top-0 left-0 w-full z-50"></VNavbar>
-  <VLoading v-if="purchaseOrderStore.loading" class="flex mr-64"/>
+  <VLoading v-if="purchaseOrderStore.loading" class="flex"/>
 
   <div v-else class="flex gap-4 h-screen mt-12 p-4">
     <!-- Card Tambah Purchase Order (1/3 Lebar Page) -->
@@ -204,7 +207,7 @@ const submitPurchaseOrder = async () => {
         @update:hasError="updateErrorStatus('signee', $event)"
       />
 
-      <VButton variant="primary" :disabled="!isFormValid" @click="submitPurchaseOrder" class="w-full mt-4" size="md">
+      <VButton variant="primary" size="lg" :disabled="!isFormValid" @click="submitPurchaseOrder" class="w-full mt-4">
         Simpan Purchase Order
       </VButton>
     </div>

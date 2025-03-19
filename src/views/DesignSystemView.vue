@@ -3,8 +3,7 @@ import { computed, reactive, ref } from 'vue'
 import VInputField from '../components/VInputField.vue'
 import VButton from '../components/VButton.vue'
 import VDropdown from '../components/VDropdown.vue'
-import VLoading from '../components/VLoading.vue'
-import { usePurchaseOrderStore } from '../stores/purchaseOrder.ts'
+import VInputImageField from '../components/VInputImageField.vue'
 
 const colors = reactive({
   'Red 400': { bg: 'bg-red-400', text: 'text-white' },
@@ -32,7 +31,8 @@ const hasErrors = ref({
   positiveNumberOnly: false,
   minLength: true,
   maxLength: false,
-  role: true
+  role: true,
+  image: true
 });
 
 // Fungsi untuk update status error tiap input
@@ -64,6 +64,24 @@ const options = [
 ];
 
 const selectedOptions = ref('')
+
+const uploadedFiles = ref([]);
+
+const handleFiles = (files) => {
+  uploadedFiles.value = files;
+  console.log('Files ready for upload:', uploadedFiles.value);
+};
+
+const submitForm = () => {
+  // Simpan file ke backend menggunakan FormData
+  const formData = new FormData();
+  uploadedFiles.value.forEach((file) => {
+    formData.append('images', file);
+  });
+
+  // Contoh kirim ke backend (Axios atau Fetch)
+  console.log("Mengirim file:", formData);
+};
 </script>
 
 <template>
@@ -239,7 +257,7 @@ const selectedOptions = ref('')
         </div>
 
         <div class="flex justify-center mt-6">
-          <VButton variant="primary" size="md" :disabled="!isFormValid">
+          <VButton @click="submitForm" variant="primary" size="md" :disabled="!isFormValid">
             Submit
           </VButton>
         </div>
@@ -256,6 +274,33 @@ const selectedOptions = ref('')
           <VButton @click="successToast" variant="primary" class="bg-green-700 text-white-100 hover:bg-green-500" size="md">Success</VButton>
           <VButton @click="errorToast" variant="primary" class="bg-red-200 text-white-100 hover:bg-red-175" size="md">Error</VButton>
           <VButton @click="infoToast" variant="primary" class="bg-brown-200 text-white-100 hover:bg-yellow-700" size="md">Info</VButton>
+        </div>
+      </div>
+    </div>
+
+    <!-- Input Image Preview -->
+    <div class="w-full max-w-8xl mb-12">
+      <div class="bg-white p-6 rounded-2xl shadow-lg">
+        <h2 class="mb-2 heading-2">Input Image</h2>
+        <hr class="border-gray-300 border-t-2 mb-4" />
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <VInputImageField
+              @update:files="handleFiles"
+              @update:hasError="updateErrorStatus('image', $event)"
+              :maxSize="2 * 1024 * 1024"
+              :maxImages="5"
+              :minImages="2"
+              aspectRatio="1:1"
+              :allowedTypes="['image/jpeg', 'image/png', 'image/jpg']"
+            />
+          </div>
+
+          <div class="flex items-center justify-end mt-4 h-16">
+            <div class="text-normal text-black-grey-700">
+              Masih terdapat error = {{ !isFormValid }}
+            </div>
+          </div>
         </div>
       </div>
     </div>
