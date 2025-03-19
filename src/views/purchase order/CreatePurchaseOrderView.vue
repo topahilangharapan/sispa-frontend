@@ -124,7 +124,7 @@ const submitPurchaseOrder = async () => {
   const isSuccess = await purchaseOrderStore.create(formattedPurchaseOrder, authStore.token);
 
   if (isSuccess) {
-    router.push('/marketing/purchase-order');
+    await router.push('/marketing/purchase-order');
   }
 
 };
@@ -255,6 +255,7 @@ const submitPurchaseOrder = async () => {
             :isEmpty="true"
             :isNumberOnly="true"
             :isNegative="false"
+            :useThousandSeparator="true"
             @update:hasError="updateErrorStatus(`volume-${item.tempId}`, $event)"
           />
           <VInputField
@@ -271,6 +272,7 @@ const submitPurchaseOrder = async () => {
             :isEmpty="true"
             :isNumberOnly="true"
             :isNegative="false"
+            :useThousandSeparator="true"
             @update:hasError="updateErrorStatus(`pricePerUnit-${item.tempId}`, $event)"
           />
           <VInputField
