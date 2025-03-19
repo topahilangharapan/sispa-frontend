@@ -21,6 +21,8 @@ import UpdateClientView from '../views/UpdateClientView.vue'
 import AddClientView from '../views/AddClientView.vue'
 import PurchaseOrderList from '../views/purchase order/PurchaseOrderList.vue'
 import PurchaseOrderDetail from '../views/purchase order/PurchaseOrderDetail.vue'
+import InvoiceDetailView from '../views/invoice/InvoiceDetail.vue'
+import InvoiceListView from '../views/invoice/InvoiceList.vue'
 import CreateInvoiceView from '../views/invoice/CreateInvoiceView.vue'
 import PurchasingView from '../views/PurchasingView.vue'
 
@@ -125,15 +127,26 @@ const routes = [
     props: true
   },
   {
-    path: '/marketing/purchase-order',
-    name: 'PurchaseOrderList',
-    component: PurchaseOrderList
+    path: '/finance',
+    name: 'Finance',
+    component: FinanceView,
+    beforeEnter: roleGuard
   },
   {
-    path: '/marketing/purchase-order/:id',
-    name: 'PurchaseOrderDetail',
-    component: PurchaseOrderDetail,
-    props: true
+    path: '/finance/invoice/create',
+    name: 'Create Invoice',
+    component: CreateInvoiceView,
+    beforeEnter: roleGuard
+  },
+  {
+    path: '/finance/invoice',
+    name: 'InvoiceList',
+    component: InvoiceListView
+  },
+  {
+    path: '/finance/invoice/:id',
+    name: 'InvoiceDetail',
+    component: InvoiceDetailView,
   },
   {
     path: '/profile',
