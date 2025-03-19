@@ -109,7 +109,7 @@ export const useClientStore = defineStore ('client', {
         if (response.ok) {
           this.clients = this.clients.filter((client) => client.id !== id);
           window.$toast('success', `Berhasil menghapus klien dengan ID ${id}`);
-          await router.push("/client");
+          await router.push("/marketing/client");
         } else {
           const data = await response.json();
           window.$toast('error', `Gagal menghapus klien: ${data.message}`);
@@ -139,7 +139,7 @@ export const useClientStore = defineStore ('client', {
           await response.json()
         if (response.ok) {
           window.$toast('success', "Berhasil menambahkan klien dengan ID " + data.data.id);
-          await router.push("/client")
+          await router.push("/marketing/client")
           return true;
         } else {
           window.$toast('error', "Gagal menambahkan klien: " + data.message);

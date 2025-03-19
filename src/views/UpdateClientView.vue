@@ -10,6 +10,12 @@ import VTextArea from '../components/VTextArea.vue'
 import VInputField from '../components/VInputField.vue'
 import VButton from '../components/VButton.vue'
 
+const title = ref({ 'Marketing': '/marketing' });
+const submodules = ref({
+  "Purchase Order": "/marketing/purchase-order",
+  "Klien": "/marketing/client",
+});
+
 const clientStore = useClientStore()
 const authStore = useAuthStore()
 const route = useRoute()
@@ -40,9 +46,9 @@ onMounted(async () => {
       industry: clientStore.currentClient.industry,
       description: clientStore.currentClient.description,
     }
-    isDataLoaded.value = true 
+    isDataLoaded.value = true
     console.log(formData.value);
-    
+
   } else {
     console.log('Data client tidak ditemukan')
   }
@@ -63,29 +69,29 @@ const updateErrorStatus = (field: string, isError: boolean) => {
 
 const isFormValid = computed(() => {
   const isValid = Object.values(hasErrors.value).every(error => !error);
-  console.log('Form is valid:', isValid); 
+  console.log('Form is valid:', isValid);
   return isValid;
 });
 
 const submitForm = async () => {
-  console.log('Submitting form...'); 
+  console.log('Submitting form...');
   if (!isFormValid.value) {
-    console.log('Form is not valid. Aborting submit.'); 
+    console.log('Form is not valid. Aborting submit.');
     return;
   }
 
   try {
-    console.log('Form data to submit:', formData.value); 
+    console.log('Form data to submit:', formData.value);
     const isSuccess = await clientStore.updateClient(formData.value);
 
     if (isSuccess) {
-      console.log('Update successful. Redirecting...'); 
-      router.push("/client");
+      console.log('Update successful. Redirecting...');
+      router.push("/marketing/client");
     } else {
-      console.log('Update failed.'); 
+      console.log('Update failed.');
     }
   } catch (error) {
-    console.error('Error during submit:', error); 
+    console.error('Error during submit:', error);
   } finally {
     authStore.loading = false;
   }

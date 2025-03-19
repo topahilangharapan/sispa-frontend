@@ -22,6 +22,7 @@ import AddClientView from '../views/AddClientView.vue'
 import PurchaseOrderList from '../views/purchase order/PurchaseOrderList.vue'
 import PurchaseOrderDetail from '../views/purchase order/PurchaseOrderDetail.vue'
 import CreateInvoiceView from '../views/invoice/CreateInvoiceView.vue'
+import PurchasingView from '../views/PurchasingView.vue'
 
 const routes = [
   {
@@ -66,19 +67,25 @@ const routes = [
     beforeEnter: roleGuard
   },
   {
-    path: '/client',
+    path: '/marketing/client',
     name: 'Client',
     component: ClientView,
     beforeEnter: roleGuard
   },
   {
-    path: '/vendor',
+    path: '/purchasing',
+    name: 'Purchasing',
+    component: PurchasingView,
+    beforeEnter: roleGuard
+  },
+  {
+    path: '/purchasing/vendor',
     name: 'Vendor',
     component: VendorView,
     beforeEnter: roleGuard
   },
   {
-    path: '/vendor/:id',
+    path: '/purchasing/vendor/:id',
     name: 'Vendor Detail',
     component: VendorDetail,
     beforeEnter: roleGuard
@@ -134,43 +141,31 @@ const routes = [
     component: ProfileView
   },
   {
-    path: '/vendor/add',
+    path: '/purchasing/vendor/add',
     name: 'Add Vendor',
     component: AddVendorView,
     beforeEnter: roleGuard
   },
   {
-    path: '/vendor/:id/update',
+    path: '/purchasing/vendor/:id/update',
     name: 'Update Vendor',
     component: UpdateVendorView,
     beforeEnter: roleGuard
   },
   {
-    path: '/vendor/add',
-    name: 'Add Vendor',
-    component: AddVendorView,
-    beforeEnter: roleGuard
-  },
-  {
-    path: '/vendor/:id/update',
-    name: 'Update Vendor',
-    component: UpdateVendorView,
-    beforeEnter: roleGuard
-  },
-  {
-    path: '/client/:id',
+    path: '/marketing/client/:id',
     name: 'Client Detail',
     component: ClientDetailView,
     beforeEnter: roleGuard
   },
   {
-    path: '/client/:id/update',
+    path: '/marketing/client/:id/update',
     name: 'Update Client',
     component: UpdateClientView,
     beforeEnter: roleGuard
   },
   {
-    path: '/client/add',
+    path: '/marketing/client/add',
     name: 'Add Client',
     component: AddClientView,
     beforeEnter: roleGuard

@@ -10,6 +10,11 @@ import VTextArea from '../components/VTextArea.vue'
 import VInputField from '../components/VInputField.vue'
 import VButton from '../components/VButton.vue'
 
+const title = ref({ 'Purchasing': '/purchasing' });
+const submodules = ref({
+  "Vendor": "/purchasing/vendor",
+});
+
 const vendorStore = useVendorStore()
 const authStore = useAuthStore()
 const route = useRoute()
@@ -40,9 +45,9 @@ onMounted(async () => {
       service: vendorStore.currentVendor.service,
       description: vendorStore.currentVendor.description,
     }
-    isDataLoaded.value = true 
+    isDataLoaded.value = true
     console.log(formData.value);
-    
+
   } else {
     console.log('Data vendor tidak ditemukan')
   }
@@ -63,29 +68,29 @@ const updateErrorStatus = (field: string, isError: boolean) => {
 
 const isFormValid = computed(() => {
   const isValid = Object.values(hasErrors.value).every(error => !error);
-  console.log('Form is valid:', isValid); 
+  console.log('Form is valid:', isValid);
   return isValid;
 });
 
 const submitForm = async () => {
-  console.log('Submitting form...'); 
+  console.log('Submitting form...');
   if (!isFormValid.value) {
-    console.log('Form is not valid. Aborting submit.'); 
+    console.log('Form is not valid. Aborting submit.');
     return;
   }
 
   try {
-    console.log('Form data to submit:', formData.value); 
+    console.log('Form data to submit:', formData.value);
     const isSuccess = await vendorStore.updateVendor(formData.value);
 
     if (isSuccess) {
-      console.log('Update successful. Redirecting...'); 
-      router.push("/vendor");
+      console.log('Update successful. Redirecting...');
+      router.push("/purchasing/vendor");
     } else {
-      console.log('Update failed.'); 
+      console.log('Update failed.');
     }
   } catch (error) {
-    console.error('Error during submit:', error); 
+    console.error('Error during submit:', error);
   } finally {
     authStore.loading = false;
   }

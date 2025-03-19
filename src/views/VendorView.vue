@@ -7,7 +7,10 @@ import { useVendorStore } from '../stores/vendor.ts'
 import { useAuthStore } from '../stores/auth.ts'
 import { DataTable } from 'simple-datatables'
 
-const title = ref({ 'Vendor': '/vendor' });
+const title = ref({ 'Purchasing': '/purchasing' });
+const submodules = ref({
+  "Vendor": "/purchasing/vendor",
+});
 const vendorStore = useVendorStore()
 const authStore = useAuthStore()
 const dataTableInstance = ref<DataTable | null>(null);
@@ -75,7 +78,7 @@ onMounted(async () => {
               </svg>
             </span>
           </div>
-          <RouterLink :to="`/vendor/add`">
+          <RouterLink :to="`/purchasing/vendor/add`">
             <VButton variant="primary" size="md">+ Tambah Vendor</VButton>
           </RouterLink>
         </div>
@@ -99,7 +102,7 @@ onMounted(async () => {
                 <td class="px-4 py-2 text-left">{{ vendor.name }}</td>
                 <td class="px-4 py-2 text-left">{{ vendor.service }}</td>
                 <td class="px-4 py-2 text-center">
-                  <RouterLink :to="`/vendor/${vendor.id}`">
+                  <RouterLink :to="`/purchasing/vendor/${vendor.id}`">
                     <VButton variant="primary" size="sm">Detail</VButton>
                   </RouterLink>
                 </td>
