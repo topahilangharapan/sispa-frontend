@@ -1,4 +1,3 @@
-
 export interface InvoiceInterface {
   receiver: string;
   placeSigned: string;
