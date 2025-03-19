@@ -66,6 +66,94 @@ export const useInvoiceStore = defineStore('invoice', {
         } finally {
           this.loading = false;
         }
-      }
+      },
+      async fetchAll(token: string): Promise<boolean> {
+        this.loading = true;
+        this.error = null;
+
+        try {
+          const response = await fetch(`${apiUrl}/invoice/all`, {
+            method: "GET",
+            headers: {
+              "Authorization": `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          });
+
+          const data: CommonResponseInterface<InvoiceInterface[]> = await response.json();
+
+          if (response.ok) {
+            this.invoices = data.data || [];
+            return true; // success
+          } else {
+            this.error = data.message || "Failed to fetch invoice.";
+            return false;
+          }
+        } catch (err) {
+          this.error = (err as Error).message;
+          return false;
+        } finally {
+          this.loading = false;
+        }
+      },
+      async fetchDetail(id: number, token: string): Promise<boolean> {
+        this.loading = true;
+        this.error = null;
+        this.selectedInvoice = null;
+
+        try {
+          const response = await fetch(`${apiUrl}/invoice/${id}`, {
+            method: "GET",
+            headers: {
+              "Authorization": `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          });
+
+          const data: CommonResponseInterface<InvoiceInterface> = await response.json();
+
+          if (response.ok) {
+            this.selectedInvoice = data.data;
+            return true;
+          } else {
+            this.error = data.message || "Failed to fetch invoice detail.";
+            return false;
+          }
+        } catch (err) {
+          this.error = (err as Error).message;
+          return false;
+        } finally {
+          this.loading = false;
+        }
+      },
+      async deleteInvoice(id: number, token: string): Promise<boolean> {
+        this.loading = true;
+        this.error = null;
+
+        try {
+          const response = await fetch(`${apiUrl}/invoice/${id}`, {
+            method: "DELETE",
+            headers: {
+              "Authorization": `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          });
+
+          const data = await response.json();
+          if (response.ok) {
+            this.invoices = this.invoices.filter(inv => inv.id !== id);
+            return true;
+          } else {
+            this.error = data.message || "Failed to delete invoice.";
+            return false;
+          }
+        } catch (err) {
+          this.error = (err as Error).message;
+          return false;
+        } finally {
+          this.loading = false;
+        }
+      },
+
 }
 })
