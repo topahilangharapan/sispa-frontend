@@ -11,6 +11,7 @@ import VDropdown from '../../../components/VDropdown.vue'
 import VInputField from '../../../components/VInputField.vue'
 import VButton from '../../../components/VButton.vue'
 
+
 const authStore = useAuthStore();
 const purchaseOrderStore = usePurchaseOrderStore();
 const invoiceStore = useInvoiceStore();
@@ -62,7 +63,8 @@ const invoice = ref<InvoiceInterface>({
   event: "",
   id: 0,
   noPo: "",
-  noInvoice: ""
+  noInvoice: "",
+  items: []
 });
 
 const hasErrors = ref({

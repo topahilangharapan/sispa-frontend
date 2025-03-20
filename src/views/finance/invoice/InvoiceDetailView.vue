@@ -79,6 +79,7 @@
           <table v-if="invoiceStore.selectedInvoice.items?.length">
             <thead>
               <tr>
+                <th>No.</th>
                 <th>Title</th>
                 <th>Volume</th>
                 <th>Unit</th>
@@ -88,17 +89,15 @@
               </tr>
             </thead>
             <tbody>
-              <tr
-                v-for="item in invoiceStore.selectedInvoice.items"
-                :key="item.id"
-              >
-                <td>{{ item.title }}</td>
-                <td>{{ item.volume }}</td>
-                <td>{{ item.unit }}</td>
-                <td>{{ item.pricePerUnit }}</td>
-                <td>{{ item.sum }}</td>
-                <td>{{ item.description }}</td>
-              </tr>
+            <tr v-for="(item, index) in invoiceStore.selectedInvoice.items" :key="item.id">
+              <td>{{ index + 1 }}</td> <!-- Kolom Nomor -->
+              <td>{{ item.title }}</td>
+              <td>{{ item.volume }}</td>
+              <td>{{ item.unit }}</td>
+              <td>{{ item.pricePerUnit }}</td>
+              <td>{{ item.sum }}</td>
+              <td>{{ item.description }}</td>
+            </tr>
             </tbody>
           </table>
           <p v-else>No items.</p>
@@ -122,9 +121,9 @@
         </div>
       </div>
     </div>
-  </template>
+</template>
 
-  <script setup lang="ts">
+<script setup lang="ts">
 
   import { useInvoiceStore } from '../../../stores/invoice.ts'
   import { useAuthStore } from '../../../stores/auth.ts'
@@ -142,7 +141,7 @@
   const router = useRouter()
   const route = useRoute()
   const showDialog = ref(false);
-  const invoiceId = Number(route.params.id);
+  const invoiceId = Number(route.params.id) || 0;
 
   onMounted(async () => {
     if (!authStore.token) {
@@ -156,7 +155,7 @@
     router.push('/finance/invoice')
   }
   const deleteInvoice = async () => {
-    await invoiceStore.deleteInvoice(invoiceId, authStore.token);
+    await invoiceStore.deleteInvoice(invoiceId, authStore.token || '');
     showDialog.value = false;
     router.push('/finance/invoice')
   }
