@@ -7,6 +7,7 @@ import { useRouter } from 'vue-router'
 import { DataTable } from 'simple-datatables'
 import VNavbar from '../../../components/VNavbar.vue'
 import VButton from '../../../components/VButton.vue'
+import ConfirmationDialog from '../../../components/ConfirmationDialog.vue'
 
 const title = ref({ 'Keuangan': '/finance' });
 const submodules = ref({ "Invoice": "/finance/invoice" });
@@ -43,18 +44,18 @@ function goToDetail(invId: number) {
   router.push(`/finance/invoice/${invId}`)
 }
 
-// const deleteInvoice = async (id: number) => {
-//   // await invoiceStore.deleteInvoice(id);
-//   showDialog.value = false;
-//   router.push('/finance/invoice');
-// }
+const deleteInvoice = async (id: number) => {
+  await invoiceStore.deleteInvoice(id);
+  showDialog.value = false;
+  router.push('/finance/invoice');
+}
 
-// async function downloadInvoice() {
-//   const success = await invoiceStore.downloadInvoice();
-//   if (success) {
-//     window.$toast('success', 'Invoice berhasil di-download!')
-//   }
-// }
+async function downloadInvoice() {
+  const success = await invoiceStore.downloadInvoice();
+  if (success) {
+    window.$toast('success', 'Invoice berhasil di-download!')
+  }
+}
 </script>
 
 <template>
@@ -101,14 +102,14 @@ function goToDetail(invId: number) {
                 <VButton @click="() => (showDialog = true)" size="sm" variant="delete">
                   Hapus
                 </VButton>
-<!--                <ConfirmationDialog-->
-<!--                  :visible="showDialog"-->
-<!--                  title="Hapus Invoice"-->
-<!--                  message="Apakah Anda yakin ingin menghapus Invoice?"-->
-<!--                  @confirm="deleteInvoice(inv.id)"-->
-<!--                  @cancel="() => (showDialog = false)"-->
-<!--                />-->
-<!--                <VButton variant="primary" size="sm" @click="downloadInvoice(inv.id)">Download PDF</VButton>-->
+                <ConfirmationDialog
+                  :visible="showDialog"
+                  title="Hapus Invoice"
+                  message="Apakah Anda yakin ingin menghapus Invoice?"
+                  @confirm="deleteInvoice(inv.id)"
+                  @cancel="() => (showDialog = false)"
+                />
+                <VButton variant="primary" size="sm" @click="downloadInvoice()">Download PDF</VButton>
               </td>
             </tr>
             </tbody>

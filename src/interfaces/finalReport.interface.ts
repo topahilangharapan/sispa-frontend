@@ -3,6 +3,13 @@ export interface FinalReportInterface {
   event: string;
   eventDate: string;
   company: string;
+  images: ImageInterface[];
+}
+
+export interface ImageInterface {
+  id: number;
+  fileName: string;
+  fileData: string;
 }
 
 export interface CreateFinalReportRequestInterface {

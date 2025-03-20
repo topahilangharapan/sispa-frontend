@@ -1,4 +1,6 @@
 import { defineStore } from "pinia";
+import { useAuthStore } from '../stores/auth.ts';
+// import { useRoute, useRouter } from 'vue-router'
 
 import axios from 'axios'
 import type {
@@ -143,7 +145,35 @@ export const useFinalReportStore = defineStore('finalReport', {
       window.URL.revokeObjectURL(url);
 
       return true;
-    }
+    },
+    async deleteFinalReport(id: number){
+      this.loading = true
+      this.error = null
 
+      try {
+        const response = await fetch(apiUrl + `/final-report/${id}/delete`, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${useAuthStore().token}`,
+            'Content-Type': 'application/json'
+          },
+        });
+
+        if (response.ok) {
+          this.finalReports = this.finalReports.filter((finalReport) => finalReport.id !== id);
+          window.$toast('success', `Berhasil menghapus finalReport dengan ID ${id}`);
+          router.push("/purchasing/final-report");
+        } else {
+          const data = await response.json();
+          window.$toast('error', `Gagal menghapus final report: ${data.message}`);
+        }
+      } catch (err) {
+        this.error = `Gagal menghapus final report: ${(err as Error).message}`;
+        window.$toast(this.error, data.message);
+      } finally {
+        this.loading = false;
+      }
+    }
   }
+
 })
