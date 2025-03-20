@@ -18,7 +18,14 @@ const emit = defineEmits(['update:modelValue', 'update:hasError']);
 
 const inputValue = ref(props.modelValue || '');
 
-// **Format angka jika isNumberOnly = true & useThousandSeparator = true**
+watch(
+  () => props.modelValue,
+  (newValue) => {
+    inputValue.value = newValue || '';
+  }
+)
+
+// **Format angka jika isNumberOnly = true & useThousandSeparator = true & useThousandSeparator = true**
 const formattedValue = computed({
   get: () => {
     if (props.type === 'date') return inputValue.value;

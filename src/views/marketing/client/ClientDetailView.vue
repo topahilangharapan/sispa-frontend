@@ -52,90 +52,92 @@ onMounted(async () => {
     <VLoading :isDone="!clientStore.loading" />
   </div>
 
-  <div v-else-if="clientStore.currentClient" class="w-full max-w-5xl mb-12 mt-23 ml-53">
-    <div class="bg-white p-6 rounded-2xl shadow-lg">
-      <div class="flex items-center justify-between mb-2">
-        <h2 class="heading-2">Detail Client</h2>
-        <div class="flex space-x-2">
-          <RouterLink :to="`/marketing/client/${clientId}/update`">
-            <VButton size="sm" variant="primary">
-              Ubah
+  <div v-else-if="clientStore.currentClient" class="p-8 bg-white-100 min-h-screen flex flex-col items-center">
+    <div class="w-full max-w-3xl mb-12 mt-16">
+      <div class="bg-white p-6 rounded-2xl shadow-lg">
+        <div class="flex items-center justify-between mb-2">
+          <h2 class="heading-2">Detail Client</h2>
+          <div class="flex space-x-2">
+            <RouterLink :to="`/marketing/client/${clientId}/update`">
+              <VButton size="sm" variant="primary">
+                Ubah
+              </VButton>
+            </RouterLink>
+            <VButton @click="() => (showDialog = true)" size="sm" variant="delete">
+              Hapus
             </VButton>
-          </RouterLink>
-          <VButton @click="() => (showDialog = true)" size="sm" variant="delete">
-            Hapus
+  
+            <ConfirmationDialog
+              :visible="showDialog"
+              title="Hapus Klien"
+              message="Apakah Anda yakin ingin menghapus klien?"
+              @confirm="deleteClient"
+              @cancel="() => (showDialog = false)"
+            />
+  
+          </div>
+        </div>
+        <hr class="border-gray-300 border-t-2 mb-4" />
+  
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="space-y-4">
+            <div>
+              <p class="large-text-bold">ID</p>
+              <p class="large-text-normal">{{ clientStore.currentClient.id }}</p>
+            </div>
+            <div>
+              <p class="large-text-bold">Nama</p>
+              <p class="large-text-normal">{{ clientStore.currentClient.name }}</p>
+            </div>
+            <div>
+              <p class="large-text-bold">Industri</p>
+              <p class="large-text-normal">{{ clientStore.currentClient.industry }}</p>
+            </div>
+          </div>
+          <div class="space-y-4">
+            <div>
+              <p class="large-text-bold">Kontak</p>
+              <p class="large-text-normal">{{ clientStore.currentClient.contact }}</p>
+            </div>
+            <div>
+              <p class="large-text-bold">Email</p>
+              <p class="large-text-normal">{{ clientStore.currentClient.email }}</p>
+            </div>
+            <div>
+              <p class="large-text-bold">Alamat</p>
+              <p class="large-text-normal">{{ clientStore.currentClient.address }}</p>
+            </div>
+          </div>
+        </div>
+        <div class="mt-6">
+          <p class="large-text-bold">Deskripsi</p>
+          <p class="large-text-normal">{{ clientStore.currentClient.description }}</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+          <div>
+            <p class="large-text-bold">Created By</p>
+            <p class="large-text-normal">{{ clientStore.currentClient.createdBy }}</p>
+          </div>
+          <div>
+            <p class="large-text-bold">Updated By</p>
+            <p class="large-text-normal">{{ clientStore.currentClient.updatedBy }}</p>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+          <div>
+            <p class="large-text-bold">Created At</p>
+            <p class="large-text-normal">{{ new Date(clientStore.currentClient.createdAt).toLocaleDateString() }}</p>
+          </div>
+          <div>
+            <p class="large-text-bold">Updated At</p>
+            <p class="large-text-normal">{{ new Date(clientStore.currentClient.updatedAt).toLocaleDateString() }}</p>
+          </div>
+        </div>
+        <div class="flex justify-center mt-8">
+          <VButton @click="router.back()" type="button" size="md" variant="delete" class="bg-slate-600 hover:bg-slate-800 text-white">
+            Kembali
           </VButton>
-
-          <ConfirmationDialog
-            :visible="showDialog"
-            title="Hapus Klien"
-            message="Apakah Anda yakin ingin menghapus klien?"
-            @confirm="deleteClient"
-            @cancel="() => (showDialog = false)"
-          />
-
         </div>
-      </div>
-      <hr class="border-gray-300 border-t-2 mb-4" />
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div class="space-y-4">
-          <div>
-            <p class="large-text-bold">ID</p>
-            <p class="large-text-normal">{{ clientStore.currentClient.id }}</p>
-          </div>
-          <div>
-            <p class="large-text-bold">Nama</p>
-            <p class="large-text-normal">{{ clientStore.currentClient.name }}</p>
-          </div>
-          <div>
-            <p class="large-text-bold">Industri</p>
-            <p class="large-text-normal">{{ clientStore.currentClient.industry }}</p>
-          </div>
-        </div>
-        <div class="space-y-4">
-          <div>
-            <p class="large-text-bold">Kontak</p>
-            <p class="large-text-normal">{{ clientStore.currentClient.contact }}</p>
-          </div>
-          <div>
-            <p class="large-text-bold">Email</p>
-            <p class="large-text-normal">{{ clientStore.currentClient.email }}</p>
-          </div>
-          <div>
-            <p class="large-text-bold">Alamat</p>
-            <p class="large-text-normal">{{ clientStore.currentClient.address }}</p>
-          </div>
-        </div>
-      </div>
-      <div class="mt-6">
-        <p class="large-text-bold">Deskripsi</p>
-        <p class="large-text-normal">{{ clientStore.currentClient.description }}</p>
-      </div>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-        <div>
-          <p class="large-text-bold">Created By</p>
-          <p class="large-text-normal">{{ clientStore.currentClient.createdBy }}</p>
-        </div>
-        <div>
-          <p class="large-text-bold">Updated By</p>
-          <p class="large-text-normal">{{ clientStore.currentClient.updatedBy }}</p>
-        </div>
-      </div>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-        <div>
-          <p class="large-text-bold">Created At</p>
-          <p class="large-text-normal">{{ new Date(clientStore.currentClient.createdAt).toLocaleDateString() }}</p>
-        </div>
-        <div>
-          <p class="large-text-bold">Updated At</p>
-          <p class="large-text-normal">{{ new Date(clientStore.currentClient.updatedAt).toLocaleDateString() }}</p>
-        </div>
-      </div>
-      <div class="flex space-x-2 mt-4">
-        <VButton @click="router.back()" type="button" size="sm" variant="delete" class="bg-slate-600 hover:bg-slate-800 text-white">
-          Kembali
-        </VButton>
       </div>
     </div>
     </div>
