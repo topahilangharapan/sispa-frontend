@@ -76,32 +76,32 @@
           <br>
 
           <h3>Items</h3>
-          <table v-if="invoiceStore.selectedInvoice.items?.length">
-            <thead>
-              <tr>
-                <th>Title</th>
-                <th>Volume</th>
-                <th>Unit</th>
-                <th>Price per Unit</th>
-                <th>Sum</th>
-                <th>Description</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr
-                v-for="item in invoiceStore.selectedInvoice.items"
-                :key="item.id"
-              >
-                <td>{{ item.title }}</td>
-                <td>{{ item.volume }}</td>
-                <td>{{ item.unit }}</td>
-                <td>{{ item.pricePerUnit }}</td>
-                <td>{{ item.sum }}</td>
-                <td>{{ item.description }}</td>
-              </tr>
-            </tbody>
-          </table>
-          <p v-else>No items.</p>
+<!--          <table v-if="invoiceStore.selectedInvoice.items?.length">-->
+<!--            <thead>-->
+<!--              <tr>-->
+<!--                <th>Title</th>-->
+<!--                <th>Volume</th>-->
+<!--                <th>Unit</th>-->
+<!--                <th>Price per Unit</th>-->
+<!--                <th>Sum</th>-->
+<!--                <th>Description</th>-->
+<!--              </tr>-->
+<!--            </thead>-->
+<!--            <tbody>-->
+<!--              <tr-->
+<!--                v-for="item in invoiceStore.selectedInvoice.items"-->
+<!--                :key="item.id"-->
+<!--              >-->
+<!--                <td>{{ item.title }}</td>-->
+<!--                <td>{{ item.volume }}</td>-->
+<!--                <td>{{ item.unit }}</td>-->
+<!--                <td>{{ item.pricePerUnit }}</td>-->
+<!--                <td>{{ item.sum }}</td>-->
+<!--                <td>{{ item.description }}</td>-->
+<!--              </tr>-->
+<!--            </tbody>-->
+<!--          </table>-->
+<!--          <p v-else>No items.</p>-->
 
           <div class="actions">
             <VButton variant="primary" size="md" @click="goBack">
@@ -111,13 +111,13 @@
               Hapus
             </VButton>
 
-            <ConfirmationDialog
-              :visible="showDialog"
-              title="Hapus Invoice"
-              message="Apakah Anda yakin ingin menghapus Invoice?"
-              @confirm="deleteInvoice"
-              @cancel="() => (showDialog = false)"
-            />
+<!--            <ConfirmationDialog-->
+<!--              :visible="showDialog"-->
+<!--              title="Hapus Invoice"-->
+<!--              message="Apakah Anda yakin ingin menghapus Invoice?"-->
+<!--              @confirm="deleteInvoice"-->
+<!--              @cancel="() => (showDialog = false)"-->
+<!--            />-->
           </div>
         </div>
       </div>
@@ -132,7 +132,7 @@
   import { onMounted, ref } from 'vue'
   import VButton from '../../../components/VButton.vue'
   import VNavbar from '../../../components/VNavbar.vue'
-  import ConfirmationDialog from '../../../components/ConfirmationDialog.vue'
+  // import ConfirmationDialog from '../../../components/ConfirmationDialog.vue'
 
   const title = ref({ 'Inventory': '/inventory' });
   const submodules = ref({ '': '' });
@@ -155,11 +155,11 @@
   function goBack() {
     router.push('/finance/invoice')
   }
-  const deleteInvoice = async () => {
-    await invoiceStore.deleteInvoice(invoiceId, authStore.token);
-    showDialog.value = false;
-    router.push('/finance/invoice')
-  }
+  // const deleteInvoice = async () => {
+  //   await invoiceStore.deleteInvoice(invoiceId, authStore.token);
+  //   showDialog.value = false;
+  //   router.push('/finance/invoice')
+  // }
   </script>
 
   <style scoped>

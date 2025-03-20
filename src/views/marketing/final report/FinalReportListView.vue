@@ -7,7 +7,7 @@ import { useRouter } from 'vue-router'
 import { DataTable } from 'simple-datatables'
 import VNavbar from '../../../components/VNavbar.vue'
 import VButton from '../../../components/VButton.vue'
-import ConfirmationDialog from '../../../components/ConfirmationDialog.vue'
+// import ConfirmationDialog from '../../../components/ConfirmationDialog.vue'
 
 const authStore = useAuthStore();
 const router = useRouter();
@@ -23,7 +23,7 @@ const dataTableInstance = ref<DataTable | null>(null);
 const selectedReportId = ref<number | null>(null);
 // const route = useRoute()
 // const finalReportId = route.params.id as number;
-const showDialog = ref(false);
+// const showDialog = ref(false);
 
 onMounted(async () => {
   if (!authStore.token) return
@@ -55,36 +55,36 @@ const confirmDelete = (invId: number) => {
   selectedReportId.value = invId;
 };
 
-async function deleteFinalReport() {
-  if (!selectedReportId.value) return;
+// async function deleteFinalReport() {
+//   if (!selectedReportId.value) return;
+//
+//   const success = await finalReportStore.deleteFinalReport(selectedReportId.value);
+//   if (success) {
+//     window.$toast('success', 'Final report berhasil dihapus!');
+//     // await finalReportStore.fetchAll(authStore.token);
+//     router.push('/marketing/final-report');
+//     return true;
+//   }
+//   selectedReportId.value = null;
+// }
 
-  const success = await finalReportStore.deleteFinalReport(selectedReportId.value);
-  if (success) {
-    window.$toast('success', 'Final report berhasil dihapus!');
-    // await finalReportStore.fetchAll(authStore.token);
-    router.push('/marketing/final-report');
-    return true;
-  }
-  selectedReportId.value = null;
-}
-
-async function downloadReport() {
-  const success = await finalReportStore.downloadFinalReport();
-  if (success) {
-    window.$toast('success', 'Final report berhasil di-download!')
-  }
-}
+// async function downloadReport() {
+//   const success = await finalReportStore.downloadFinalReport();
+//   if (success) {
+//     window.$toast('success', 'Final report berhasil di-download!')
+//   }
+// }
 </script>
 
 <template>
   <VNavbar :title="title" :submodules="submodules" />
-  <ConfirmationDialog
-    :visible="selectedReportId !== null"
-    title="Hapus Laporan Akhir"
-    message="Apakah Anda yakin ingin menghapus laporan ini?"
-    @confirm="deleteFinalReport"
-    @cancel="selectedReportId = null"
-  />
+<!--  <ConfirmationDialog-->
+<!--    :visible="selectedReportId !== null"-->
+<!--    title="Hapus Laporan Akhir"-->
+<!--    message="Apakah Anda yakin ingin menghapus laporan ini?"-->
+<!--    @confirm="deleteFinalReport"-->
+<!--    @cancel="selectedReportId = null"-->
+<!--  />-->
   <div class="p-8 bg-white min-h-screen flex flex-col items-center">
     <div class="w-full max-w-screen-xl mb-12 mt-16">
       <div class="bg-white p-6 rounded-2xl shadow-lg w-full">
@@ -129,14 +129,14 @@ async function downloadReport() {
                 >
                   Hapus
                 </VButton>
-                <ConfirmationDialog
-                  :visible="showDialog"
-                  title="Hapus Laporan Akhir"
-                  message="Apakah Anda yakin ingin menghapus Laporan Akhir?"
-                  @confirm="deleteFinalReport(inv.id)"
-                  @cancel="() => (showDialog = false)"
-                />
-                <VButton variant="primary" size="sm" @click="downloadReport(inv.id)">Download PDF</VButton>
+<!--                <ConfirmationDialog-->
+<!--                  :visible="showDialog"-->
+<!--                  title="Hapus Laporan Akhir"-->
+<!--                  message="Apakah Anda yakin ingin menghapus Laporan Akhir?"-->
+<!--                  @confirm="deleteFinalReport(inv.id)"-->
+<!--                  @cancel="() => (showDialog = false)"-->
+<!--                />-->
+<!--                <VButton variant="primary" size="sm" @click="downloadReport(inv.id)">Download PDF</VButton>-->
               </td>
             </tr>
             </tbody>

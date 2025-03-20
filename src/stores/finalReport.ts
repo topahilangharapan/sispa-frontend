@@ -9,6 +9,7 @@ import type {
   FinalReportInterface
 } from '../interfaces/finalReport.interface.ts'
 import type { CommonResponseInterface } from '../interfaces/common.interface.ts'
+import router from '../router'
 
 const apiUrl = import.meta.env.VITE_API_LOCAL_URL;
 
@@ -169,7 +170,7 @@ export const useFinalReportStore = defineStore('finalReport', {
         }
       } catch (err) {
         this.error = `Gagal menghapus final report: ${(err as Error).message}`;
-        window.$toast(this.error, data.message);
+        window.$toast(this.error, this.error);
       } finally {
         this.loading = false;
       }

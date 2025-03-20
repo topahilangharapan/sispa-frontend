@@ -7,7 +7,7 @@ import { useRouter } from 'vue-router'
 import { DataTable } from 'simple-datatables'
 import VNavbar from '../../../components/VNavbar.vue'
 import VButton from '../../../components/VButton.vue'
-import ConfirmationDialog from '../../../components/ConfirmationDialog.vue'
+// import ConfirmationDialog from '../../../components/ConfirmationDialog.vue'
 
 const title = ref({ 'Keuangan': '/finance' });
 const submodules = ref({ "Invoice": "/finance/invoice" });
@@ -44,11 +44,11 @@ function goToDetail(invId: number) {
   router.push(`/finance/invoice/${invId}`)
 }
 
-const deleteInvoice = async (id: number) => {
-  await invoiceStore.deleteInvoice(id);
-  showDialog.value = false;
-  router.push('/finance/invoice');
-}
+// const deleteInvoice = async (id: number) => {
+//   await invoiceStore.deleteInvoice(id);
+//   showDialog.value = false;
+//   router.push('/finance/invoice');
+// }
 
 async function downloadInvoice() {
   const success = await invoiceStore.downloadInvoice();
@@ -102,13 +102,13 @@ async function downloadInvoice() {
                 <VButton @click="() => (showDialog = true)" size="sm" variant="delete">
                   Hapus
                 </VButton>
-                <ConfirmationDialog
-                  :visible="showDialog"
-                  title="Hapus Invoice"
-                  message="Apakah Anda yakin ingin menghapus Invoice?"
-                  @confirm="deleteInvoice(inv.id)"
-                  @cancel="() => (showDialog = false)"
-                />
+<!--                <ConfirmationDialog-->
+<!--                  :visible="showDialog"-->
+<!--                  title="Hapus Invoice"-->
+<!--                  message="Apakah Anda yakin ingin menghapus Invoice?"-->
+<!--                  @confirm="deleteInvoice(inv.id)"-->
+<!--                  @cancel="() => (showDialog = false)"-->
+<!--                />-->
                 <VButton variant="primary" size="sm" @click="downloadInvoice()">Download PDF</VButton>
               </td>
             </tr>
