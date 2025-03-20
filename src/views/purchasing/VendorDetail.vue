@@ -41,92 +41,94 @@ onMounted(async () => {
 <template>
   <VNavbar :title="title" :submodules="submodules"></VNavbar>
   <div v-if="vendorStore.loading">
-    <VLoading :isDone="!vendorStore.loading" />
+    <VLoading :isDone="isLoaded" />
   </div>
 
-  <div v-else-if="vendorStore.currentVendor" class="w-full max-w-5xl mb-12 mt-23 ml-53">
-    <div class="bg-white p-6 rounded-2xl shadow-lg">
-      <div class="flex items-center justify-between mb-2">
-        <h2 class="heading-2">Detail Vendor</h2>
-        <div class="flex space-x-2">
-          <RouterLink :to="`/purchasing/vendor/${vendorId}/update`">
-            <VButton size="sm" variant="primary">
-              Ubah
+  <div v-else-if="vendorStore.currentVendor" class="p-8 bg-white-100 min-h-screen flex flex-col items-center">
+    <div class="w-full max-w-3xl mb-12 mt-16">
+      <div class="bg-white p-6 rounded-2xl shadow-lg">
+        <div class="flex items-center justify-between mb-2">
+          <h2 class="heading-2">Detail Vendor</h2>
+          <div class="flex space-x-2">
+            <RouterLink :to="`/purchasing/vendor/${vendorId}/update`">
+              <VButton size="sm" variant="primary">
+                Ubah
+              </VButton>
+            </RouterLink>
+            <VButton @click="() => (showDialog = true)" size="sm" variant="delete">
+              Hapus
             </VButton>
-          </RouterLink>
-          <VButton @click="() => (showDialog = true)" size="sm" variant="delete">
-            Hapus
+  
+            <ConfirmationDialog
+              :visible="showDialog"
+              title="Hapus Vendor"
+              message="Apakah Anda yakin ingin menghapus vendor?"
+              @confirm="deleteVendor"
+              @cancel="() => (showDialog = false)"
+            />
+          </div>
+        </div>
+        <hr class="border-gray-300 border-t-2 mb-4" />
+  
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="space-y-4">
+            <div>
+              <p class="large-text-bold">ID</p>
+              <p class="large-text-normal">{{ vendorStore.currentVendor.id }}</p>
+            </div>
+            <div>
+              <p class="large-text-bold">Nama</p>
+              <p class="large-text-normal">{{ vendorStore.currentVendor.name }}</p>
+            </div>
+            <div>
+              <p class="large-text-bold">Layanan</p>
+              <p class="large-text-normal">{{ vendorStore.currentVendor.service }}</p>
+            </div>
+          </div>
+          <div class="space-y-4">
+            <div>
+              <p class="large-text-bold">Kontak</p>
+              <p class="large-text-normal">{{ vendorStore.currentVendor.contact }}</p>
+            </div>
+            <div>
+              <p class="large-text-bold">Email</p>
+              <p class="large-text-normal">{{ vendorStore.currentVendor.email }}</p>
+            </div>
+            <div>
+              <p class="large-text-bold">Alamat</p>
+              <p class="large-text-normal">{{ vendorStore.currentVendor.address }}</p>
+            </div>
+          </div>
+        </div>
+        <div class="mt-6">
+          <p class="large-text-bold">Deskripsi</p>
+          <p class="large-text-normal">{{ vendorStore.currentVendor.description }}</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+          <div>
+            <p class="large-text-bold">Created By</p>
+            <p class="large-text-normal">{{ vendorStore.currentVendor.createdBy }}</p>
+          </div>
+          <div>
+            <p class="large-text-bold">Updated By</p>
+            <p class="large-text-normal">{{ vendorStore.currentVendor.updatedBy }}</p>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+          <div>
+            <p class="large-text-bold">Created At</p>
+            <p class="large-text-normal">{{ new Date(vendorStore.currentVendor.createdAt).toLocaleDateString() }}</p>
+          </div>
+          <div>
+            <p class="large-text-bold">Updated At</p>
+            <p class="large-text-normal">{{ new Date(vendorStore.currentVendor.updatedAt).toLocaleDateString() }}</p>
+          </div>
+        </div>
+        <div class="flex justify-center mt-8">
+          <VButton @click="router.back()" type="button" size="md" variant="delete" class="bg-slate-600 hover:bg-slate-800 text-white">
+            Kembali
           </VButton>
-
-          <ConfirmationDialog
-            :visible="showDialog"
-            title="Hapus Vendor"
-            message="Apakah Anda yakin ingin menghapus vendor?"
-            @confirm="deleteVendor"
-            @cancel="() => (showDialog = false)"
-          />
-        </div>
       </div>
-      <hr class="border-gray-300 border-t-2 mb-4" />
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div class="space-y-4">
-          <div>
-            <p class="large-text-bold">ID</p>
-            <p class="large-text-normal">{{ vendorStore.currentVendor.id }}</p>
-          </div>
-          <div>
-            <p class="large-text-bold">Nama</p>
-            <p class="large-text-normal">{{ vendorStore.currentVendor.name }}</p>
-          </div>
-          <div>
-            <p class="large-text-bold">Layanan</p>
-            <p class="large-text-normal">{{ vendorStore.currentVendor.service }}</p>
-          </div>
-        </div>
-        <div class="space-y-4">
-          <div>
-            <p class="large-text-bold">Kontak</p>
-            <p class="large-text-normal">{{ vendorStore.currentVendor.contact }}</p>
-          </div>
-          <div>
-            <p class="large-text-bold">Email</p>
-            <p class="large-text-normal">{{ vendorStore.currentVendor.email }}</p>
-          </div>
-          <div>
-            <p class="large-text-bold">Alamat</p>
-            <p class="large-text-normal">{{ vendorStore.currentVendor.address }}</p>
-          </div>
-        </div>
-      </div>
-      <div class="mt-6">
-        <p class="large-text-bold">Deskripsi</p>
-        <p class="large-text-normal">{{ vendorStore.currentVendor.description }}</p>
-      </div>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-        <div>
-          <p class="large-text-bold">Created By</p>
-          <p class="large-text-normal">{{ vendorStore.currentVendor.createdBy }}</p>
-        </div>
-        <div>
-          <p class="large-text-bold">Updated By</p>
-          <p class="large-text-normal">{{ vendorStore.currentVendor.updatedBy }}</p>
-        </div>
-      </div>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-        <div>
-          <p class="large-text-bold">Created At</p>
-          <p class="large-text-normal">{{ new Date(vendorStore.currentVendor.createdAt).toLocaleDateString() }}</p>
-        </div>
-        <div>
-          <p class="large-text-bold">Updated At</p>
-          <p class="large-text-normal">{{ new Date(vendorStore.currentVendor.updatedAt).toLocaleDateString() }}</p>
-        </div>
-      </div>
-      <div class="flex space-x-2 mt-4">
-        <VButton @click="router.back()" type="button" size="sm" variant="delete" class="bg-slate-600 hover:bg-slate-800 text-white">
-          Kembali
-        </VButton>
       </div>
     </div>
     </div>
