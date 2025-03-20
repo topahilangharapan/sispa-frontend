@@ -40,7 +40,7 @@ const submitForm = async () => {
   const isSuccess = await authStore.login(formData.value);
 
   if (isSuccess) {
-    await router.push('/');
+    await router.push('/dashboard');
   }
 };
 
