@@ -131,7 +131,6 @@ const onSelectPurchaseOrder = (poId: string) => {
         @update:modelValue="onSelectPurchaseOrder"
       />
 
-       Detail PO yang dipilih
       <div v-if="invoice.purchaseOrderId" class="mt-4 p-4 bg-white rounded-lg shadow-sm border">
         <p><strong>No PO:</strong> {{ selectedPurchaseOrder?.noPo }}</p>
         <p><strong>Company:</strong> {{ selectedPurchaseOrder?.companyName }}</p>
