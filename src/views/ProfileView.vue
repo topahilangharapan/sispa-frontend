@@ -1,6 +1,6 @@
 <template>
   <div class="profile-container">
-    <VNavbar title="User Profile" />
+    <VNavbar/>
     <div class="profile-card">
       <h2>General</h2>
 
@@ -112,7 +112,7 @@
           <VButton @click="changePassword" :disabled="userStore.loading">
             Yes, Change Password
           </VButton>
-          <VButton @click="showPasswordModal = false" variant="secondary">
+          <VButton @click="showPasswordModal = false" variant="primary">
             Cancel
           </VButton>
         </div>

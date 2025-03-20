@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia'
-import type { CommonResponseInterface } from '../interfaces/common.interface'
 import { useAuthStore } from '../stores/auth.ts'
 import type { UserProfileInterface, UserStateInterface } from '../interfaces/user.interface.ts'
 import type { CommonResponseInterface } from '../interfaces/common.interface.ts'
@@ -28,10 +27,10 @@ export const useUserStore = defineStore('user', {
      */
     async fetchUser(userId?: number, username?: string): Promise<boolean> {
         const authStore = useAuthStore();
-      
+
         this.loading = true;
         this.error = null;
-      
+
         try {
           const response = await fetch(`${apiUrl}/user/get`, {
             method: "POST",
@@ -39,9 +38,9 @@ export const useUserStore = defineStore('user', {
               "Content-Type": "application/json",
               "Authorization": `Bearer ${authStore.token}`,
             },
-            body: JSON.stringify({ 
+            body: JSON.stringify({
                 id: userId || null,
-                username: username || null 
+                username: username || null
               }),
           });
 
