@@ -10,10 +10,3 @@ services:
       - NODE_ENV=production
       - VITE_API_LOCAL_URL=${BACKEND_URL}
     restart: always
-    networks:
-      - frontend-network
-
-networks:
-  frontend-network:
-    name: sispa-radiant-frontend-network
-    driver: bridge

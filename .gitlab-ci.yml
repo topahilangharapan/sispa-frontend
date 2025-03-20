@@ -1,15 +1,15 @@
 default:
   tags:
-    - hostinger
+    - hostinger  # This is the tag you want to use on your GitLab runner
 
 .setup-ssh:
   before_script:
     - "which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )"
-    - eval $(ssh-agent -s)
-    - echo "$DEPLOY_PRIVATE_KEY" | tr -d '\r' | ssh-add -
-    - mkdir -p ~/.ssh
-    - chmod 700 ~/.ssh
-    - echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
+    - eval $(ssh-agent -s)  # Starts the ssh-agent
+    - echo "$DEPLOY_PRIVATE_KEY" | tr -d '\r' | ssh-add -  # Add SSH private key to agent
+    - mkdir -p ~/.ssh  # Create .ssh directory if doesn't exist
+    - chmod 700 ~/.ssh  # Set proper permissions for .ssh
+    - echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config  # Disable SSH key checking
 
 stages:
   - build
@@ -18,72 +18,77 @@ stages:
   - clean
 
 variables:
-  IMAGE_NAME: topahilangharapan/b01-radiant-fe
-  IMAGE_TAG: latest
+  IMAGE_NAME: topahilangharapan/b01-radiant-fe  # Docker image name
+  IMAGE_TAG: latest  # Docker image tag
 
+# Build the Vue.js app
 build:
-  image: node:20.11.0-alpine
+  image: node:20.11.0-alpine  # Use Node.js alpine image for build
   stage: build
   only:
-    - deployment
+    - deployment  # Trigger only for the deployment branch
   script:
     - echo "Install dependencies and build Vue project"
-    - cd /root/$CI_PROJECT_DIR
-    - export NVM_DIR="$HOME/.nvm"
-    - source "$NVM_DIR/nvm.sh"
-    - nvm use 20.11.1
-    - node -v
-    - npm -v
-    - npm install
-    - npm run build
+    - cd /root/$CI_PROJECT_DIR  # Navigate to project directory
+    - export NVM_DIR="$HOME/.nvm"  # Set NVM directory for Node version management
+    - source "$NVM_DIR/nvm.sh"  # Source NVM to use correct Node.js version
+    - nvm use 20.11.1  # Use specific Node.js version
+    - node -v  # Verify Node.js version
+    - npm -v  # Verify npm version
+    - npm install  # Install dependencies
+    - npm run build  # Build the Vue.js project
   artifacts:
     paths:
-      - dist/
+      - dist/  # Store build artifacts (the dist folder)
 
+# Log into Docker Hub
 login:
   stage: publish
   only:
-    - deployment
+    - deployment  # Trigger only for the deployment branch
   script:
     - echo "Login to Docker Hub..."
-    - echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
+    - echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin  # Log into Docker Hub
 
+# Build and push Docker image
 publish:
-  image: docker:27.3.1-alpine3.20
+  image: docker:27.3.1-alpine3.20  # Docker image for build & publish stage
   stage: publish
   dependencies:
-    - build
+    - build  # Depends on the build stage
   only:
-    - deployment
+    - deployment  # Trigger only for the deployment branch
   script:
     - echo "Build Docker image..."
-    - cd /root/$CI_PROJECT_DIR
-    - docker build -t $IMAGE_NAME:$IMAGE_TAG -f Dockerfile .
+    - cd /root/$CI_PROJECT_DIR  # Navigate to project directory
+    - docker build -t $IMAGE_NAME:$IMAGE_TAG -f Dockerfile .  # Build the Docker image
     - echo "Push image to registry..."
-    - docker push $IMAGE_NAME:$IMAGE_TAG
+    - docker push $IMAGE_NAME:$IMAGE_TAG  # Push the Docker image to the registry
 
+# Deploy to Hostinger VPS
 deploy:
   stage: deploy
   dependencies:
-    - publish
+    - publish  # Depends on the publish stage
   only:
-    - deployment
-  extends: .setup-ssh
+    - deployment  # Trigger only for the deployment branch
+  extends: .setup-ssh  # Use the SSH setup before deploying
   script:
     - echo "Deploying to Hostinger VPS..."
     - ssh "${DEPLOY_USERNAME}@${DEPLOY_SERVER}" "
       export IMAGE_NAME=${IMAGE_NAME} &&
       cd /root/$CI_PROJECT_DIR &&
-      docker compose -f docker-compose-deploy.yml up -d --pull always
+      docker compose -f docker-compose-deploy.yml up -d --pull always  # Deploy with Docker Compose
       "
 
+# Clean up old Docker images on the server
 cleaning:
   stage: clean
   dependencies:
-    - deploy
+    - deploy  # Depends on the deploy stage
   only:
-    - deployment
-  extends: .setup-ssh
+    - deployment  # Trigger only for the deployment branch
+  extends: .setup-ssh  # Use the SSH setup before cleaning
   script:
     - echo "Cleaning up old Docker images..."
-    - ssh "${DEPLOY_USERNAME}@${DEPLOY_SERVER}" "docker system prune -f"
+    - ssh "${DEPLOY_USERNAME}@${DEPLOY_SERVER}" "docker system prune -f"  # Clean up unused Docker images
