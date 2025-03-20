@@ -140,7 +140,7 @@
   const invoiceStore = useInvoiceStore()
   const authStore = useAuthStore()
   const router = useRouter()
-  // const route = useRoute()
+  const route = useRoute()
   const showDialog = ref(false);
   const invoiceId = Number(route.params.id);
 
