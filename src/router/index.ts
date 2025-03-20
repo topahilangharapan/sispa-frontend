@@ -210,6 +210,7 @@ const routes = [
     component: AddClientView,
     beforeEnter: roleGuard
   },
+  { path: '/:catchAll(.*)', redirect: '/dashboard' }
 ]
 
 const router = createRouter({

@@ -13,18 +13,17 @@ const isActive = (path: string) => route.path === path;
 
 // Daftar menu dengan role yang bisa mengaksesnya
 const menuItems = [
-  { label: "Dashboard", path: "/dashboard", roles: ["admin", "staff", "inventory", "finance", "hr", "guest", "purchasing"] },
-  { label: "Inventaris", path: "/inventory", roles: ["admin", "inventory"] },
-  { label: "Keuangan", path: "/finance", roles: ["admin", "finance"] },
-  { label: "Marketing", path: "/marketing", roles: ["admin", "staff", "marketing"] },
-  // { label: "Klien", path: "/client", roles: ["admin", "staff"] },
-  { label: "Purchasing", path: "/purchasing", roles: ["admin", "staff", "purchasing"] },
-  { label: "Staf dan Freelancer", path: "/staff-freelancer", roles: ["admin", "hr"] },
+  { label: "Dashboard", path: "/dashboard", roles: ["admin", "management", "purchasing", "finance", "hr", "marketing"] },
+  { label: "Inventaris", path: "/inventory", roles: ["admin", "management", "purchasing"] },
+  { label: "Keuangan", path: "/finance", roles: ["admin","management", "finance"] },
+  { label: "Marketing", path: "/marketing", roles: ["admin", "management", "marketing"] },
+  { label: "Purchasing", path: "/purchasing", roles: ["admin", "management", "purchasing"] },
+  { label: "Staf dan Freelancer", path: "/staff-freelancer", roles: ["admin", "management"] },
 ];
 
 const settingsItems = [
   { label: "Daftarkan Akun", path: "/auth/register", roles: ["admin"] },
-  { label: "Logout", action: () => logout(), roles: ["admin", "staff", "inventory", "finance", "hr", "guest"] },
+  { label: "Logout", action: () => logout(), roles: ["admin", "management", "purchasing", "finance", "hr", "marketing"] },
 ];
 
 const userRoles = computed<string[]>(() => authStore.user?.role?.toLowerCase().split(',') || []);
