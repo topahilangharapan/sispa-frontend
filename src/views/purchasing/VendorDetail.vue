@@ -21,6 +21,8 @@ const vendorId = route.params.id as string;
 
 const showDialog = ref(false);
 
+const isLoaded = ref(false);
+
 const deleteVendor = async () => {
   await vendorStore.deleteVendor(vendorId);
   showDialog.value = false;
@@ -34,6 +36,9 @@ onMounted(async () => {
 
   const token = authStore.token ?? '';
   await vendorStore.getVendorById(token, vendorId)
+  
+  
+  isLoaded.value = true;
 });
 
 </script>
