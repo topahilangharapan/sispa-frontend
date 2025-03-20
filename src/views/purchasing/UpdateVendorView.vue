@@ -1,22 +1,26 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-import { useVendorStore } from '../stores/vendor.ts'
-import VNavbar from '../components/VNavbar.vue'
-import { useAuthStore } from '../stores/auth.ts'
-import VLoading from '../components/VLoading.vue'
-import router from '../router'
-import VTextArea from '../components/VTextArea.vue'
-import VInputField from '../components/VInputField.vue'
-import VButton from '../components/VButton.vue'
+import { computed, ref, onMounted } from 'vue'
+import { useVendorStore } from '../../stores/vendor.ts'
+import { useRoute } from 'vue-router'
+import VNavbar from '../../components/VNavbar.vue'
+import { useAuthStore } from '../../stores/auth.ts'
+import VLoading from '../../components/VLoading.vue'
+import router from '../../router'
+import VTextArea from '../../components/VTextArea.vue'
+import VInputField from '../../components/VInputField.vue'
+import VButton from '../../components/VButton.vue'
 
 const title = ref({ 'Purchasing': '/purchasing' });
 const submodules = ref({
   "Vendor": "/purchasing/vendor",
 });
+
 const vendorStore = useVendorStore()
 const authStore = useAuthStore()
+const route = useRoute()
 
 const formData = ref({
+  id: '',
   name: '',
   contact: '',
   email: '',
@@ -25,80 +29,100 @@ const formData = ref({
   description: '',
 })
 
+const isDataLoaded = ref(false)
+onMounted(async () => {
+  const vendorId = route.params.id as string
+  if (!authStore.token) {
+    console.error('Token tidak tersedia');
+    return;
+  }
+  await vendorStore.getVendorById(authStore.token, vendorId);
+  console.log(vendorId)
+
+  if (vendorStore.currentVendor) {
+    formData.value = {
+      id: vendorStore.currentVendor.id,
+      name: vendorStore.currentVendor.name,
+      contact: vendorStore.currentVendor.contact,
+      email: vendorStore.currentVendor.email,
+      address: vendorStore.currentVendor.address,
+      service: vendorStore.currentVendor.service,
+      description: vendorStore.currentVendor.description,
+    }
+    isDataLoaded.value = true
+    console.log(formData.value);
+
+  } else {
+    console.log('Data vendor tidak ditemukan')
+  }
+})
+
 const hasErrors = ref({
-  name: true,
   contact: true,
   email: true,
   address: true,
   service: true,
   description: true,
-});
+})
 
 const updateErrorStatus = (field: keyof typeof hasErrors.value, isError: boolean) => {
   hasErrors.value[field] = isError;
 };
 
-const isFormValid = computed(() =>
-  Object.values(hasErrors.value).every(error => !error)
-);
+const isFormValid = computed(() => {
+  const isValid = Object.values(hasErrors.value).every(error => !error);
+  console.log('Form is valid:', isValid);
+  return isValid;
+});
 
 const submitForm = async () => {
-  if (!isFormValid.value) return;
-
-  const isSuccess = await vendorStore.addVendor(formData.value);
-
-  if (isSuccess) {
-    formData.value = {
-      name: '',
-      contact: '',
-      email: '',
-      address: '',
-      service: '',
-      description: '',
-    };
-
-    hasErrors.value = {
-      name: true,
-      contact: true,
-      email: true,
-      address: true,
-      service: true,
-      description: true,
-    };
+  console.log('Submitting form...');
+  if (!isFormValid.value) {
+    console.log('Form is not valid. Aborting submit.');
+    return;
   }
 
-  authStore.loading = false;
-};
+  try {
+    console.log('Form data to submit:', formData.value);
+    const isSuccess = await vendorStore.updateVendor(formData.value);
 
+    if (isSuccess) {
+      console.log('Update successful. Redirecting...');
+      router.push("/purchasing/vendor");
+    } else {
+      console.log('Update failed.');
+    }
+  } catch (error) {
+    console.error('Error during submit:', error);
+  } finally {
+    authStore.loading = false;
+  }
+};
 </script>
 
 <template>
   <VNavbar :title="title" :submodules="submodules"></VNavbar>
   <main class="w-full h-screen flex justify-center items-center">
-    <VLoading v-if="authStore.loading" class="flex mr-64"/>
+    <VLoading v-if="authStore.loading || vendorStore.loading" class="flex mr-64"/>
 
-    <div class="w-[100%] flex flex-col gap-2 divide-y-2 bg-white drop-shadow-xl p-6 rounded-xl">
-
+    <div v-else class="w-[100%] flex flex-col gap-2 divide-y-2 bg-white drop-shadow-xl p-6 rounded-xl">
       <div class="w-full flex justify-between">
-        <h2 class="mb-2 heading-2">Tambah Vendor Baru</h2>
+        <h2 class="mb-2 heading-2">Update Vendor</h2>
         <hr class="border-gray-300 border-t-2 mb-4" />
       </div>
 
       <form @submit.prevent="submitForm" class="flex flex-col gap-2 py-2">
-
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <VInputField
-              v-model="formData.name"
-              label="Nama"
-              placeholder="Masukkan nama disini"
-              :isEmpty="true"
-              @update:hasError="updateErrorStatus('name', $event)"
-            />
+            <div class="flex flex-col">
+              <label class="mb-1 text-black-grey-700 text-semibold">Nama</label>
+              <p class="px-3 py-2 border rounded-lg bg-gray-100">{{ formData.name }}</p>
+            </div>
             <VInputField
               v-model="formData.contact"
               label="Kontak"
               placeholder="Masukkan kontak disini"
+              :isNumberOnly="true"
               :isEmpty="true"
               @update:hasError="updateErrorStatus('contact', $event)"
             />
@@ -143,11 +167,10 @@ const submitForm = async () => {
             Kembali
           </VButton>
           <VButton variant="primary" @click="submitForm" :disabled="!isFormValid">
-            Simpan
+            Update
           </VButton>
         </div>
       </form>
-
     </div>
   </main>
 </template>

@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import VNavbar from '../components/VNavbar.vue'
+import VNavbar from '../../components/VNavbar.vue'
 import { onMounted, ref } from 'vue'
-import VLoading from '../components/VLoading.vue'
-import VButton from '../components/VButton.vue'
-import { useVendorStore } from '../stores/vendor.ts'
-import { useAuthStore } from '../stores/auth.ts'
+import VLoading from '../../components/VLoading.vue'
+import VButton from '../../components/VButton.vue'
+import { useVendorStore } from '../../stores/vendor.ts'
+import { useAuthStore } from '../../stores/auth.ts'
 import { DataTable } from 'simple-datatables'
 
 const title = ref({ 'Purchasing': '/purchasing' });

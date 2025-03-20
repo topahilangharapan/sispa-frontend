@@ -106,6 +106,7 @@ const submitForm = async () => {
               v-model="formData.contact"
               label="Kontak"
               placeholder="Masukkan kontak disini"
+              :isNumberOnly="true"
               :isEmpty="true"
               @update:hasError="updateErrorStatus('contact', $event)"
             />

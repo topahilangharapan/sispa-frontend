@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import VNavbar from '../components/VNavbar.vue'
+import VNavbar from '../../components/VNavbar.vue'
 import { onMounted, ref } from 'vue'
-import VLoading from '../components/VLoading.vue'
-import VButton from '../components/VButton.vue'
-import { useVendorStore } from '../stores/vendor.ts'
-import { useAuthStore } from '../stores/auth.ts'
+import VLoading from '../../components/VLoading.vue'
+import VButton from '../../components/VButton.vue'
+import { useVendorStore } from '../../stores/vendor.ts'
+import { useAuthStore } from '../../stores/auth.ts'
 import { useRoute } from 'vue-router';
-import router from '../router'
-import ConfirmationDialog from '../components/ConfirmationDialog.vue'
+import router from '../../router'
+import ConfirmationDialog from '../../components/ConfirmationDialog.vue'
 
 const title = ref({ 'Purchasing': '/purchasing' });
 const submodules = ref({

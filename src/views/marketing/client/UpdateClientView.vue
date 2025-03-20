@@ -127,6 +127,7 @@ const submitForm = async () => {
               label="Kontak"
               placeholder="Masukkan kontak disini"
               :isNumberOnly="true"
+              :isEmpty="true"
               @update:hasError="updateErrorStatus('contact', $event)"
             />
           </div>
