@@ -22,10 +22,6 @@ const submodules = ref({
   "Klien": "/marketing/client"
 });
 
-const title = ref({ 'Marketing': '/marketing' });
-const submodules = ref({
-  "Klien": "/marketing/client",
-});
 
 const formData = ref({
   name: '',
