@@ -10,7 +10,6 @@ default:
     - mkdir -p ~/.ssh
     - chmod 700 ~/.ssh
     - echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
-    - echo "Backend URL ${BACKEND_URL}"
 
 stages:
   - build
@@ -59,7 +58,7 @@ publish:
   script:
     - echo "Build Docker image..."
     - cd /root/$CI_PROJECT_DIR
-    - docker build -t $IMAGE_NAME:$IMAGE_TAG -f Dockerfile .
+    - docker build --build-arg VITE_API_LOCAL_URL=$BACKEND_URL -t $IMAGE_NAME:$IMAGE_TAG -f Dockerfile .
     - echo "Push image to registry..."
     - docker push $IMAGE_NAME:$IMAGE_TAG
 
@@ -88,3 +87,4 @@ cleaning:
   script:
     - echo "Cleaning up old Docker images..."
     - ssh "${DEPLOY_USERNAME}@${DEPLOY_SERVER}" "docker system prune -f"
+    - echo "Backend URL ${BACKEND_URL}"
