@@ -13,56 +13,37 @@ export const useInvoiceStore = defineStore('invoice', {
     actions: {
 
       async create(body: InvoiceInterface, token: string): Promise<boolean> {
-
-        function base64ToBlob(base64, contentType = "application/pdf") {
-          const byteCharacters = atob(base64); // Decode Base64
-          const byteNumbers = new Array(byteCharacters.length).fill(0).map((_, i) => byteCharacters.charCodeAt(i));
-          const byteArray = new Uint8Array(byteNumbers);
-          return new Blob([byteArray], { type: contentType });
-        }
-
         this.loading = true;
         this.error = null;
 
         try {
-          const response = await fetch(apiUrl + '/invoice/create',
-            {
-              method: 'POST',
-              headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify(body),
+          const response = await fetch(apiUrl + "/invoice/create", {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
             },
-          )
+            body: JSON.stringify(body),
+          });
 
-          const data: CommonResponseInterface<InvoiceRequestResponseInterface> = await response.json();
+          const data: CommonResponseInterface<InvoiceRequestResponseInterface> =
+            await response.json();
 
           if (response.ok) {
-            // Buat URL untuk Blob
-            const blob = base64ToBlob(data.data.pdf);
-            const url = URL.createObjectURL(blob);
+            // Simpan PDF & nama file ke state, BUKAN langsung download
+            this.pdfBase64 = data.data.pdf;
+            this.pdfFileName = data.data.fileName;
 
-            // Buat elemen <a> untuk trigger download
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = data.data.fileName; // Nama file yang di-download
-            document.body.appendChild(a);
-            a.click();
-
-            // Bersihkan URL object
-            window.URL.revokeObjectURL(url);
-
-            window.$toast('success', "Invoice berhasil dibuat!");
-            return true; // Login berhasil
+            window.$toast("success", "Invoice berhasil dibuat!");
+            return true;
           } else {
-            window.$toast('error', "Gagal membuat Invoice: " + data.message);
-            return false; // Login gagal
+            window.$toast("error", "Gagal membuat Invoice: " + data.message);
+            return false;
           }
         } catch (err) {
           this.error = (err as Error).message;
-          window.$toast('error', "Gagal membuat Invoice: " + this.error);
-          return false; // Login gagal karena error
+          window.$toast("error", "Gagal membuat Invoice: " + this.error);
+          return false;
         } finally {
           this.loading = false;
         }
@@ -154,6 +135,31 @@ export const useInvoiceStore = defineStore('invoice', {
           this.loading = false;
         }
       },
+      async downloadInvoice() {
+        if (!this.pdfBase64 || !this.pdfFileName) {
+          window.$toast("error", "Tidak ada file untuk diunduh!");
+          return;
+        }
 
-}
+        function base64ToBlob(base64: string, contentType = "application/pdf") {
+          const byteCharacters = atob(base64);
+          const byteNumbers = new Array(byteCharacters.length)
+            .fill(0)
+            .map((_, i) => byteCharacters.charCodeAt(i));
+          const byteArray = new Uint8Array(byteNumbers);
+          return new Blob([byteArray], { type: contentType });
+        }
+
+        const blob = base64ToBlob(this.pdfBase64);
+        const url = URL.createObjectURL(blob);
+
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = this.pdfFileName;
+        document.body.appendChild(a);
+        a.click();
+
+        window.URL.revokeObjectURL(url);
+      }
+    }
 })
