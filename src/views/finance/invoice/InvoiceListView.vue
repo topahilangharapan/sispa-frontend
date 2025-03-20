@@ -3,7 +3,7 @@
 import { onMounted, ref } from 'vue'
 import { useInvoiceStore } from '../../../stores/invoice.ts'
 import { useAuthStore } from '../../../stores/auth.ts'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { DataTable } from 'simple-datatables'
 import VNavbar from '../../../components/VNavbar.vue'
 import VButton from '../../../components/VButton.vue'
@@ -14,8 +14,8 @@ const submodules = ref({ "Invoice": "/finance/invoice" });
 const invoiceStore = useInvoiceStore()
 const authStore = useAuthStore()
 const router = useRouter()
-// const route = useRoute()
-// const invoiceId = route.params.id as number;
+const route = useRoute()
+const invoiceId = Number(route.params.id);
 // const searchTerm = ref('')
 const dataTableInstance = ref<DataTable | null>(null);
 const showDialog = ref(false);
@@ -44,14 +44,17 @@ function goToDetail(invId: number) {
   router.push(`/finance/invoice/${invId}`)
 }
 
-const deleteInvoice = async (id: number) => {
-  await invoiceStore.deleteInvoice(id);
+const deleteInvoice = async () => {
+  await invoiceStore.deleteInvoice(invoiceId, authStore.token || '');
   showDialog.value = false;
-  router.push('/finance/invoice');
+  router.push('/finance/invoice')
 }
 
-async function downloadInvoice() {
-  const success = await invoiceStore.downloadInvoice();
+async function downloadInvoice(id: number, token: string) {
+  console.log("Invoice ID:", id); // Pastikan ini bukan undefined
+  console.log("Auth Token:", token);
+
+  const success = await invoiceStore.downloadInvoice(id, token);
   if (success) {
     window.$toast('success', 'Invoice berhasil di-download!')
   }
@@ -106,10 +109,10 @@ async function downloadInvoice() {
                   :visible="showDialog"
                   title="Hapus Invoice"
                   message="Apakah Anda yakin ingin menghapus Invoice?"
-                  @confirm="deleteInvoice(inv.id)"
+                  @confirm="deleteInvoice()"
                   @cancel="() => (showDialog = false)"
                 />
-                <VButton variant="primary" size="sm" @click="downloadInvoice()">Download PDF</VButton>
+                <VButton variant="primary" size="sm" @click="downloadInvoice(inv.id, authStore.token || '')">Download PDF</VButton>
               </td>
             </tr>
             </tbody>

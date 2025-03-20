@@ -1,6 +1,5 @@
 import { defineStore } from "pinia";
 import { useAuthStore } from '../stores/auth.ts';
-// import { useRoute, useRouter } from 'vue-router'
 
 import axios from 'axios'
 import type {
@@ -113,39 +112,40 @@ export const useFinalReportStore = defineStore('finalReport', {
       }
     },
 
-    async downloadFinalReport() {
-      if (!this.pdfBase64 || !this.pdfFileName) {
-        window.$toast("error", "Tidak ada file untuk diunduh!");
-        return false;
+    async downloadFinalReport(id: number, token:string) {
+      this.loading = true;
+      this.error = null;
+
+      try {
+        const response = await fetch(`${apiUrl}/final-report/${id}/download`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+
+        const blob = await response.blob(); // Ubah respons ke Blob
+        const url = window.URL.createObjectURL(blob);
+
+        // Buat elemen <a> untuk download
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `FinalReport_${id}.pdf`; // Nama file default
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+
+        window.URL.revokeObjectURL(url);
+        window.$toast("success", "Final report berhasil di-download!");
+      } catch (error) {
+        window.$toast("error", "Gagal mengunduh final report!");
+        console.error(error);
+      } finally {
+        this.loading = false;
       }
-
-      if (typeof this.pdfBase64 !== "string") {
-        window.$toast("error", "Format file tidak valid!");
-        return false;
-      }
-
-      function base64ToBlob(base64: string, contentType = "application/pdf") {
-        const byteCharacters = atob(base64);
-        const byteNumbers = new Array(byteCharacters.length)
-          .fill(0)
-          .map((_, i) => byteCharacters.charCodeAt(i));
-        const byteArray = new Uint8Array(byteNumbers);
-        return new Blob([byteArray], { type: contentType });
-      }
-
-      const blob = base64ToBlob(this.pdfBase64);
-      const url = URL.createObjectURL(blob);
-
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = this.pdfFileName;
-      document.body.appendChild(a);
-      a.click();
-
-      window.URL.revokeObjectURL(url);
-
-      return true;
     },
+
     async deleteFinalReport(id: number){
       this.loading = true
       this.error = null
@@ -161,15 +161,14 @@ export const useFinalReportStore = defineStore('finalReport', {
 
         if (response.ok) {
           this.finalReports = this.finalReports.filter((finalReport) => finalReport.id !== id);
-          window.$toast('success', `Berhasil menghapus finalReport dengan ID ${id}`);
-          router.push("/purchasing/final-report");
+          window.$toast('success', `Berhasil menghapus laporan akhir dengan ID ${id}`);
         } else {
           const data = await response.json();
-          window.$toast('error', `Gagal menghapus final report: ${data.message}`);
+          window.$toast('error', `Gagal menghapus laporan akhir: ${data.message}`);
         }
       } catch (err) {
-        this.error = `Gagal menghapus final report: ${(err as Error).message}`;
-        window.$toast(this.error, data.message);
+        this.error = `Gagal menghapus laporan akhir: ${(err as Error).message}`;
+        window.$toast('error', this.error);
       } finally {
         this.loading = false;
       }

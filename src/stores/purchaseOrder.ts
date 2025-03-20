@@ -87,7 +87,6 @@ export const usePurchaseOrderStore = defineStore('purchaseOrder', {
           const data: CommonResponseInterface<PurchaseOrderInterface[]> = await response.json();
 
           if (response.ok) {
-            // data.data is presumably an array of purchase orders
             this.purchaseOrders = data.data || [];
             return true; // success
           } else {
@@ -118,7 +117,6 @@ export const usePurchaseOrderStore = defineStore('purchaseOrder', {
           const data: CommonResponseInterface<PurchaseOrderInterface> = await response.json();
 
           if (response.ok) {
-            // data.data presumably the single purchase order
             console.log(data.data)
             this.selectedPurchaseOrder = data.data;
             return true;

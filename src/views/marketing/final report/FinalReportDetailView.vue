@@ -106,15 +106,18 @@ function confirmDelete(invId: number) {
 async function deleteFinalReport() {
   if (!selectedReportId.value) return;
 
-  const success = await finalReportStore.deleteFinalReport(Number(route.params.id));
-  if (success) {
+  try {
+    await finalReportStore.deleteFinalReport(Number(route.params.id)); // Tidak menyimpan return value
     window.$toast('success', 'Final report berhasil dihapus!');
-    router.push('/marketing/final-report'); // Redirect ke list setelah hapus
-    return true
+    router.push('/marketing/final-report'); // Redirect setelah hapus
+  } catch (error) {
+    window.$toast('error', 'Gagal menghapus final report!');
+  } finally {
+    selectedReportId.value = null;
+    showDialog.value = false;
   }
-  selectedReportId.value = null;
-  showDialog.value = false;
 }
+
 </script>
 
 <style scoped>
