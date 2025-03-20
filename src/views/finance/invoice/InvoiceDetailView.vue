@@ -1,6 +1,6 @@
 <template>
     <div class="invoice-container">
-      <VNavbar  />
+<!--      <VNavbar title="Invoice Detail" />-->
 
       <div class="invoice-card">
         <h2>Invoice</h2>
@@ -75,7 +75,7 @@
           <hr class="divider" />
           <br>
 
-<!--          <h3>Items</h3>-->
+          <h3>Items</h3>
 <!--          <table v-if="invoiceStore.selectedInvoice.items?.length">-->
 <!--            <thead>-->
 <!--              <tr>-->
@@ -105,11 +105,19 @@
 
           <div class="actions">
             <VButton variant="primary" size="md" @click="goBack">
-              Back to List
+              Kembali ke list
             </VButton>
-            <VButton variant="delete" size="md" @click="deleteInvoice">
-              Delete
+            <VButton @click="() => (showDialog = true)" size="sm" variant="delete">
+              Hapus
             </VButton>
+
+            <ConfirmationDialog
+              :visible="showDialog"
+              title="Hapus Invoice"
+              message="Apakah Anda yakin ingin menghapus Invoice?"
+              @confirm="deleteInvoice"
+              @cancel="() => (showDialog = false)"
+            />
           </div>
         </div>
       </div>
@@ -120,42 +128,34 @@
 
   import { useInvoiceStore } from '../../../stores/invoice.ts'
   import { useAuthStore } from '../../../stores/auth.ts'
-  import { useRoute, useRouter } from 'vue-router'
-  import { onMounted } from 'vue'
+  import { useRouter } from 'vue-router'
+  import { onMounted, ref } from 'vue'
   import VButton from '../../../components/VButton.vue'
-  import VNavbar from '../../../components/VNavbar.vue'
+  // import VNavbar from '../../../components/VNavbar.vue'
+  import ConfirmationDialog from '../../../components/ConfirmationDialog.vue'
 
   const invoiceStore = useInvoiceStore()
   const authStore = useAuthStore()
   const router = useRouter()
-  const route = useRoute()
+  // const route = useRoute()
+  const showDialog = ref(false);
+  // const invoiceId = route.params.id as number;
 
   onMounted(async () => {
     if (!authStore.token) {
       return
     }
-    const orderId = Number(route.params.id)
-    await invoiceStore.fetchDetail(orderId, authStore.token)
+    // await invoiceStore.fetchDetail(invoiceId, authStore.token)
     console.log("Selected Invoice:", invoiceStore.selectedInvoice)
   })
 
   function goBack() {
     router.push('/finance/invoice')
   }
-
-  async function deleteInvoice() {
-    if (!authStore.token) return
-    const confirmed = confirm('Are you sure you want to delete this invoice?')
-    if (!confirmed) return
-
-    const orderId = invoiceStore.selectedInvoice?.id
-    if (!orderId) return
-
-    const success = await invoiceStore.deleteInvoice(orderId, authStore.token)
-    if (success) {
-      window.$toast('success', 'Invoice deleted!')
-      router.push('/marketing/invoice')
-    }
+  const deleteInvoice = async () => {
+    // await invoiceStore.deleteInvoice(invoiceId);
+    showDialog.value = false;
+    router.push('/finance/invoice')
   }
   </script>
 

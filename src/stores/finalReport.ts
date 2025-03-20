@@ -16,8 +16,8 @@ export const useFinalReportStore = defineStore('finalReport', {
     error: null as null | string,
     finalReports: [] as FinalReportInterface[],
     selectedFinalReport: null as FinalReportInterface | null,
-    pdfBase64: null as string | Blob | null,
-    pdfFileName: null as string | null, // Tambahkan untuk menyimpan nama file
+    pdfBase64: null as string | null,
+    pdfFileName: null as string | null,
   }),
   actions: {
     async create(body: CreateFinalReportRequestInterface | FormData, token: string): Promise<boolean> {
@@ -110,7 +110,8 @@ export const useFinalReportStore = defineStore('finalReport', {
         this.loading = false;
       }
     },
-    async downloadReport() {
+
+    async downloadFinalReport() {
       if (!this.pdfBase64 || !this.pdfFileName) {
         window.$toast("error", "Tidak ada file untuk diunduh!");
         return false;
