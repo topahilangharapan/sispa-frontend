@@ -1,5 +1,5 @@
-// stores/user.store.ts
 import { defineStore } from 'pinia'
+import type { CommonResponseInterface } from '../interfaces/common.interface'
 import { useAuthStore } from '../stores/auth.ts'
 import type { UserStateInterface, UserProfileInterface } from '../interfaces/user.interface.ts'
 
@@ -26,21 +26,24 @@ export const useUserStore = defineStore('user', {
      * Fetch user by ID (POST /api/user/get)
      * The backend expects { "id": number } in the body.
      */
-    async fetchUser(userId: number): Promise<boolean> {
-      const authStore = useAuthStore();
-
-      this.loading = true;
-      this.error = null;
-
-      try {
-        const response = await fetch(`${apiUrl}/user/get`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${authStore.token}`, // Must be authorized if required
-          },
-          body: JSON.stringify({ id: userId }),
-        });
+    async fetchUser(userId?: number, username?: string): Promise<boolean> {
+        const authStore = useAuthStore();
+      
+        this.loading = true;
+        this.error = null;
+      
+        try {
+          const response = await fetch(`${apiUrl}/user/get`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${authStore.token}`,
+            },
+            body: JSON.stringify({ 
+                id: userId || null,
+                username: username || null 
+              }),
+          });
 
         const data: CommonResponseInterface<UserProfileInterface[]> = await response.json();
         if (!response.ok) {
@@ -73,14 +76,7 @@ export const useUserStore = defineStore('user', {
       }
     },
 
-    /**
-     * Update the user's profile (PUT /api/user/update-profile)
-     * The backend wants a combined request body:
-     * {
-     *   "userRequestDTO":    { "id": number },
-     *   "profileRequestDTO": { "name", "email", "address", "phoneNumber", "placeOfBirth", "dateOfBirth", "role" }
-     * }
-     */
+
     async updateUserProfile(): Promise<boolean> {
       const authStore = useAuthStore();
 
@@ -127,87 +123,48 @@ export const useUserStore = defineStore('user', {
         this.loading = false;
       }
     },
+
+    /**
+     * Change user password with validation
+     * Requires newPassword and confirmationPassword to match
+     */
+    async changePassword(newPassword: string, confirmationPassword: string): Promise<boolean> {
+      // Validate passwords match
+      if (newPassword !== confirmationPassword) {
+        this.error = "Passwords do not match";
+        return false;
+      }
+
+      const authStore = useAuthStore();
+      this.loading = true;
+      this.error = null;
+
+      try {
+        const response = await fetch(`${apiUrl}/user/change-password`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${authStore.token}`,
+          },
+          body: JSON.stringify({
+            userId: this.profile.id,
+            newPassword: newPassword
+          }),
+        });
+
+        const data: CommonResponseInterface<any> = await response.json();
+        if (!response.ok) {
+          this.error = data.message || "Failed to change password";
+          return false;
+        }
+
+        return true; // success
+      } catch (err) {
+        this.error = (err as Error).message;
+        return false;
+      } finally {
+        this.loading = false;
+      }
+    },
   },
 });
-
-//   actions: {
-//     async fetchUser(id: number) {
-//       this.loading = true
-//       this.error = null
-//       const authStore = useAuthStore()
-
-//       try {
-//         const response = await fetch(`${apiUrl}/user/get`, {
-//           method: 'POST',
-//           headers: {
-//             'Content-Type': 'application/json',
-//             'Authorization': `Bearer ${authStore.token}`, // <--- Include token here!
-//           },
-//           body: JSON.stringify({ id }),
-//         })
-
-//         if (!response.ok) {
-//           if (response.status === 401) {
-//             throw new Error('Unauthorized - invalid or missing token')
-//           }
-//           throw new Error('Failed to fetch user')
-//         }
-
-//         const data = await response.json()
-//         if (data.data && data.data.length > 0) {
-//           const user = data.data[0]
-//           this.profile = {
-//             id: user.id,
-//             name: user.name,
-//             email: user.email,
-//             address: user.address,
-//             phoneNumber: user.phoneNumber,
-//           }
-//         }
-//       } catch (err: any) {
-//         this.error = err.message
-//       } finally {
-//         this.loading = false
-//       }
-//     },
-
-//     async updateUserProfile() {
-//       this.loading = true
-//       this.error = null
-//       const authStore = useAuthStore()
-
-//       try {
-//         const response = await fetch(`${apiUrl}/user/update-profile`, {
-//           method: 'PUT',
-//           headers: {
-//             'Content-Type': 'application/json',
-//             'Authorization': `Bearer ${authStore.token}`, // <--- Include token here too!
-//           },
-//           body: JSON.stringify({
-//             userRequestDTO: { id: this.profile.id },
-//             profileRequestDTO: {
-//               name: this.profile.name,
-//               email: this.profile.email,
-//               address: this.profile.address,
-//               phoneNumber: this.profile.phoneNumber,
-//             },
-//           }),
-//         })
-
-//         if (!response.ok) {
-//           if (response.status === 401) {
-//             throw new Error('Unauthorized - invalid or missing token')
-//           }
-//           throw new Error('Failed to update user profile')
-//         }
-
-//         const data = await response.json()
-//         // ...
-//       } catch (err: any) {
-//         this.error = err.message
-//       } finally {
-//         this.loading = false
-//       }
-//     },
-//   },
-// })
