@@ -53,9 +53,9 @@ const invoice = ref<InvoiceInterface>({
   dateCreated: today,
   dateSigned: today,
   signee: "",
-  purchaseOrderId: -1,
+  purchaseOrderId: 0,
   datePaid: today,
-  ppnPercentage: -1,
+  ppnPercentage: 0,
   bankName: "",
   accountNumber: "",
   onBehalf: "",
@@ -108,6 +108,7 @@ const submitInvoice = async () => {
 const onSelectPurchaseOrder = (poId: string) => {
   invoice.value.purchaseOrderId = Number(poId);
   selectedPurchaseOrder.value = purchaseOrderStore.purchaseOrders.find(po => po.id === Number(poId)) || null;
+
 };
 </script>
 
@@ -130,13 +131,13 @@ const onSelectPurchaseOrder = (poId: string) => {
         @update:modelValue="onSelectPurchaseOrder"
       />
 
-      <!-- Detail PO yang dipilih -->
-<!--      <div v-if="invoice.purchaseOrderId" class="mt-4 p-4 bg-white rounded-lg shadow-sm border">-->
-<!--        <p><strong>No PO:</strong> {{ selectedPurchaseOrder?.noPo }}</p>-->
-<!--        <p><strong>Company:</strong> {{ selectedPurchaseOrder?.companyName }}</p>-->
-<!--        <p><strong>Total Harga:</strong> Rp{{ selectedPurchaseOrder?.total?.toLocaleString('us-US') }}</p>-->
-<!--        <p><strong>Date Created:</strong> {{ selectedPurchaseOrder?.dateCreated }}</p>-->
-<!--      </div>-->
+       Detail PO yang dipilih
+      <div v-if="invoice.purchaseOrderId" class="mt-4 p-4 bg-white rounded-lg shadow-sm border">
+        <p><strong>No PO:</strong> {{ selectedPurchaseOrder?.noPo }}</p>
+        <p><strong>Company:</strong> {{ selectedPurchaseOrder?.companyName }}</p>
+        <p><strong>Total Harga:</strong> Rp{{ selectedPurchaseOrder?.total?.toLocaleString('us-US') }}</p>
+        <p><strong>Date Created:</strong> {{ selectedPurchaseOrder?.dateCreated }}</p>
+      </div>
     </div>
 
     <!-- Section: Form Invoice -->
