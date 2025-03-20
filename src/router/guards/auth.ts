@@ -20,25 +20,30 @@ export const roleGuard = (to: RouteLocationNormalized, _: RouteLocationNormalize
 
   // Daftar akses per role
   const rolePermissions: Record<string, string[]> = {
-    staff: ["/dashboard", "/inventory"],
-    guest: ["/"],
-    // marketing: ["/vendor"],
-    marketing: ["/marketing"],
+    marketing: ["/dashboard", "/marketing"],
+    finance: ["/dashboard", "/finance"],
+    purchasing: ["/dashboard", "/purchasing"],
   };
 
   const allowedRoutes = rolePermissions[userRole.toLowerCase()] || [];
 
-  if (userRole === "admin") {
+  if (userRole === "admin" || userRole === "management") {
+    next();
+    return;
+  }
+
+  if (to.path === "/" && rolePermissions[userRole]) {
     next();
     return;
   }
 
   // Jika role tidak memiliki izin untuk halaman yang dituju, arahkan ke home
-  if (!allowedRoutes.includes(to.path)) {
+  if (!allowedRoutes.some(route => to.path.startsWith(route))) {
     next("/");
     return;
   }
 
   // Jika semua aman, lanjutkan ke halaman tujuan
   next();
+  return
 };
