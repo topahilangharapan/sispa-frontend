@@ -26,6 +26,8 @@ import AddClientView from '../views/marketing/client/AddClientView.vue'
 import ClientView from '../views/marketing/client/ClientView.vue'
 import ClientDetailView from '../views/marketing/client/ClientDetailView.vue'
 import UpdateClientView from '../views/marketing/client/UpdateClientView.vue'
+import FinalReportListView from '../views/marketing/final report/FinalReportListView.vue'
+import FinalReportDetailView from '../views/marketing/final report/FinalReportDetailView.vue'
 
 const routes = [
   {
@@ -134,6 +136,19 @@ const routes = [
     name: 'Create Final Report',
     component: CreateFinalReportView,
     beforeEnter: roleGuard
+  },
+  {
+    path: '/marketing/final-report',
+    name: 'View All Final Report',
+    component: FinalReportListView,
+    beforeEnter: roleGuard
+  },
+  {
+    path: '/marketing/final-report/:id',
+    name: 'View Detail Final Report',
+    component: FinalReportDetailView,
+    beforeEnter: roleGuard,
+    props: true
   },
   {
     path: '/finance',
