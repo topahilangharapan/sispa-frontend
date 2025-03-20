@@ -12,6 +12,6 @@ services:
     restart: always
 
 networks:
-  backend-:
+  frontend-network:
     name: sispa-radiant-frontend-network
-    external: true
+    driver: bridge
