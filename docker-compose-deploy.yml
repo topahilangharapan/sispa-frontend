@@ -10,3 +10,8 @@ services:
       - NODE_ENV=production
       - VITE_API_LOCAL_URL=${BACKEND_URL}
     restart: always
+
+networks:
+  backend-network:
+    name: sispa-radiant-backend-network
+    external: true
