@@ -65,10 +65,12 @@ const isFormValid = computed(() =>
   Object.values(hasErrors.value).every(error => !error)
 );
 
+let counter = 0;
+
 const addItem = () => {
   const newItem = {
     id: Date.now(), // Gunakan timestamp sebagai ID sementara
-    tempId: crypto.randomUUID(), // ID unik untuk tiap item
+    tempId: `item-${counter++}`, // ID berurutan
     title: "",
     volume: 0,
     unit: "",
@@ -76,6 +78,7 @@ const addItem = () => {
     description: "",
     sum: 0, // Nilai awal untuk sum
   };
+
 
   purchaseOrder.value.items.push(newItem);
 
