@@ -17,6 +17,12 @@ const submodules = ref({
   "Klien": "/marketing/client",
 });
 
+const title = ref({ 'Marketing': '/marketing' });
+const submodules = ref({
+  "Purchase Order": "/marketing/purchase-order",
+  "Klien": "/marketing/client",
+});
+
 const clientStore = useClientStore()
 const authStore = useAuthStore()
 const route = useRoute()
