@@ -18,7 +18,7 @@ onMounted(async () => {
   if (savedAuth) {
     authStore.$patch(JSON.parse(savedAuth));
   }
-  name.value = authStore.user.name;
+  name.value = authStore.user?.name || '';
 });
 
 const logout = async () => {
@@ -41,9 +41,9 @@ const isActive = (url: string) => {
   <div v-else class="fixed top-0 left-64 right-0 h-16 bg-red-400 flex items-center px-6 justify-between">
     <!-- Container untuk Title & Submodules -->
     <div class="flex items-center space-x-6">
-      <h4 @click="navigateTo(Object.values(title)[0])"
+      <h4 v-if="title && Object.values(title).length" @click="navigateTo(Object.values(title)[0])"
           class="text-white cursor-pointer hover:text-gray-300">
-        {{ Object.keys(title)[0] }}
+        {{ title && Object.keys(title).length ? Object.keys(title)[0] : 'Untitled' }}
       </h4>
       <ul class="text-normal text-white flex space-x-4">
         <li v-for="(url, submodule) in submodules" :key="submodule"

@@ -1,6 +1,6 @@
 <template>
     <div class="invoice-container">
-      <VNavbar title="Invoice Detail" />
+      <VNavbar  />
 
       <div class="invoice-card">
         <h2>Invoice</h2>
@@ -75,39 +75,39 @@
           <hr class="divider" />
           <br>
 
-          <h3>Items</h3>
-          <table v-if="invoiceStore.selectedInvoice.items?.length">
-            <thead>
-              <tr>
-                <th>Title</th>
-                <th>Volume</th>
-                <th>Unit</th>
-                <th>Price per Unit</th>
-                <th>Sum</th>
-                <th>Description</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr
-                v-for="item in invoiceStore.selectedInvoice.items"
-                :key="item.id"
-              >
-                <td>{{ item.title }}</td>
-                <td>{{ item.volume }}</td>
-                <td>{{ item.unit }}</td>
-                <td>{{ item.pricePerUnit }}</td>
-                <td>{{ item.sum }}</td>
-                <td>{{ item.description }}</td>
-              </tr>
-            </tbody>
-          </table>
-          <p v-else>No items.</p>
+<!--          <h3>Items</h3>-->
+<!--          <table v-if="invoiceStore.selectedInvoice.items?.length">-->
+<!--            <thead>-->
+<!--              <tr>-->
+<!--                <th>Title</th>-->
+<!--                <th>Volume</th>-->
+<!--                <th>Unit</th>-->
+<!--                <th>Price per Unit</th>-->
+<!--                <th>Sum</th>-->
+<!--                <th>Description</th>-->
+<!--              </tr>-->
+<!--            </thead>-->
+<!--            <tbody>-->
+<!--              <tr-->
+<!--                v-for="item in invoiceStore.selectedInvoice.items"-->
+<!--                :key="item.id"-->
+<!--              >-->
+<!--                <td>{{ item.title }}</td>-->
+<!--                <td>{{ item.volume }}</td>-->
+<!--                <td>{{ item.unit }}</td>-->
+<!--                <td>{{ item.pricePerUnit }}</td>-->
+<!--                <td>{{ item.sum }}</td>-->
+<!--                <td>{{ item.description }}</td>-->
+<!--              </tr>-->
+<!--            </tbody>-->
+<!--          </table>-->
+<!--          <p v-else>No items.</p>-->
 
           <div class="actions">
             <VButton variant="primary" size="md" @click="goBack">
               Back to List
             </VButton>
-            <VButton variant="danger" size="md" @click="deleteInvoice">
+            <VButton variant="delete" size="md" @click="deleteInvoice">
               Delete
             </VButton>
           </div>

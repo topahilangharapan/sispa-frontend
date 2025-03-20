@@ -1,7 +1,6 @@
 import { defineStore } from "pinia";
-import type { CommonResponseInterface } from "@/interfaces/common.interface";
 import type { InvoiceInterface, InvoiceRequestResponseInterface } from '../interfaces/invoice.interface.ts'
-
+import type { CommonResponseInterface } from '../interfaces/common.interface.ts'
 
 const apiUrl = import.meta.env.VITE_API_LOCAL_URL;
 
@@ -9,6 +8,10 @@ export const useInvoiceStore = defineStore('invoice', {
     state: () => ({
       loading: false,
       error: null as null | string,
+      invoices: [] as InvoiceInterface[],
+      selectedInvoice: null as InvoiceInterface | null,
+      pdfBase64: null as string | null,
+      pdfFileName: null as string | null,
     }),
     actions: {
 
@@ -30,9 +33,6 @@ export const useInvoiceStore = defineStore('invoice', {
             await response.json();
 
           if (response.ok) {
-            // Simpan PDF & nama file ke state, BUKAN langsung download
-            this.pdfBase64 = data.data.pdf;
-            this.pdfFileName = data.data.fileName;
 
             window.$toast("success", "Invoice berhasil dibuat!");
             return true;
@@ -122,7 +122,7 @@ export const useInvoiceStore = defineStore('invoice', {
 
           const data = await response.json();
           if (response.ok) {
-            this.invoices = this.invoices.filter(inv => inv.id !== id);
+            this.invoices = this.invoices.filter((inv: InvoiceInterface) => inv.id !== id);
             return true;
           } else {
             this.error = data.message || "Failed to delete invoice.";
@@ -138,7 +138,7 @@ export const useInvoiceStore = defineStore('invoice', {
       async downloadInvoice() {
         if (!this.pdfBase64 || !this.pdfFileName) {
           window.$toast("error", "Tidak ada file untuk diunduh!");
-          return;
+          return false;
         }
 
         function base64ToBlob(base64: string, contentType = "application/pdf") {
@@ -160,6 +160,8 @@ export const useInvoiceStore = defineStore('invoice', {
         a.click();
 
         window.URL.revokeObjectURL(url);
+
+        return true;
       }
     }
 })

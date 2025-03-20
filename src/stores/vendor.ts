@@ -1,12 +1,9 @@
 import {defineStore} from "pinia";
-import type {
-  VendorInterface,
-  VendorRequestInterface
-} from '@/interfaces/vendor.interface.ts'
 
-import type { CommonResponseInterface } from '@/interfaces/common.interface'
 import { useAuthStore } from './auth.ts'
 import router from '../router'
+import type { VendorInterface, VendorRequestInterface } from '../interfaces/vendor.interface.ts'
+import type { CommonResponseInterface } from '../interfaces/common.interface.ts'
 
 const apiUrl = import.meta.env.VITE_API_LOCAL_URL;
 
@@ -86,7 +83,7 @@ export const useVendorStore = defineStore ('vendor', {
       } catch (err) {
         this.error = `Gagal menambahkan vendor: ${(err as Error).message}`
 
-        window.$toast(this.error);
+        window.$toast('error', this.error)
       } finally {
         this.loading = false
       }
@@ -111,7 +108,7 @@ export const useVendorStore = defineStore ('vendor', {
 
         if (response.ok) {
           window.$toast('success', `Berhasil mengupdate vendor dengan ID ${data.data.id}`)
-          await this.getVendors(useAuthStore().token) // Refresh vendor list
+          await this.getVendors(useAuthStore().token || '');
           return true
         } else {
           window.$toast('error', `Gagal mengupdate vendor: ${data.message}`)
@@ -149,7 +146,7 @@ export const useVendorStore = defineStore ('vendor', {
         }
       } catch (err) {
         this.error = `Gagal menghapus vendor: ${(err as Error).message}`;
-        window.$toast(this.error);
+        window.$toast('error', this.error);
       } finally {
         this.loading = false;
       }

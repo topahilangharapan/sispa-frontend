@@ -28,7 +28,8 @@ onMounted(async () => {
     authStore.$patch(JSON.parse(savedAuth));
   }
 
-  await vendorStore.getVendors(authStore.token)
+  const token = authStore.token ?? '';
+  await vendorStore.getVendors(token);
   if (
     document.getElementById('default-table') &&
     typeof DataTable != 'undefined'
@@ -45,7 +46,7 @@ onMounted(async () => {
 <template>
   <VNavbar :title="title" :submodules="submodules"></VNavbar>
   <div v-if="vendorStore.loading">
-    <VLoading :isDone="isLoaded" />
+    <VLoading :isDone="!vendorStore.loading" />
   </div>
 
   <div class="p-8 bg-white-100 min-h-screen flex flex-col items-center">

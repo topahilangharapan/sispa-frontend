@@ -1,10 +1,9 @@
 import { defineStore } from "pinia";
-import type { CommonResponseInterface } from "@/interfaces/common.interface";
 import type {
   PurchaseOrderInterface,
   PurchaseOrderRequestResponseInterface
 } from '../interfaces/purchaseOrder.interface.ts'
-
+import type { CommonResponseInterface } from '../interfaces/common.interface.ts'
 
 const apiUrl = import.meta.env.VITE_API_LOCAL_URL;
 
@@ -14,10 +13,11 @@ export const usePurchaseOrderStore = defineStore('purchaseOrder', {
       error: null as null | string,
       purchaseOrders: [] as PurchaseOrderInterface[],
       selectedPurchaseOrders: [] as PurchaseOrderInterface[],
+      selectedPurchaseOrder: null as PurchaseOrderInterface | null,
     }),
     actions: {
       async create(body: PurchaseOrderInterface, token: string): Promise<boolean> {
-        function base64ToBlob(base64, contentType = "application/pdf") {
+        function base64ToBlob(base64: string, contentType = "application/pdf") {
           const byteCharacters = atob(base64); // Decode Base64
           const byteNumbers = new Array(byteCharacters.length).fill(0).map((_, i) => byteCharacters.charCodeAt(i));
           const byteArray = new Uint8Array(byteNumbers);
@@ -42,22 +42,23 @@ export const usePurchaseOrderStore = defineStore('purchaseOrder', {
           const data: CommonResponseInterface<PurchaseOrderRequestResponseInterface> = await response.json();
 
           if (response.ok) {
-            // Buat URL untuk Blob
-            const blob = base64ToBlob(data.data.pdf);
-            const url = URL.createObjectURL(blob);
+            if (typeof data.data.pdf === 'string') {
+              const blob = base64ToBlob(data.data.pdf);
+              const url = URL.createObjectURL(blob);
 
-            // Buat elemen <a> untuk trigger download
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = data.data.fileName; // Nama file yang di-download
-            document.body.appendChild(a);
-            a.click();
+              const a = document.createElement("a");
+              a.href = url;
+              a.download = data.data.fileName;
+              document.body.appendChild(a);
+              a.click();
+              window.URL.revokeObjectURL(url);
 
-            // Bersihkan URL object
-            window.URL.revokeObjectURL(url);
-
-            window.$toast('success', "Purchase Order berhasil dibuat!");
-            return true; // Login berhasil
+              window.$toast('success', "Purchase Order berhasil dibuat!");
+              return true;
+            } else {
+              window.$toast('error', "Data PDF tidak valid.");
+              return false;
+            }
           } else {
             window.$toast('error', "Gagal membuat Purchase Order: " + data.message);
             return false; // Login gagal

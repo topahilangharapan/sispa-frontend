@@ -1,12 +1,8 @@
 import {defineStore} from "pinia";
-import type {
-  ClientInterface,
-  ClientRequestInterface
-} from '@/interfaces/client.interface.ts'
-
-import type { CommonResponseInterface } from '@/interfaces/common.interface'
 import { useAuthStore } from './auth.ts'
 import router from '../router'
+import type { ClientInterface, ClientRequestInterface } from '../interfaces/client.interface.ts'
+import type { CommonResponseInterface } from '../interfaces/common.interface.ts'
 
 const apiUrl = import.meta.env.VITE_API_LOCAL_URL;
 
@@ -78,7 +74,7 @@ export const useClientStore = defineStore ('client', {
 
         if (response.ok) {
           window.$toast('success', `Berhasil mengupdate client dengan ID ${data.data.id}`)
-          await this.getClients(useAuthStore().token)
+          await this.getClients(useAuthStore().token as string)
           return true
         } else {
           window.$toast('error', `Gagal mengupdate client: ${data.message}`)
@@ -116,7 +112,7 @@ export const useClientStore = defineStore ('client', {
         }
       } catch (err) {
         this.error = `Gagal menghapus klien: ${(err as Error).message}`;
-        window.$toast(this.error);
+        window.$toast('error', this.error ?? 'Terjadi kesalahan')
       } finally {
         this.loading = false;
       }
@@ -149,7 +145,7 @@ export const useClientStore = defineStore ('client', {
       } catch (err) {
         this.error = `Gagal menambahkan klien: ${(err as Error).message}`
 
-        window.$toast(this.error);
+        window.$toast('error', this.error ?? 'Terjadi kesalahan')
       } finally {
         this.loading = false
       }

@@ -36,7 +36,7 @@ const hasErrors = ref({
 });
 
 // Fungsi untuk update status error tiap input
-const updateErrorStatus = (field: string, isError: boolean) => {
+const updateErrorStatus = (field: keyof typeof hasErrors.value, isError: boolean) => {
   hasErrors.value[field] = isError;
 };
 
@@ -65,23 +65,27 @@ const options = [
 
 const selectedOptions = ref('')
 
-const uploadedFiles = ref([]);
+const uploadedFiles = ref<FileList | null>(null);
 
-const handleFiles = (files) => {
+const handleFiles = (files: FileList) => {
   uploadedFiles.value = files;
   console.log('Files ready for upload:', uploadedFiles.value);
 };
 
 const submitForm = () => {
-  // Simpan file ke backend menggunakan FormData
+  if (!uploadedFiles.value) {
+    console.error("Tidak ada file yang diunggah.");
+    return;
+  }
+
   const formData = new FormData();
-  uploadedFiles.value.forEach((file) => {
+  Array.from(uploadedFiles.value).forEach((file) => {
     formData.append('images', file);
   });
 
-  // Contoh kirim ke backend (Axios atau Fetch)
   console.log("Mengirim file:", formData);
 };
+
 </script>
 
 <template>
@@ -142,7 +146,6 @@ const submitForm = () => {
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <VInputField
-              v-model="inputValue"
               label="No Empty Input"
               placeholder="Enter text here"
               :isEmpty="true"
@@ -151,7 +154,6 @@ const submitForm = () => {
           </div>
           <div>
             <VInputField
-              v-model="inputValue"
               label="Number Only"
               placeholder="Enter numbers"
               :isNumberOnly="true"
@@ -160,7 +162,6 @@ const submitForm = () => {
           </div>
           <div>
             <VInputField
-              v-model="inputValue"
               label="Number and Use Thousand Separator"
               placeholder="Enter numbers"
               :isNumberOnly="true"
@@ -170,7 +171,6 @@ const submitForm = () => {
           </div>
           <div>
             <VInputField
-              v-model="inputValue"
               label="Positive Number Only"
               placeholder="Enter numbers"
               :isNumberOnly="true"
@@ -180,7 +180,6 @@ const submitForm = () => {
           </div>
           <div>
             <VInputField
-              v-model="inputValue"
               label="Min-Length"
               placeholder="Enter text here"
               :minLength="5"
@@ -189,7 +188,6 @@ const submitForm = () => {
           </div>
           <div>
             <VInputField
-              v-model="inputValue"
               label="Max-Length"
               placeholder="Enter text here"
               :maxLength="5"

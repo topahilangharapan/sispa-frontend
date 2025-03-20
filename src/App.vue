@@ -12,7 +12,14 @@ const hideSidebar = computed(() =>
   route.path.includes('/auth') || route.path.includes('/design-system')
 );
 
-const toastRef = ref(null);
+const toastRef = ref<InstanceType<typeof VToast> | null>(null);
+
+
+declare global {
+  interface Window {
+    $toast: (type: string, message: string) => void;
+  }
+}
 
 onMounted(() => {
   window.$toast = (type, message) => {

@@ -38,7 +38,7 @@ const finalReportData = ref<CreateFinalReportRequestInterface>({
 });
 
 const images = ref<File[]>([]);
-const hasErrors = ref({ title: true, description: true });
+const hasErrors = ref<{ [key: string]: boolean }>({ title: true, description: true });
 
 const updateErrorStatus = (field: string, status: boolean) => {
   hasErrors.value[field] = status;
@@ -67,6 +67,11 @@ const submitReport = async () => {
   images.value.forEach((image) => formData.append('images', image));
 
   console.log(formData)
+
+  if (!authStore.token) {
+    console.error('Token tidak tersedia');
+    return;
+  }
 
   const isSuccess = await finalReportStore.create(formData, authStore.token);
   if (isSuccess) {

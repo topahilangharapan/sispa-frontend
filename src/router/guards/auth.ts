@@ -1,7 +1,7 @@
 import type { NavigationGuardNext, RouteLocationNormalized } from "vue-router";
 import { useAuthStore } from '../../stores/auth.ts'
 
-export const roleGuard = (to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) => {
+export const roleGuard = (to: RouteLocationNormalized, _: RouteLocationNormalized, next: NavigationGuardNext) => {
   const authStore = useAuthStore();
 
   const savedAuth = localStorage.getItem("auth");

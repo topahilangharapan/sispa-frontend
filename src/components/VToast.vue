@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
-const toasts = ref<{ id: number; type: 'success' | 'error' | 'info'; message: string }[]>([]);
+const toasts = ref<{ id: number; type: string; message: string }[]>([]);
 let toastId = 0;
 
-const addToast = (type: 'success' | 'error' | 'info', message: string) => {
+const addToast = (type: string, message: string) => {
   const id = toastId++;
   toasts.value.push({ id, type, message });
 

@@ -31,6 +31,7 @@ onMounted(async () => {
 const today = new Date().toISOString().split('T')[0];
 
 const purchaseOrder = ref<PurchaseOrderInterface>({
+  id: 0,
   companyName: "",
   companyAddress: "",
   receiver: "",
@@ -40,9 +41,10 @@ const purchaseOrder = ref<PurchaseOrderInterface>({
   dateCreated: today,
   dateSigned: today,
   signee: "",
+  noPo: "",
 });
 
-const hasErrors = ref({
+const hasErrors = ref<Record<string, boolean>>({
   companyName: true,
   companyAddress: true,
   receiver: true,
@@ -53,9 +55,11 @@ const hasErrors = ref({
   signee: true
 });
 
-const updateErrorStatus = (field, status) => {
+
+const updateErrorStatus = (field: string, status: boolean) => {
   hasErrors.value[field] = status;
 };
+
 
 const isFormValid = computed(() =>
   Object.values(hasErrors.value).every(error => !error)
@@ -63,12 +67,14 @@ const isFormValid = computed(() =>
 
 const addItem = () => {
   const newItem = {
+    id: Date.now(), // Gunakan timestamp sebagai ID sementara
     tempId: crypto.randomUUID(), // ID unik untuk tiap item
     title: "",
-    volume: "",
+    volume: 0,
     unit: "",
-    pricePerUnit: "",
+    pricePerUnit: 0,
     description: "",
+    sum: 0, // Nilai awal untuk sum
   };
 
   purchaseOrder.value.items.push(newItem);
@@ -81,7 +87,8 @@ const addItem = () => {
 };
 
 
-const removeItem = (tempId) => {
+
+const removeItem = (tempId: string | number) => {
   const index = purchaseOrder.value.items.findIndex(item => item.tempId === tempId);
   if (index === -1) return;
 
@@ -102,7 +109,6 @@ const removeItem = (tempId) => {
   delete hasErrors.value[`pricePerUnit-undefined`];
   delete hasErrors.value[`description-undefined`];
 
-  console.log(hasErrors.value)
 };
 
 
@@ -124,6 +130,9 @@ const submitPurchaseOrder = async () => {
     dateSigned: formatDate(purchaseOrder.value.dateSigned),
   };
 
+  if (!authStore.token) {
+    throw new Error('Token is missing');
+  }
   const isSuccess = await purchaseOrderStore.create(formattedPurchaseOrder, authStore.token);
 
   if (isSuccess) {

@@ -19,7 +19,7 @@ const router = useRouter();
 const today = new Date().toISOString().split('T')[0];
 
 const purchaseOrderOption = ref<{ value: string; label: string }[]>([]);
-const selectedPurchaseOrder = ref(null);
+const selectedPurchaseOrder = ref();
 const title = ref({ 'Keuangan': '/finance' });
 const submodules = ref({
   "Invoice": "/finance/invoice",
@@ -32,11 +32,17 @@ onMounted(async () => {
     authStore.$patch(JSON.parse(savedAuth))
   }
 
+  if (!authStore.token) {
+    console.error("Token tidak tersedia");
+    return;
+  }
+
   await purchaseOrderStore.fetchAll(authStore.token);
+
   if (purchaseOrderStore.purchaseOrders) {
     purchaseOrderOption.value = purchaseOrderStore.purchaseOrders.map(po => ({
-      value: po.id,
-      label: po.noPo,
+      value: String(po.id),
+      label: String(po.noPo),
     }));
   }
 });
@@ -47,13 +53,16 @@ const invoice = ref<InvoiceInterface>({
   dateCreated: today,
   dateSigned: today,
   signee: "",
-  purchaseOrderId: "",
+  purchaseOrderId: -1,
   datePaid: today,
-  ppnPercentage: "",
+  ppnPercentage: -1,
   bankName: "",
   accountNumber: "",
   onBehalf: "",
-  event: ""
+  event: "",
+  id: 0,
+  noPo: "",
+  noInvoice: ""
 });
 
 const hasErrors = ref({
@@ -67,8 +76,8 @@ const hasErrors = ref({
   event: true
 });
 
-const updateErrorStatus = (field, status) => {
-  hasErrors.value[field] = status;
+const updateErrorStatus = (field: keyof typeof hasErrors.value, isError: boolean) => {
+  hasErrors.value[field] = isError;
 };
 
 const isFormValid = computed(() =>
@@ -88,13 +97,17 @@ const submitInvoice = async () => {
     datePaid: formatDate(invoice.value.datePaid),
   };
 
+  if (authStore.token == null) {
+    return
+  }
+
   const isSuccess = await invoiceStore.create(formattedInvoice, authStore.token);
   if (isSuccess) await router.push('/finance/invoice');
 };
 
 const onSelectPurchaseOrder = (poId: string) => {
-  invoice.value.purchaseOrderId = poId;
-  selectedPurchaseOrder.value = purchaseOrderStore.purchaseOrders.find(po => po.id === poId);
+  invoice.value.purchaseOrderId = Number(poId);
+  selectedPurchaseOrder.value = purchaseOrderStore.purchaseOrders.find(po => po.id === Number(poId)) || null;
 };
 </script>
 
@@ -118,12 +131,12 @@ const onSelectPurchaseOrder = (poId: string) => {
       />
 
       <!-- Detail PO yang dipilih -->
-      <div v-if="invoice.purchaseOrderId" class="mt-4 p-4 bg-white rounded-lg shadow-sm border">
-        <p><strong>No PO:</strong> {{ selectedPurchaseOrder.noPo }}</p>
-        <p><strong>Company:</strong> {{ selectedPurchaseOrder.companyName }}</p>
-        <p><strong>Total Harga:</strong> Rp{{ selectedPurchaseOrder.total.toLocaleString('us-US') }}</p>
-        <p><strong>Date Created:</strong> {{ selectedPurchaseOrder.dateCreated }}</p>
-      </div>
+<!--      <div v-if="invoice.purchaseOrderId" class="mt-4 p-4 bg-white rounded-lg shadow-sm border">-->
+<!--        <p><strong>No PO:</strong> {{ selectedPurchaseOrder?.noPo }}</p>-->
+<!--        <p><strong>Company:</strong> {{ selectedPurchaseOrder?.companyName }}</p>-->
+<!--        <p><strong>Total Harga:</strong> Rp{{ selectedPurchaseOrder?.total?.toLocaleString('us-US') }}</p>-->
+<!--        <p><strong>Date Created:</strong> {{ selectedPurchaseOrder?.dateCreated }}</p>-->
+<!--      </div>-->
     </div>
 
     <!-- Section: Form Invoice -->

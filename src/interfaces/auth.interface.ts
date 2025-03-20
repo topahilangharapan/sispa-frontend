@@ -20,3 +20,16 @@ export interface RegisterRequestInterface {
   role: string
   password: string
 }
+
+export interface RegisterResponseInterface {
+  id: number
+  name: string
+  username: string
+  role: string
+  password: string
+}
+
+export interface RoleResponseInterface {
+  id: number;
+  name: string;
+}

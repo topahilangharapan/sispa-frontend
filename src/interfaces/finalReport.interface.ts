@@ -1,4 +1,5 @@
 export interface FinalReportInterface {
+  id: number;
   event: string;
   eventDate: string;
   company: string;

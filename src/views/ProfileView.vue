@@ -1,6 +1,6 @@
 <template>
   <div class="profile-container">
-    <VNavbar title="User Profile" />
+    <VNavbar :title="title" :submodules="submodules"  />
     <div class="profile-card">
       <h2>General</h2>
 
@@ -82,9 +82,27 @@ import VNavbar from '../components/VNavbar.vue'
 import VButton from '../components/VButton.vue'
 import VInputField from '../components/VInputField.vue'
 
+const title = ref({ 'User Profile': '/profile' });
+const submodules = ref({
+  "": "",
+});
+
 const userStore = useUserStore()
 const isEditing = ref(false)
-const originalProfile = ref({})
+const originalProfile = ref<{
+  id?: number;
+  name: string;
+  email: string;
+  address?: string;
+  phoneNumber?: string;
+  placeOfBirth?: string;
+  dateOfBirth?: string;
+  role?: string;
+}>({
+  name: '',
+  email: ''
+})
+
 
 onMounted(async () => {
   // example: user #1

@@ -1,8 +1,8 @@
 // stores/user.store.ts
 import { defineStore } from 'pinia'
 import { useAuthStore } from '../stores/auth.ts'
-import type { UserStateInterface, UserProfileInterface } from '../interfaces/user.interface.ts'
-
+import type { UserProfileInterface, UserStateInterface } from '../interfaces/user.interface.ts'
+import type { CommonResponseInterface } from '../interfaces/common.interface.ts'
 const apiUrl = import.meta.env.VITE_API_LOCAL_URL
 
 export const useUserStore = defineStore('user', {
@@ -15,9 +15,9 @@ export const useUserStore = defineStore('user', {
       email: '',
       address: '',
       phoneNumber: '',
-      placeOfBirth: '',    
-      dateOfBirth: '',   
-      role: '',         
+      placeOfBirth: '',
+      dateOfBirth: '',
+      role: '',
     },
   }),
 

@@ -44,10 +44,6 @@ const submitForm = async () => {
   }
 };
 
-const loginAsGuest = async () => {
-  await authStore.loginAsAGuest()
-  await router.push('/');
-};
 </script>
 
 <template>
@@ -84,9 +80,6 @@ const loginAsGuest = async () => {
 
           <VButton variant="primary" @click="submitForm" :disabled="!isFormValid" class="w-full mt-6" size="md">
             Login
-          </VButton>
-          <VButton variant="secondary" @click="loginAsGuest" class="w-full mt-2" size="md">
-            Login As Guest
           </VButton>
         </form>
 <!--        <p class="text-normal text-center mt-4">Ingin mendaftarkan akun?-->

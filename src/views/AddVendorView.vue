@@ -34,7 +34,7 @@ const hasErrors = ref({
   description: true,
 });
 
-const updateErrorStatus = (field: string, isError: boolean) => {
+const updateErrorStatus = (field: keyof typeof hasErrors.value, isError: boolean) => {
   hasErrors.value[field] = isError;
 };
 

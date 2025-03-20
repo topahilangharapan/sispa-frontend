@@ -27,7 +27,7 @@ const settingsItems = [
   { label: "Logout", action: () => logout(), roles: ["admin", "staff", "inventory", "finance", "hr", "guest"] },
 ];
 
-const userRoles = computed(() => authStore.user?.role.toLowerCase() || []);
+const userRoles = computed<string[]>(() => authStore.user?.role?.toLowerCase().split(',') || []);
 
 const filteredMenuItems = computed(() =>
   menuItems.filter(item => item.roles.some(role => userRoles.value.includes(role)))

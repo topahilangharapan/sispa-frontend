@@ -32,7 +32,11 @@ const formData = ref({
 const isDataLoaded = ref(false)
 onMounted(async () => {
   const vendorId = route.params.id as string
-  await vendorStore.getVendorById(authStore.token, vendorId)
+  if (!authStore.token) {
+    console.error('Token tidak tersedia');
+    return;
+  }
+  await vendorStore.getVendorById(authStore.token, vendorId);
   console.log(vendorId)
 
   if (vendorStore.currentVendor) {
@@ -61,9 +65,8 @@ const hasErrors = ref({
   description: true,
 })
 
-const updateErrorStatus = (field: string, isError: boolean) => {
+const updateErrorStatus = (field: keyof typeof hasErrors.value, isError: boolean) => {
   hasErrors.value[field] = isError;
-  console.log(`Field ${field} error status:`, isError);
 };
 
 const isFormValid = computed(() => {
