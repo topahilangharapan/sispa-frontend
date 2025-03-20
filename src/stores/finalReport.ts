@@ -1,10 +1,12 @@
 import { defineStore } from "pinia";
-import type { CommonResponseInterface } from "@/interfaces/common.interface";
+
+import axios from 'axios'
 import type {
   CreateFinalReportRequestInterface,
-  CreateFinalReportResponseInterface
+  CreateFinalReportResponseInterface,
+  FinalReportInterface
 } from '../interfaces/finalReport.interface.ts'
-import axios from 'axios'
+import type { CommonResponseInterface } from '../interfaces/common.interface.ts'
 
 const apiUrl = import.meta.env.VITE_API_LOCAL_URL;
 
@@ -14,11 +16,11 @@ export const useFinalReportStore = defineStore('finalReport', {
     error: null as null | string,
     finalReports: [] as FinalReportInterface[],
     selectedFinalReport: null as FinalReportInterface | null,
-    pdfBase64: null as string | null, // Tambahkan untuk menyimpan PDF
+    pdfBase64: null as string | Blob | null,
     pdfFileName: null as string | null, // Tambahkan untuk menyimpan nama file
   }),
   actions: {
-    async create(body: CreateFinalReportRequestInterface, token: string): Promise<boolean> {
+    async create(body: CreateFinalReportRequestInterface | FormData, token: string): Promise<boolean> {
       this.loading = true;
       this.error = null;
 
@@ -33,10 +35,6 @@ export const useFinalReportStore = defineStore('finalReport', {
         const data: CommonResponseInterface<CreateFinalReportResponseInterface> = response.data;
 
         if (response.status >= 200 && response.status < 300) {
-          // Simpan Base64 PDF dan nama file di state
-          this.pdfBase64 = data.data.pdf;
-          this.pdfFileName = data.data.fileName;
-
           window.$toast('success', "Final Report berhasil dibuat!");
           return true;
         } else {
@@ -112,11 +110,15 @@ export const useFinalReportStore = defineStore('finalReport', {
         this.loading = false;
       }
     },
-
     async downloadReport() {
       if (!this.pdfBase64 || !this.pdfFileName) {
         window.$toast("error", "Tidak ada file untuk diunduh!");
-        return;
+        return false;
+      }
+
+      if (typeof this.pdfBase64 !== "string") {
+        window.$toast("error", "Format file tidak valid!");
+        return false;
       }
 
       function base64ToBlob(base64: string, contentType = "application/pdf") {
@@ -138,6 +140,9 @@ export const useFinalReportStore = defineStore('finalReport', {
       a.click();
 
       window.URL.revokeObjectURL(url);
+
+      return true;
     }
+
   }
 })

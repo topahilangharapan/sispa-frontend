@@ -1,6 +1,6 @@
 <template>
   <div class="profile-container">
-    <VNavbar :title="title" :submodules="submodules"></VNavbar>
+    <VNavbar/>
     <div class="profile-card">
       <h2>General</h2>
 
@@ -85,7 +85,7 @@
           <label>New Password</label>
           <VInputField v-model="passwordData.newPassword" type="password" />
         </div>
-        
+
         <div class="profile-field">
           <label>Confirm Password</label>
           <VInputField v-model="passwordData.confirmPassword" type="password" />
@@ -112,7 +112,7 @@
           <VButton @click="changePassword" :disabled="userStore.loading">
             Yes, Change Password
           </VButton>
-          <VButton @click="showPasswordModal = false" variant="secondary">
+          <VButton @click="showPasswordModal = false" variant="primary">
             Cancel
           </VButton>
         </div>
@@ -130,12 +130,23 @@ import VButton from '../components/VButton.vue'
 import VInputField from '../components/VInputField.vue'
 import type { UserProfileInterface } from '../interfaces/user.interface'
 
-const title = ref({ 'Profile': '#' })
-const submodules = ref({})
 const userStore = useUserStore()
 const authStore = useAuthStore()
 const isEditing = ref(false)
-const originalProfile = ref({})
+const originalProfile = ref<{
+  id?: number;
+  name: string;
+  email: string;
+  address?: string;
+  phoneNumber?: string;
+  placeOfBirth?: string;
+  dateOfBirth?: string;
+  role?: string;
+}>({
+  name: '',
+  email: ''
+})
+
 
 // Password change state
 const passwordData = ref({
@@ -147,7 +158,7 @@ const isChangingPassword = ref(false)
 const isChangingPasswordMode = ref(false)
 
 const passwordMismatch = computed(() => {
-  return passwordData.value.newPassword !== passwordData.value.confirmPassword && 
+  return passwordData.value.newPassword !== passwordData.value.confirmPassword &&
          passwordData.value.confirmPassword.length > 0
 })
 
@@ -175,9 +186,9 @@ async function saveProfile() {
 
 function cancelEditing() {
   // If originalProfile has been properly initialized
-  if (originalProfile.value && 
-      'id' in originalProfile.value && 
-      'name' in originalProfile.value && 
+  if (originalProfile.value &&
+      'id' in originalProfile.value &&
+      'name' in originalProfile.value &&
       'email' in originalProfile.value) {
     userStore.profile = { ...originalProfile.value as UserProfileInterface }
   } else {
@@ -194,7 +205,7 @@ function startPasswordChange() {
   passwordData.value.newPassword = '';
   passwordData.value.confirmPassword = '';
   userStore.error = null;
-  
+
   // Show password change section
   isChangingPasswordMode.value = true;
 }
@@ -202,7 +213,7 @@ function startPasswordChange() {
 function cancelPasswordChange() {
   // Hide password change section
   isChangingPasswordMode.value = false;
-  
+
   // Clear any errors
   userStore.error = null;
 }
@@ -213,35 +224,35 @@ function confirmPasswordChange() {
     userStore.error = "Passwords do not match";
     return;
   }
-  
+
   if (passwordData.value.newPassword.length < 6) {
     userStore.error = "Password must be at least 6 characters";
     return;
   }
-  
+
   // Clear any previous errors
   userStore.error = null;
-  
+
   // Show confirmation modal
   showPasswordModal.value = true;
 }
 
 async function changePassword() {
   isChangingPassword.value = true;
-  
+
   try {
     const success = await userStore.changePassword(
       passwordData.value.newPassword,
       passwordData.value.confirmPassword
     );
-    
+
     if (success) {
       // Reset form
       passwordData.value.newPassword = '';
       passwordData.value.confirmPassword = '';
       showPasswordModal.value = false;
       isChangingPasswordMode.value = false;
-      
+
       // Show success message (you could use a toast here if available)
       alert('Password changed successfully');
     }

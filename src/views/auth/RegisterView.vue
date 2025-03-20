@@ -6,6 +6,8 @@ import { useRouter } from 'vue-router';
 import VDropdown from '../../components/VDropdown.vue'
 import { useAuthStore } from '../../stores/auth.ts'
 import VLoading from '../../components/VLoading.vue'
+import type { RoleResponseInterface } from '../../interfaces/auth.interface.ts'
+import type { CommonResponseInterface } from '../../interfaces/common.interface.ts'
 
 const router = useRouter();
 const authStore = useAuthStore();
@@ -19,13 +21,10 @@ const formData = ref({
 });
 
 const hasErrors = ref({
-  companyName: false,
-  companyAddress: false,
-  terms: false,
-  placeSigned: false,
-  dateCreated: false,
-  dateSigned: false,
-  signee: false
+  username: true,
+  email: true,
+  password: true,
+  role: true
 });
 
 const roleOption = ref<{ value: string; label: string }[]>([]);
@@ -38,16 +37,14 @@ onMounted(async () => {
     authStore.$patch(JSON.parse(savedAuth))
   }
 
-  const fetchedRoles = await authStore.getRoles();
-  if (fetchedRoles) {
-    roleOption.value = fetchedRoles.data.map((role) => ({
-      value: role.name,
-      label: role.name,
-    }));
-  }
+  const fetchedRoles = await authStore.getRoles() as CommonResponseInterface<RoleResponseInterface[]> | undefined;
+  roleOption.value = fetchedRoles?.data?.map((role) => ({
+    value: role.name,
+    label: role.name,
+  })) || [];
 });
 
-const updateErrorStatus = (field: string, isError: boolean) => {
+const updateErrorStatus = (field: keyof typeof hasErrors.value, isError: boolean) => {
   hasErrors.value[field] = isError;
 };
 

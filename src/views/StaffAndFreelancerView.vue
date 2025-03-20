@@ -5,12 +5,13 @@ import VLoading from '../components/VLoading.vue'
 
 
 const title = ref({ 'Staff and Freelancer': '/staff-freelancer' });
+const submodules = ref();
 </script>
 
 <template>
   <VNavbar :title="title" :submodules="submodules"></VNavbar>/
   <div>
-    <VLoading :isDone="isLoaded" />
+    <VLoading :isDone="true" />
   </div>
 </template>
 

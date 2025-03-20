@@ -34,6 +34,10 @@ const formData = ref({
 const isDataLoaded = ref(false)
 onMounted(async () => {
   const clientId = route.params.id as string
+  if (!authStore.token) {
+    console.error('Token tidak tersedia');
+    return;
+  }
   await clientStore.getClientById(authStore.token, clientId)
   console.log(clientId)
 
@@ -55,13 +59,14 @@ onMounted(async () => {
   }
 })
 
-const hasErrors = ref({
+const hasErrors = ref<{ [key: string]: boolean }>({
   contact: true,
   email: true,
   address: true,
   industry: true,
   description: true,
-})
+});
+
 
 const updateErrorStatus = (field: string, isError: boolean) => {
   hasErrors.value[field] = isError;

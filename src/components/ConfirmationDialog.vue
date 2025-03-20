@@ -14,13 +14,13 @@ const onCancel = () => emits("cancel");
 </script>
 
 <template>
-  <div v-if="visible" class="fixed inset-0 flex items-center justify-center">
+  <div v-if="props.visible" class="fixed inset-0 flex items-center justify-center">
 
     <div class="absolute inset-0 bg-black/50"></div>
 
     <div class="bg-white rounded-lg shadow-lg p-6 max-w-sm w-full z-10">
-      <h3 class="text-lg font-bold mb-4">{{ title }}</h3>
-      <p class="text-gray-700 mb-6">{{ message }}</p>
+      <h3 class="text-lg font-bold mb-4">{{ props.title }}</h3>
+      <p class="text-gray-700 mb-6">{{ props.message }}</p>
       <div class="flex justify-end gap-4">
         <VButton @click="onCancel" variant="primary" size="md">
           Batal

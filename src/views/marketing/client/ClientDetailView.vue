@@ -4,7 +4,7 @@
 import { onMounted, ref } from 'vue'
 import { useClientStore } from '../../../stores/client.ts'
 import { useAuthStore } from '../../../stores/auth.ts'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import VNavbar from '../../../components/VNavbar.vue'
 import VButton from '../../../components/VButton.vue'
 import VLoading from '../../../components/VLoading.vue'
@@ -20,6 +20,7 @@ const submodules = ref({
 const clientStore = useClientStore()
 const authStore = useAuthStore()
 const route = useRoute();
+const router = useRouter();
 const clientId = route.params.id as string;
 
 const showDialog = ref(false);
@@ -35,6 +36,11 @@ onMounted(async () => {
     authStore.$patch(JSON.parse(savedAuth));
   }
 
+  if (!authStore.token) {
+    console.error('Token tidak tersedia');
+    return;
+  }
+
   await clientStore.getClientById(authStore.token, clientId)
 });
 
@@ -43,7 +49,7 @@ onMounted(async () => {
 <template>
   <VNavbar :title="title" :submodules="submodules"></VNavbar>
   <div v-if="clientStore.loading">
-    <VLoading :isDone="isLoaded" />
+    <VLoading :isDone="!clientStore.loading" />
   </div>
 
   <div v-else-if="clientStore.currentClient" class="w-full max-w-5xl mb-12 mt-23 ml-53">

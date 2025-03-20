@@ -5,6 +5,7 @@ import VLoading from '../components/VLoading.vue'
 import { useAuthStore } from '../stores/auth.ts'
 
 const title = ref({ 'Home': '/home' });
+const submodules = ref({ '': '' });
 
 const isLoaded = ref(true);
 

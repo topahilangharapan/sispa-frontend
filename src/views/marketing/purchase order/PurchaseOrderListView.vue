@@ -44,7 +44,7 @@
                 View
               </VButton>
               <VButton
-                variant="danger"
+                variant="delete"
                 size="sm"
                 @click="deleteOrder(order.id)"
               >

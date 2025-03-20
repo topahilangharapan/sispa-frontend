@@ -27,11 +27,13 @@ const formattedValue = computed({
     }
     return inputValue.value;
   },
+// Pastikan newValue adalah string
   set: (newValue) => {
+    const valueStr = String(newValue);
     if (props.isNumberOnly) {
-      inputValue.value = newValue.replace(/\D/g, '');
+      inputValue.value = valueStr.replace(/\D/g, '');
     } else {
-      inputValue.value = newValue;
+      inputValue.value = valueStr;
     }
   }
 });
@@ -40,11 +42,11 @@ const formattedValue = computed({
 const errorMessage = computed(() => {
   if (props.isEmpty && !inputValue.value) return 'Field tidak boleh kosong!';
   if (props.isNumberOnly) {
-    if (!/^-?\d*$/.test(inputValue.value)) return 'Hanya boleh angka!';
+    if (!/^-?\d*$/.test(String(inputValue.value))) return 'Hanya boleh angka!';
     if (!props.isNegative && Number(inputValue.value) < 0) return 'Nilai tidak boleh negatif!';
   }
-  if (props.minLength && inputValue.value.length < props.minLength) return `Minimal ${props.minLength} karakter!`;
-  if (props.maxLength && inputValue.value.length > props.maxLength) return `Maksimal ${props.maxLength} karakter!`;
+  if (props.minLength && String(inputValue.value).length < props.minLength) return `Minimal ${props.minLength} karakter!`;
+  if (props.maxLength && String(inputValue.value).length > props.maxLength) return `Maksimal ${props.maxLength} karakter!`;
   return '';
 });
 
