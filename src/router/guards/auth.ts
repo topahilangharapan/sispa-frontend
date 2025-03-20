@@ -33,13 +33,13 @@ export const roleGuard = (to: RouteLocationNormalized, _: RouteLocationNormalize
   }
 
   if (to.path === "/" && rolePermissions[userRole]) {
-    next();
+    next("/dashboard");
     return;
   }
 
   // Jika role tidak memiliki izin untuk halaman yang dituju, arahkan ke home
   if (!allowedRoutes.some(route => to.path.startsWith(route))) {
-    next("/");
+    next("/dashboard");
     return;
   }
 
