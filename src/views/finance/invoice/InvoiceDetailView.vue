@@ -1,6 +1,6 @@
 <template>
     <div class="invoice-container">
-      <VNavbar title="Invoice Detail" />
+<!--      <VNavbar title="Invoice Detail" />-->
 
       <div class="invoice-card">
         <h2>Invoice</h2>
@@ -76,32 +76,32 @@
           <br>
 
           <h3>Items</h3>
-          <table v-if="invoiceStore.selectedInvoice.items?.length">
-            <thead>
-              <tr>
-                <th>Title</th>
-                <th>Volume</th>
-                <th>Unit</th>
-                <th>Price per Unit</th>
-                <th>Sum</th>
-                <th>Description</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr
-                v-for="item in invoiceStore.selectedInvoice.items"
-                :key="item.id"
-              >
-                <td>{{ item.title }}</td>
-                <td>{{ item.volume }}</td>
-                <td>{{ item.unit }}</td>
-                <td>{{ item.pricePerUnit }}</td>
-                <td>{{ item.sum }}</td>
-                <td>{{ item.description }}</td>
-              </tr>
-            </tbody>
-          </table>
-          <p v-else>No items.</p>
+<!--          <table v-if="invoiceStore.selectedInvoice.items?.length">-->
+<!--            <thead>-->
+<!--              <tr>-->
+<!--                <th>Title</th>-->
+<!--                <th>Volume</th>-->
+<!--                <th>Unit</th>-->
+<!--                <th>Price per Unit</th>-->
+<!--                <th>Sum</th>-->
+<!--                <th>Description</th>-->
+<!--              </tr>-->
+<!--            </thead>-->
+<!--            <tbody>-->
+<!--              <tr-->
+<!--                v-for="item in invoiceStore.selectedInvoice.items"-->
+<!--                :key="item.id"-->
+<!--              >-->
+<!--                <td>{{ item.title }}</td>-->
+<!--                <td>{{ item.volume }}</td>-->
+<!--                <td>{{ item.unit }}</td>-->
+<!--                <td>{{ item.pricePerUnit }}</td>-->
+<!--                <td>{{ item.sum }}</td>-->
+<!--                <td>{{ item.description }}</td>-->
+<!--              </tr>-->
+<!--            </tbody>-->
+<!--          </table>-->
+<!--          <p v-else>No items.</p>-->
 
           <div class="actions">
             <VButton variant="primary" size="md" @click="goBack">
@@ -128,24 +128,24 @@
 
   import { useInvoiceStore } from '../../../stores/invoice.ts'
   import { useAuthStore } from '../../../stores/auth.ts'
-  import { useRoute, useRouter } from 'vue-router'
+  import { useRouter } from 'vue-router'
   import { onMounted, ref } from 'vue'
   import VButton from '../../../components/VButton.vue'
-  import VNavbar from '../../../components/VNavbar.vue'
+  // import VNavbar from '../../../components/VNavbar.vue'
   import ConfirmationDialog from '../../../components/ConfirmationDialog.vue'
 
   const invoiceStore = useInvoiceStore()
   const authStore = useAuthStore()
   const router = useRouter()
-  const route = useRoute()
+  // const route = useRoute()
   const showDialog = ref(false);
-  const invoiceId = route.params.id as number;
+  // const invoiceId = route.params.id as number;
 
   onMounted(async () => {
     if (!authStore.token) {
       return
     }
-    await invoiceStore.fetchDetail(invoiceId, authStore.token)
+    // await invoiceStore.fetchDetail(invoiceId, authStore.token)
     console.log("Selected Invoice:", invoiceStore.selectedInvoice)
   })
 
@@ -153,7 +153,7 @@
     router.push('/finance/invoice')
   }
   const deleteInvoice = async () => {
-    await invoiceStore.deleteInvoice(invoiceId);
+    // await invoiceStore.deleteInvoice(invoiceId);
     showDialog.value = false;
     router.push('/finance/invoice')
   }

@@ -3,11 +3,10 @@
 import { onMounted, ref } from 'vue'
 import { useFinalReportStore } from '../../../stores/finalReport.ts'
 import { useAuthStore } from '../../../stores/auth.ts'
-import { useRouter, useRoute } from 'vue-router'
+import { useRouter } from 'vue-router'
 import { DataTable } from 'simple-datatables'
 import VNavbar from '../../../components/VNavbar.vue'
 import VButton from '../../../components/VButton.vue'
-import ConfirmationDialog from '../../../components/ConfirmationDialog.vue'
 
 const authStore = useAuthStore();
 const router = useRouter();
@@ -19,8 +18,8 @@ const submodules = ref({
   "Klien": "/marketing/client"
 });
 const dataTableInstance = ref<DataTable | null>(null);
-const route = useRoute()
-const finalReportId = route.params.id as number;
+// const route = useRoute()
+// const finalReportId = route.params.id as number;
 const showDialog = ref(false);
 
 onMounted(async () => {
@@ -49,18 +48,18 @@ function goToDetail(invId: number) {
   router.push(`/marketing/final-report/${invId}`)
 }
 
-const deleteFinalReport = async (id: number) => {
-  await finalReportStore.deleteFinalReport(id);
-  showDialog.value = false;
-  router.push('/marketing/final-report');
-}
+// const deleteFinalReport = async (id: number) => {
+//   await finalReportStore.deleteFinalReport(id);
+//   showDialog.value = false;
+//   router.push('/marketing/final-report');
+// }
 
-async function downloadReport(invId: number) {
-  const success = await finalReportStore.downloadFinalReport(finalReportId, authStore.token);
-  if (success) {
-    window.$toast('success', 'Final report berhasil di-download!')
-  }
-}
+// async function downloadReport(invId: number) {
+//   const success = await finalReportStore.downloadFinalReport(finalReportId, authStore.token);
+//   if (success) {
+//     window.$toast('success', 'Final report berhasil di-download!')
+//   }
+// }
 </script>
 
 <template>
@@ -105,14 +104,14 @@ async function downloadReport(invId: number) {
                 <VButton @click="() => (showDialog = true)" size="sm" variant="delete">
                   Hapus
                 </VButton>
-                <ConfirmationDialog
-                  :visible="showDialog"
-                  title="Hapus Laporan Akhir"
-                  message="Apakah Anda yakin ingin menghapus Laporan Akhir?"
-                  @confirm="deleteFinalReport(inv.id)"
-                  @cancel="() => (showDialog = false)"
-                />
-                <VButton variant="secondary" size="sm" @click="downloadReport(inv.id)">Download PDF</VButton>
+<!--                <ConfirmationDialog-->
+<!--                  :visible="showDialog"-->
+<!--                  title="Hapus Laporan Akhir"-->
+<!--                  message="Apakah Anda yakin ingin menghapus Laporan Akhir?"-->
+<!--                  @confirm="deleteFinalReport(inv.id)"-->
+<!--                  @cancel="() => (showDialog = false)"-->
+<!--                />-->
+<!--                <VButton variant="primary" size="sm" @click="downloadReport(inv.id)">Download PDF</VButton>-->
               </td>
             </tr>
             </tbody>

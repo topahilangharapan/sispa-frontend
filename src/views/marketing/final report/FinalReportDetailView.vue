@@ -1,6 +1,6 @@
 <template>
     <div class="finalReport-container">
-      <VNavbar title="Detail Laporan Akhir" />
+<!--      <VNavbar title="Detail Laporan Akhir" />-->
 
       <div class="finalReport-card">
         <h2>Laporan Akhir</h2>
@@ -43,13 +43,13 @@
             <VButton @click="() => (showDialog = true)" size="sm" variant="delete">
               Hapus
             </VButton>
-            <ConfirmationDialog
-              :visible="showDialog"
-              title="Hapus Laporan Akhir"
-              message="Apakah Anda yakin ingin menghapus Laporan Akhir?"
-              @confirm="deleteFinalReport(inv.id)"
-              @cancel="() => (showDialog = false)"
-            />
+<!--            <ConfirmationDialog-->
+<!--              :visible="showDialog"-->
+<!--              title="Hapus Laporan Akhir"-->
+<!--              message="Apakah Anda yakin ingin menghapus Laporan Akhir?"-->
+<!--              @confirm="deleteFinalReport(inv.id)"-->
+<!--              @cancel="() => (showDialog = false)"-->
+<!--            />-->
           </div>
         </div>
       </div>
@@ -63,12 +63,12 @@
   import { useRoute, useRouter } from 'vue-router'
   import { onMounted, ref } from 'vue'
   import VButton from '../../../components/VButton.vue'
-  import VNavbar from '../../../components/VNavbar.vue'
-  import ConfirmationDialog from '../../../components/ConfirmationDialog.vue'
+  // import VNavbar from '../../../components/VNavbar.vue'
+  // import ConfirmationDialog from '../../../components/ConfirmationDialog.vue'
 
   const route = useRoute()
   const router = useRouter()
-  const finalReportId = route.params.id as number;
+  // const finalReportId = route.params.id as number;
   const showDialog = ref(false);
   const finalReportStore = useFinalReportStore()
   const authStore = useAuthStore()
@@ -86,20 +86,20 @@
     router.push('/marketing/final-report')
   }
 
-  async function deleteFinalReport() {
-    if (!authStore.token) return
-    const confirmed = confirm('Are you sure you want to delete this finalReport?')
-    if (!confirmed) return
-
-    const orderId = finalReportStore.selectedFinalReport?.id
-    if (!orderId) return
-
-    const success = await finalReportStore.deleteFinalReport(orderId, authStore.token)
-    if (success) {
-      window.$toast('success', 'Final Report deleted!')
-      router.push('/marketing/finalReport')
-    }
-  }
+  // async function deleteFinalReport() {
+  //   if (!authStore.token) return
+  //   const confirmed = confirm('Are you sure you want to delete this finalReport?')
+  //   if (!confirmed) return
+  //
+  //   const orderId = finalReportStore.selectedFinalReport?.id
+  //   if (!orderId) return
+  //
+  //   // const success = await finalReportStore.deleteFinalReport(orderId, authStore.token)
+  //   if (success) {
+  //     window.$toast('success', 'Final Report deleted!')
+  //     router.push('/marketing/finalReport')
+  //   }
+  // }
   </script>
 
   <style scoped>
