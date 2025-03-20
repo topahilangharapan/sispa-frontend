@@ -56,7 +56,7 @@ onMounted(async () => {
     <div class="w-full max-w-3xl mb-12 mt-16">
       <div class="bg-white p-6 rounded-2xl shadow-lg">
         <div class="flex items-center justify-between mb-2">
-          <h2 class="heading-2">Detail Client</h2>
+          <h2 class="heading-2">Detail Klien</h2>
           <div class="flex space-x-2">
             <RouterLink :to="`/marketing/client/${clientId}/update`">
               <VButton size="sm" variant="primary">

@@ -20,6 +20,7 @@ const submodules = ref({
 const clientStore = useClientStore()
 const authStore = useAuthStore()
 const route = useRoute()
+const originalData = ref<typeof formData.value>();
 
 const formData = ref({
   id: '',
@@ -111,7 +112,7 @@ const submitForm = async () => {
 
     <div v-else class="w-[100%] flex flex-col gap-2 divide-y-2 bg-white drop-shadow-xl p-6 rounded-xl">
       <div class="w-full flex justify-between">
-        <h2 class="mb-2 heading-2">Update Client</h2>
+        <h2 class="mb-2 heading-2">Update Klien</h2>
         <hr class="border-gray-300 border-t-2 mb-4" />
       </div>
 
