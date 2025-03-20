@@ -39,7 +39,7 @@ export const useClientStore = defineStore ('client', {
       this.error = null
 
       try {
-        const response = await fetch(`http://localhost:8080/api/client/${id}`, {
+        const response = await fetch(apiUrl+ '/client/${id}', {
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`

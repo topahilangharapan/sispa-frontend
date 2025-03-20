@@ -40,7 +40,7 @@ export const useVendorStore = defineStore ('vendor', {
       this.error = null
 
       try {
-        const response = await fetch(`http://localhost:8080/api/vendor/${id}`, {
+        const response = await fetch(apiUrl+ '/vendor/${id}', {
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`
