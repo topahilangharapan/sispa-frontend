@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  vue-app:
+    image: topahilangharapan/b01-radiant-fe:latest
+    ports:
+      - "80:80"
+    environment:
+      - NODE_ENV=production
+      - VITE_API_LOCAL_URL=${BACKEND_URL}
+    restart: always
