@@ -88,7 +88,7 @@ const submitForm = async () => {
 
     if (isSuccess) {
       console.log('Update successful. Redirecting...');
-      router.push("/purchasing/vendor");
+      router.push(`/purchasing/vendor/${formData.value.id}`);
     } else {
       console.log('Update failed.');
     }

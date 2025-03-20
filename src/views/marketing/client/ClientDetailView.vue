@@ -134,7 +134,13 @@ onMounted(async () => {
           </div>
         </div>
         <div class="flex justify-center mt-8">
-          <VButton @click="router.back()" type="button" size="md" variant="delete" class="bg-slate-600 hover:bg-slate-800 text-white">
+          <VButton 
+            @click="router.push('/marketing/client')" 
+            type="button" 
+            size="md" 
+            variant="delete" 
+            class="bg-slate-600 hover:bg-slate-800 text-white"
+          >
             Kembali
           </VButton>
         </div>
