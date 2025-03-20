@@ -10,6 +10,7 @@ default:
     - mkdir -p ~/.ssh
     - chmod 700 ~/.ssh
     - echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
+    - echo "Backend URL ${BACKEND_URL}"
 
 stages:
   - build
