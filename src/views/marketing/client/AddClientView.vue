@@ -9,9 +9,11 @@ import VLoading from '../../../components/VLoading.vue'
 import VInputField from '../../../components/VInputField.vue'
 import VTextArea from '../../../components/VTextArea.vue'
 import VButton from '../../../components/VButton.vue'
+import { useRouter } from 'vue-router'
 
 const clientStore = useClientStore()
 const authStore = useAuthStore()
+const router = useRouter()
 
 const title = ref({ 'Marketing': '/marketing' });
 const submodules = ref({
@@ -29,7 +31,7 @@ const formData = ref({
   description: '',
 })
 
-const hasErrors = ref({
+const hasErrors = ref<{ [key: string]: boolean }>({
   name: true,
   contact: true,
   email: true,

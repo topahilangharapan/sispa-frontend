@@ -27,11 +27,11 @@ watch(
 const errorMessage = computed(() => {
   if (props.isEmpty && !inputValue.value) return 'Field tidak boleh kosong!';
   if (props.isNumberOnly) {
-    if (!/^-?\d*$/.test(inputValue.value)) return 'Hanya boleh angka!';
+    if (!/^-?\d*$/.test(String(inputValue.value))) return 'Hanya boleh angka!';
     if (!props.isNegative && Number(inputValue.value) < 0) return 'Nilai tidak boleh negatif!';
   }
-  if (props.minLength && inputValue.value.length < props.minLength) return `Minimal ${props.minLength} karakter!`;
-  if (props.maxLength && inputValue.value.length > props.maxLength) return `Maksimal ${props.maxLength} karakter!`;
+  if (props.minLength && String(inputValue.value).length < props.minLength) return `Minimal ${props.minLength} karakter!`;
+  if (props.maxLength && String(inputValue.value).length > props.maxLength) return `Maksimal ${props.maxLength} karakter!`;
   return '';
 });
 
@@ -45,7 +45,7 @@ watch(inputValue, () => {
 const preventNonNumeric = (event: KeyboardEvent) => {
   const char = event.key;
   if (props.isNumberOnly) {
-    if (!/[\d-]/.test(char) || (char === '-' && inputValue.value.length > 0)) {
+    if (!/[\d-]/.test(char) || (char === '-' && String(inputValue.value).length > 0)) {
       event.preventDefault();
     }
   }

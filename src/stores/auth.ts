@@ -1,16 +1,15 @@
 import { defineStore } from "pinia";
 import { jwtDecode } from 'jwt-decode';
-import type { CommonResponseInterface } from "@/interfaces/common.interface";
 
-import { nextTick, reactive } from 'vue'
 
 const apiUrl = import.meta.env.VITE_API_LOCAL_URL;
 
 import type {
   UserInterface,
   LoginRequestInterface,
-  LoginResponseInterface, RegisterRequestInterface
+  LoginResponseInterface, RegisterRequestInterface, RegisterResponseInterface, RoleResponseInterface
 } from '../interfaces/auth.interface.ts'
+import type { CommonResponseInterface } from '../interfaces/common.interface.ts'
 
 export const useAuthStore = defineStore('auth', {
     state: () => ({
@@ -34,11 +33,9 @@ export const useAuthStore = defineStore('auth', {
           const data: CommonResponseInterface<LoginResponseInterface> = await response.json();
 
           if (response.ok) {
-            // Decode token untuk mendapatkan informasi user
-            const decodedToken = jwtDecode(data.data.token);
-
+            const decodedToken = jwtDecode<any>(data.data.token);
             const userDetail: UserInterface = {
-              username: decodedToken.sub, // Biasanya sub berisi username
+              username: decodedToken.sub || "",
               name: decodedToken.name || "",
               role: decodedToken.role || "",
             };
@@ -128,7 +125,7 @@ export const useAuthStore = defineStore('auth', {
             },
           )
 
-          const data: CommonResponseInterface<AuthInterface> =
+          const data: CommonResponseInterface<RegisterResponseInterface> =
             await response.json()
           if (response.ok) {
             window.$toast('success', "Berhasil menambahkan user dengan username " + data.data.username);
@@ -141,7 +138,7 @@ export const useAuthStore = defineStore('auth', {
         } catch (err) {
           this.error = `Gagal menambahkan user: ${(err as Error).message}`
 
-          window.$toast(this.error);
+          window.$toast('error', this.error);
           return false;
         } finally {
           this.loading = true
@@ -164,7 +161,7 @@ export const useAuthStore = defineStore('auth', {
             },
           )
 
-          const data: CommonResponseInterface<AuthInterface> =
+          const data: CommonResponseInterface<RoleResponseInterface> =
             await response.json()
 
           if (response.ok) {
@@ -176,37 +173,11 @@ export const useAuthStore = defineStore('auth', {
         } catch (err) {
           this.error = `Gagal mendapatkan daftar role: ${(err as Error).message}`
 
-          window.$toast(this.error);
+          window.$toast("error", this.error);
         } finally {
           this.loading = false
         }
       },
-
-      async getUserDetail(id: string, username: string, email: string) {
-        this.loading = true
-        this.error = null
-
-        try {
-          const response = await fetch(`http://localhost:8085/api/user/detail?id=${id}&username=${username}&email=${email}`, {
-            method: 'GET',
-            headers: {'Content-Type': 'application/json',
-                      'Authorization': 'Bearer ' + localStorage.getItem('token')},
-          })
-          const data: CommonResponseInterface<AuthInterface> =
-            await response.json()
-
-          this.userDetail = data.data;
-
-          localStorage.setItem('username', data.data.username)
-          localStorage.setItem('email', data.data.email)
-          localStorage.setItem('userId', data.data.id)
-
-        } catch (error) {
-          this.error = `Gagal mengambil proyek ${error}`
-        } finally {
-          this.loading = false
-        }
-      }
     },
     persist: true // Aktifkan persist agar data tetap ada
 })

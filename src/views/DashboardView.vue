@@ -4,12 +4,13 @@ import { ref } from 'vue'
 import VLoading from '../components/VLoading.vue'
 
 const title = ref({ 'Dashboard': '/dashboard' });
+const submodules = ref({ '': '' });
 </script>
 
 <template>
   <VNavbar :title="title" :submodules="submodules"></VNavbar>/
   <div>
-    <VLoading :isDone="isLoaded" />
+    <VLoading :isDone="true" />
   </div>
 </template>
 

@@ -3,7 +3,7 @@
 import { onMounted, ref } from 'vue'
 import { useClientStore } from '../../../stores/client.ts'
 import { useAuthStore } from '../../../stores/auth.ts'
-import type { DataTable } from 'simple-datatables'
+import { DataTable } from 'simple-datatables'
 import VNavbar from '../../../components/VNavbar.vue'
 import VLoading from '../../../components/VLoading.vue'
 import VButton from '../../../components/VButton.vue'
@@ -32,6 +32,11 @@ onMounted(async () => {
     authStore.$patch(JSON.parse(savedAuth));
   }
 
+  if (!authStore.token) {
+    console.error('Token tidak tersedia');
+    return;
+  }
+
   await clientStore.getClients(authStore.token)
   if (
     document.getElementById('default-table') &&
@@ -45,24 +50,12 @@ onMounted(async () => {
   }
 });
 
-const reloadTable = async () => {
-  if (
-    document.getElementById('default-table') &&
-    typeof DataTable != 'undefined'
-  ) {
-    new DataTable('#default-table', {
-      searchable: false,
-      sortable: true,
-      paging: true,
-    })
-  }
-}
 </script>
 
 <template>
   <VNavbar :title="title" :submodules="submodules"></VNavbar>
   <div v-if="clientStore.loading">
-    <VLoading :isDone="isLoaded" />
+    <VLoading :isDone="!clientStore.loading" />
   </div>
 
   <div class="p-8 bg-white-100 min-h-screen flex flex-col items-center">

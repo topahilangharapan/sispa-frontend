@@ -89,7 +89,7 @@
             <VButton variant="primary" size="md" @click="goBack">
               Back to List
             </VButton>
-            <VButton variant="danger" size="md" @click="deleteOrder">
+            <VButton variant="delete" size="md" @click="deleteOrder">
               Delete
             </VButton>
           </div>

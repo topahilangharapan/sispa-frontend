@@ -32,7 +32,8 @@ onMounted(async () => {
     authStore.$patch(JSON.parse(savedAuth));
   }
 
-  await vendorStore.getVendorById(authStore.token, vendorId)
+  const token = authStore.token ?? '';
+  await vendorStore.getVendorById(token, vendorId)
 });
 
 </script>
@@ -40,7 +41,7 @@ onMounted(async () => {
 <template>
   <VNavbar :title="title" :submodules="submodules"></VNavbar>
   <div v-if="vendorStore.loading">
-    <VLoading :isDone="isLoaded" />
+    <VLoading :isDone="!vendorStore.loading" />
   </div>
 
   <div v-else-if="vendorStore.currentVendor" class="w-full max-w-5xl mb-12 mt-23 ml-53">

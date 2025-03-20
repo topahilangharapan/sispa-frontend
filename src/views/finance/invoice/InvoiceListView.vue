@@ -4,7 +4,7 @@ import { onMounted, ref } from 'vue'
 import { useInvoiceStore } from '../../../stores/invoice.ts'
 import { useAuthStore } from '../../../stores/auth.ts'
 import { useRouter } from 'vue-router'
-import type { DataTable } from 'simple-datatables'
+import { DataTable } from 'simple-datatables'
 import VNavbar from '../../../components/VNavbar.vue'
 import VButton from '../../../components/VButton.vue'
 
@@ -13,7 +13,6 @@ const submodules = ref({ "Invoice": "/finance/invoice" });
 const invoiceStore = useInvoiceStore()
 const authStore = useAuthStore()
 const router = useRouter()
-const searchTerm = ref('')
 const dataTableInstance = ref<DataTable | null>(null);
 
 onMounted(async () => {
@@ -50,8 +49,8 @@ async function deleteInvoice(invId: number) {
   }
 }
 
-async function downloadInvoice(invId: number) {
-  const success = await invoiceStore.downloadInvoice(invId, authStore.token);
+async function downloadInvoice() {
+  const success = await invoiceStore.downloadInvoice();
   if (success) {
     window.$toast('success', 'Invoice berhasil di-download!')
   }
@@ -100,7 +99,7 @@ async function downloadInvoice(invId: number) {
               <td class="px-4 py-2 text-center">
                 <VButton variant="primary" size="sm" @click="goToDetail(inv.id)">Detail</VButton>
                 <VButton variant="delete" size="sm" @click="deleteInvoice(inv.id)">Delete</VButton>
-                <VButton variant="secondary" size="sm" @click="downloadInvoice(inv.id)">Download PDF</VButton>
+                <VButton variant="primary" size="sm" @click="downloadInvoice()">Download PDF</VButton>
               </td>
             </tr>
             </tbody>

@@ -4,7 +4,7 @@ import { onMounted, ref } from 'vue'
 import { useFinalReportStore } from '../../../stores/finalReport.ts'
 import { useAuthStore } from '../../../stores/auth.ts'
 import { useRouter } from 'vue-router'
-import type { DataTable } from 'simple-datatables'
+import { DataTable } from 'simple-datatables'
 import VNavbar from '../../../components/VNavbar.vue'
 import VButton from '../../../components/VButton.vue'
 
@@ -17,7 +17,6 @@ const submodules = ref({
   "Final Report": "/marketing/final-report",
   "Klien": "/marketing/client"
 });
-const searchTerm = ref('')
 const dataTableInstance = ref<DataTable | null>(null);
 
 onMounted(async () => {
@@ -46,22 +45,16 @@ function goToDetail(invId: number) {
   router.push(`/marketing/final-report/${invId}`)
 }
 
-async function deleteFinalReport(invId: number) {
-  const confirmed = confirm('Apakah Anda yakin akan menghapus final report ini?')
-  if (!confirmed) return
-  if (!authStore.token) return
-  const success = await finalReportStore.deleteFinalReport(invId, authStore.token)
-  if (success) {
-    window.$toast('success', 'Final report berhasil dihapus!')
-  }
-}
+// async function deleteFinalReport(invId: number) {
+//   const confirmed = confirm('Apakah Anda yakin akan menghapus final report ini?')
+//   if (!confirmed) return
+//   if (!authStore.token) return
+//   const success = await finalReportStore.deleteFinalReport(invId, authStore.token)
+//   if (success) {
+//     window.$toast('success', 'Final report berhasil dihapus!')
+//   }
+// }
 
-async function downloadReport(invId: number) {
-  const success = await finalReportStore.downloadReport(invId, authStore.token);
-  if (success) {
-    window.$toast('success', 'Final report berhasil di-download!')
-  }
-}
 </script>
 
 <template>
@@ -103,8 +96,8 @@ async function downloadReport(invId: number) {
               <td class="px-4 py-2 text-left">{{ inv.eventDate }}</td>
               <td class="px-4 py-2 text-center">
                 <VButton variant="primary" size="sm" @click="goToDetail(inv.id)">Detail</VButton>
-                <VButton variant="delete" size="sm" @click="deleteFinalReport(inv.id)">Delete</VButton>
-                <VButton variant="secondary" size="sm" @click="deleteFinalReport(inv.id)">Download PDF</VButton>
+<!--                <VButton variant="delete" size="sm" @click="deleteFinalReport(inv.id)">Delete</VButton>-->
+<!--                <VButton variant="primary" size="sm" @click="deleteFinalReport(inv.id)">Download PDF</VButton>-->
               </td>
             </tr>
             </tbody>

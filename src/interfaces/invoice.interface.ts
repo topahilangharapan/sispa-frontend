@@ -1,4 +1,5 @@
 export interface InvoiceInterface {
+  id: number;
   receiver: string;
   placeSigned: string;
   dateCreated: string;
@@ -10,7 +11,9 @@ export interface InvoiceInterface {
   bankName: string,
   accountNumber: string,
   onBehalf: string,
-  event: string
+  event: string,
+  noPo: string,
+  noInvoice: string
 }
 
 export interface InvoiceRequestResponseInterface {
