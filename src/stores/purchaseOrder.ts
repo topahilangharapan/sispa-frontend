@@ -42,23 +42,23 @@ export const usePurchaseOrderStore = defineStore('purchaseOrder', {
           const data: CommonResponseInterface<PurchaseOrderRequestResponseInterface> = await response.json();
 
           if (response.ok) {
-            if (typeof data.data.pdf === 'string') {
-              const blob = base64ToBlob(data.data.pdf);
-              const url = URL.createObjectURL(blob);
-
-              const a = document.createElement("a");
-              a.href = url;
-              a.download = data.data.fileName;
-              document.body.appendChild(a);
-              a.click();
-              window.URL.revokeObjectURL(url);
+            // if (typeof data.data.pdf === 'string') {
+              // const blob = base64ToBlob(data.data.pdf);
+              // const url = URL.createObjectURL(blob);
+              //
+              // const a = document.createElement("a");
+              // a.href = url;
+              // a.download = data.data.fileName;
+              // document.body.appendChild(a);
+              // a.click();
+              // window.URL.revokeObjectURL(url);
 
               window.$toast('success', "Purchase Order berhasil dibuat!");
               return true;
-            } else {
-              window.$toast('error', "Data PDF tidak valid.");
-              return false;
-            }
+            // } else {
+            //   window.$toast('error', "Data PDF tidak valid.");
+            //   return false;
+            // }
           } else {
             window.$toast('error', "Gagal membuat Purchase Order: " + data.message);
             return false; // Login gagal
