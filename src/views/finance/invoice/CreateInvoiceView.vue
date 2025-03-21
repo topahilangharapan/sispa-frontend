@@ -118,7 +118,7 @@ const onSelectPurchaseOrder = (poId: string) => {
   <VNavbar :title=title :submodules=submodules class="fixed top-0 left-0 w-full z-50" />
   <VLoading v-if="purchaseOrderStore.loading || invoiceStore.loading" class="flex" />
 
-  <div class="p-8 mt-12 w-full min-h-screen">
+  <div v-else class="p-8 mt-12 w-full min-h-screen">
     <h2 class="mb-6">Tambah Invoice</h2>
 
     <!-- Section: Pilih Purchase Order -->

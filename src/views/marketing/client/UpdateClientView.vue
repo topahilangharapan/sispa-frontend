@@ -20,7 +20,6 @@ const submodules = ref({
 const clientStore = useClientStore()
 const authStore = useAuthStore()
 const route = useRoute()
-const originalData = ref<typeof formData.value>();
 
 const formData = ref({
   id: '',

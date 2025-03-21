@@ -17,12 +17,12 @@ export const usePurchaseOrderStore = defineStore('purchaseOrder', {
     }),
     actions: {
       async create(body: PurchaseOrderInterface, token: string): Promise<boolean> {
-        function base64ToBlob(base64: string, contentType = "application/pdf") {
-          const byteCharacters = atob(base64); // Decode Base64
-          const byteNumbers = new Array(byteCharacters.length).fill(0).map((_, i) => byteCharacters.charCodeAt(i));
-          const byteArray = new Uint8Array(byteNumbers);
-          return new Blob([byteArray], { type: contentType });
-        }
+        // function base64ToBlob(base64: string, contentType = "application/pdf") {
+        //   const byteCharacters = atob(base64); // Decode Base64
+        //   const byteNumbers = new Array(byteCharacters.length).fill(0).map((_, i) => byteCharacters.charCodeAt(i));
+        //   const byteArray = new Uint8Array(byteNumbers);
+        //   return new Blob([byteArray], { type: contentType });
+        // }
 
         this.loading = true;
         this.error = null;
@@ -42,23 +42,23 @@ export const usePurchaseOrderStore = defineStore('purchaseOrder', {
           const data: CommonResponseInterface<PurchaseOrderRequestResponseInterface> = await response.json();
 
           if (response.ok) {
-            if (typeof data.data.pdf === 'string') {
-              const blob = base64ToBlob(data.data.pdf);
-              const url = URL.createObjectURL(blob);
-
-              const a = document.createElement("a");
-              a.href = url;
-              a.download = data.data.fileName;
-              document.body.appendChild(a);
-              a.click();
-              window.URL.revokeObjectURL(url);
+            // if (typeof data.data.pdf === 'string') {
+              // const blob = base64ToBlob(data.data.pdf);
+              // const url = URL.createObjectURL(blob);
+              //
+              // const a = document.createElement("a");
+              // a.href = url;
+              // a.download = data.data.fileName;
+              // document.body.appendChild(a);
+              // a.click();
+              // window.URL.revokeObjectURL(url);
 
               window.$toast('success', "Purchase Order berhasil dibuat!");
               return true;
-            } else {
-              window.$toast('error', "Data PDF tidak valid.");
-              return false;
-            }
+            // } else {
+            //   window.$toast('error', "Data PDF tidak valid.");
+            //   return false;
+            // }
           } else {
             window.$toast('error', "Gagal membuat Purchase Order: " + data.message);
             return false; // Login gagal
