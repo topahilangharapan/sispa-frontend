@@ -63,12 +63,14 @@ async function deleteFinalReport() {
   }
 }
 
-async function downloadReport(id: number) {
+async function downloadReport(id: number, token: string) {
   try {
-    await finalReportStore.downloadFinalReport(id, authStore.token || '');
-    window.$toast('success', 'Final report berhasil di-download!');
+    const success = await finalReportStore.downloadFinalReport(id, token);
+    if (success) {
+      console.log('Download successful');
+    }
   } catch (error) {
-    window.$toast('error', 'Gagal mengunduh final report!');
+    console.error('Error in download handler:', error);
   }
 }
 
@@ -129,7 +131,7 @@ async function downloadReport(id: number) {
                 >
                   Hapus
                 </VButton>
-                <VButton variant="primary" size="sm" @click="downloadReport(inv.id)">Download PDF</VButton>
+                <VButton variant="primary" size="sm" @click="downloadReport(inv.id, authStore.token || '')">Download PDF</VButton>
               </td>
             </tr>
             </tbody>
