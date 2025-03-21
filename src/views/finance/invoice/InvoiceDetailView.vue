@@ -141,7 +141,7 @@
   const router = useRouter()
   const route = useRoute()
   const showDialog = ref(false);
-  const invoiceId = Number(route.params.id);
+  const invoiceId = Number(route.params.id) || 0;
 
   onMounted(async () => {
     if (!authStore.token) {

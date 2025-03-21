@@ -77,6 +77,39 @@ export const useInvoiceStore = defineStore('invoice', {
         this.loading = false;
       }
     },
+    async deleteInvoice(id: number, token: string): Promise<boolean> {
+      this.loading = true;
+      this.error = null;
+
+      try {
+        const response = await fetch(`${apiUrl}/invoice/${id}`, {
+          method: "DELETE",
+          headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          this.invoices = this.invoices.filter((inv: InvoiceInterface) => inv.id !== id);
+          window.$toast("success", "Invoice berhasil dihapus!");
+          return true;
+        } else {
+          this.error = data.message || "Gagal menghapus invoice.";
+          window.$toast("error", this.error ? this.error : "Terjadi kesalahan yang tidak diketahui.");
+
+          return false;
+        }
+      } catch (err) {
+        this.error = (err as Error).message;
+        window.$toast("error", `Gagal menghapus invoice: ${this.error}`);
+        return false;
+      } finally {
+        this.loading = false;
+      }
+    },
     async fetchDetail(id: number, token: string): Promise<boolean> {
       this.loading = true;
       this.error = null;
@@ -103,34 +136,6 @@ export const useInvoiceStore = defineStore('invoice', {
         this.loading = false;
       }
     },
-    async deleteInvoice(id: number, token: string): Promise<boolean> {
-      this.loading = true;
-      this.error = null;
-
-      try {
-        const response = await fetch(`${apiUrl}/invoice/${id}`, {
-          method: "DELETE",
-          headers: {
-            "Authorization": `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        });
-
-        const data = await response.json();
-        if (response.ok) {
-          this.invoices = this.invoices.filter((inv: InvoiceInterface) => inv.id !== id);
-          return true;
-        } else {
-          this.error = data.message || "Failed to delete invoice.";
-          return false;
-        }
-      } catch (err) {
-        this.error = (err as Error).message;
-        return false;
-      } finally {
-        this.loading = false;
-      }
-    },
     async downloadInvoice(id: number, token: string): Promise<boolean> {
       this.loading = true;
       this.error = null;
@@ -139,31 +144,43 @@ export const useInvoiceStore = defineStore('invoice', {
         const response = await fetch(`${apiUrl}/invoice/${id}/download`, {
           method: "GET",
           headers: {
-            "Authorization": `Bearer ${token}`,
-            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
           },
         });
 
-        const data = await response.json();
-        if (!data.base64 || !data.fileName) {
-          throw new Error("Invalid file response.");
+        if (!response.ok) {
+          throw new Error(`Failed to download invoice: ${response.statusText}`);
         }
 
-        // Convert Base64 to Blob
-        const byteCharacters = atob(data.base64);
-        const byteNumbers = new Array(byteCharacters.length)
-          .fill(0)
-          .map((_, i) => byteCharacters.charCodeAt(i));
-        const byteArray = new Uint8Array(byteNumbers);
-        const blob = new Blob([byteArray], { type: "application/pdf" });
+        // Get the filename from the Content-Disposition header
+        const contentDisposition = response.headers.get('Content-Disposition');
+        // Extract filename from Content-Disposition header
+        let filename;
+        if (contentDisposition) {
+          const filenameMatch = contentDisposition.match(/filename=([^;]+)/);
+          if (filenameMatch && filenameMatch[1]) {
+            // Remove quotes if present
+            filename = filenameMatch[1].replace(/"/g, '').replace(/'/g, '');
+          } else {
+            // If we couldn't extract the filename, use the invoice ID
+            filename = `invoice_${id}.pdf`;
+          }
+        } else {
+          // If there's no Content-Disposition header, use the invoice ID
+          filename = `invoice_${id}.pdf`;
+        }
 
-        // Create a URL and download the file
+        // Get the blob from the response
+        const blob = await response.blob();
+
+        // Create a URL for the blob and trigger download
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
-        a.download = data.fileName;
+        a.download = filename;
         document.body.appendChild(a);
         a.click();
+        document.body.removeChild(a);
         URL.revokeObjectURL(url);
 
         window.$toast("success", "Invoice berhasil diunduh!");
@@ -176,5 +193,6 @@ export const useInvoiceStore = defineStore('invoice', {
         this.loading = false;
       }
     }
-  }
+    }
+
 })

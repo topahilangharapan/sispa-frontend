@@ -112,35 +112,57 @@ export const useFinalReportStore = defineStore('finalReport', {
       }
     },
 
-    async downloadFinalReport(id: number, token:string) {
+    async downloadFinalReport(id: number, token: string): Promise<boolean> {
       this.loading = true;
       this.error = null;
 
       try {
+        // Make request to download endpoint
         const response = await fetch(`${apiUrl}/final-report/${id}/download`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
-            'Content-Type': 'multipart/form-data',
           },
         });
 
-        const blob = await response.blob(); // Ubah respons ke Blob
+        // Check if response is successful
+        if (!response.ok) {
+          throw new Error(`Error: ${response.status} ${response.statusText}`);
+        }
+
+        // Get the filename from the Content-Disposition header if available
+        const contentDisposition = response.headers.get('Content-Disposition');
+        let filename = `FinalReport_${id}.pdf`;
+        if (contentDisposition) {
+          const filenameMatch = contentDisposition.match(/filename="(.+)"/);
+          if (filenameMatch && filenameMatch[1]) {
+            filename = filenameMatch[1];
+          }
+        }
+
+        // Convert response to blob
+        const blob = await response.blob();
         const url = window.URL.createObjectURL(blob);
 
-        // Buat elemen <a> untuk download
+        // Create download link and trigger download
         const a = document.createElement("a");
         a.href = url;
-        a.download = `FinalReport_${id}.pdf`; // Nama file default
+        a.download = filename;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
 
+        // Clean up URL object
         window.URL.revokeObjectURL(url);
-        window.$toast("success", "Final report berhasil di-download!");
+
+        window.$toast("success", "Laporan akhir berhasil di-download!");
+        return true;
       } catch (error) {
-        window.$toast("error", "Gagal mengunduh final report!");
+        const errorMessage = error instanceof Error ? error.message : "Unknown error";
+        window.$toast("error", `Gagal mengunduh laporan akhir: ${errorMessage}`);
         console.error(error);
+        this.error = errorMessage;
+        return false;
       } finally {
         this.loading = false;
       }
