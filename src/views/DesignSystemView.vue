@@ -150,6 +150,7 @@ const submitForm = () => {
               placeholder="Enter text here"
               :isEmpty="true"
               @update:hasError="updateErrorStatus('noInput', $event)"
+              @update:modelValue="(value) => console.log('Current Value:', value)"
             />
           </div>
           <div>
@@ -158,6 +159,7 @@ const submitForm = () => {
               placeholder="Enter numbers"
               :isNumberOnly="true"
               @update:hasError="updateErrorStatus('numberOnly', $event)"
+              @update:modelValue="(value) => console.log('Current Value:', value)"
             />
           </div>
           <div>
@@ -167,6 +169,7 @@ const submitForm = () => {
               :isNumberOnly="true"
               :useThousandSeparator="true"
               @update:hasError="updateErrorStatus('numberOnly', $event)"
+              @update:modelValue="(value) => console.log('Current Value:', value)"
             />
           </div>
           <div>
@@ -176,6 +179,7 @@ const submitForm = () => {
               :isNumberOnly="true"
               :isNegative="false"
               @update:hasError="updateErrorStatus('positiveNumberOnly', $event)"
+              @update:modelValue="(value) => console.log('Current Value:', value)"
             />
           </div>
           <div>
@@ -184,6 +188,7 @@ const submitForm = () => {
               placeholder="Enter text here"
               :minLength="5"
               @update:hasError="updateErrorStatus('minLength', $event)"
+              @update:modelValue="(value) => console.log('Current Value:', value)"
             />
           </div>
           <div>
@@ -192,6 +197,7 @@ const submitForm = () => {
               placeholder="Enter text here"
               :maxLength="5"
               @update:hasError="updateErrorStatus('maxLength', $event)"
+              @update:modelValue="(value) => console.log('Current Value:', value)"
             />
           </div>
           <div class="flex items-center justify-end mt-4 h-16">

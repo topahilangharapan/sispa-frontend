@@ -18,13 +18,6 @@ const emit = defineEmits(['update:modelValue', 'update:hasError']);
 
 const inputValue = ref(props.modelValue || '');
 
-watch(
-  () => props.modelValue,
-  (newValue) => {
-    inputValue.value = newValue || '';
-  }
-)
-
 // **Format angka jika isNumberOnly = true & useThousandSeparator = true & useThousandSeparator = true**
 const formattedValue = computed({
   get: () => {
@@ -57,14 +50,15 @@ const errorMessage = computed(() => {
   return '';
 });
 
-// **Watch perubahan value & emit ke parent**
 watch(inputValue, () => {
-  let valueToEmit = inputValue.value;
+  let valueToEmit: string | number = inputValue.value;
+
   if (props.type === 'date' && valueToEmit) {
     valueToEmit = new Date(valueToEmit).toISOString().split('T')[0]; // Format YYYY-MM-DD
   } else if (props.isNumberOnly) {
-    valueToEmit = Number(inputValue.value) || 0;
+    valueToEmit = String(valueToEmit); // Tetap string agar leading zero terjaga
   }
+
   emit('update:modelValue', valueToEmit);
   emit('update:hasError', !!errorMessage.value);
 });
