@@ -13,7 +13,19 @@ export interface InvoiceInterface {
   onBehalf: string,
   event: string,
   noPo: string,
-  noInvoice: string
+  noInvoice: string,
+  items: InvoiceItemInterface[],
+}
+
+export interface InvoiceItemInterface {
+  id: number;
+  tempId: string;
+  title: string;
+  volume: number;
+  unit: string;
+  pricePerUnit: number;
+  description: string;
+  sum: number;
 }
 
 export interface InvoiceRequestResponseInterface {

@@ -53,13 +53,13 @@
           <VButton @click="confirmDelete(finalReportStore.selectedFinalReport.id)" size="sm" variant="delete">
             Hapus
           </VButton>
-<!--          <ConfirmationDialog-->
-<!--            :visible="showDialog"-->
-<!--            title="Hapus Laporan Akhir"-->
-<!--            message="Apakah Anda yakin ingin menghapus Laporan Akhir?"-->
-<!--            @confirm="deleteFinalReport"-->
-<!--            @cancel="showDialog = false"-->
-<!--          />-->
+          <ConfirmationDialog
+            :visible="showDialog"
+            title="Hapus Laporan Akhir"
+            message="Apakah Anda yakin ingin menghapus Laporan Akhir?"
+            @confirm="deleteFinalReport"
+            @cancel="showDialog = false"
+          />
         </div>
       </div>
     </div>
@@ -73,7 +73,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { onMounted, ref } from 'vue'
 import VButton from '../../../components/VButton.vue'
 import VNavbar from '../../../components/VNavbar.vue'
-// import ConfirmationDialog from '../../../components/ConfirmationDialog.vue'
+import ConfirmationDialog from '../../../components/ConfirmationDialog.vue'
 
 const title = ref({ 'Marketing': '/marketing' });
 const submodules = ref({ "Final Report": "/marketing/final-report" });
@@ -103,18 +103,21 @@ function confirmDelete(invId: number) {
   showDialog.value = true;
 }
 
-// async function deleteFinalReport() {
-//   if (!selectedReportId.value) return;
-//
-//   const success = await finalReportStore.deleteFinalReport(Number(route.params.id));
-//   if (success) {
-//     window.$toast('success', 'Final report berhasil dihapus!');
-//     router.push('/marketing/final-report'); // Redirect ke list setelah hapus
-//     return true
-//   }
-//   selectedReportId.value = null;
-//   showDialog.value = false;
-// }
+async function deleteFinalReport() {
+  if (!selectedReportId.value) return;
+
+  try {
+    await finalReportStore.deleteFinalReport(Number(route.params.id)); // Tidak menyimpan return value
+    window.$toast('success', 'Final report berhasil dihapus!');
+    router.push('/marketing/final-report'); // Redirect setelah hapus
+  } catch (error) {
+    window.$toast('error', 'Gagal menghapus final report!');
+  } finally {
+    selectedReportId.value = null;
+    showDialog.value = false;
+  }
+}
+
 </script>
 
 <style scoped>

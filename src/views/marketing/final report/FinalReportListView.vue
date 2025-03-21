@@ -1,13 +1,12 @@
 <script setup lang="ts">
-
-import { onMounted, ref } from 'vue'
-import { useFinalReportStore } from '../../../stores/finalReport.ts'
-import { useAuthStore } from '../../../stores/auth.ts'
-import { useRouter } from 'vue-router'
-import { DataTable } from 'simple-datatables'
-import VNavbar from '../../../components/VNavbar.vue'
-import VButton from '../../../components/VButton.vue'
-// import ConfirmationDialog from '../../../components/ConfirmationDialog.vue'
+import { onMounted, ref } from 'vue';
+import { useFinalReportStore } from '../../../stores/finalReport.ts';
+import { useAuthStore } from '../../../stores/auth.ts';
+import { useRouter } from 'vue-router';
+import { DataTable } from 'simple-datatables';
+import VNavbar from '../../../components/VNavbar.vue';
+import VButton from '../../../components/VButton.vue';
+import ConfirmationDialog from '../../../components/ConfirmationDialog.vue';
 
 const authStore = useAuthStore();
 const router = useRouter();
@@ -19,26 +18,22 @@ const submodules = ref({
   "Klien": "/marketing/client"
 });
 const dataTableInstance = ref<DataTable | null>(null);
-// const showDialog = ref<number | null>(null);
 const selectedReportId = ref<number | null>(null);
-// const route = useRoute()
-// const finalReportId = route.params.id as number;
-// const showDialog = ref(false);
 
 onMounted(async () => {
-  if (!authStore.token) return
-  await finalReportStore.fetchAll(authStore.token)
+  if (!authStore.token) return;
+  await finalReportStore.fetchAll(authStore.token);
 
-  console.log("Final Reports Data:", finalReportStore.finalReports)
+  console.log("Final Reports Data:", finalReportStore.finalReports);
 
   if (document.getElementById('finalReport-table') && typeof DataTable !== 'undefined') {
     dataTableInstance.value = new DataTable('#finalReport-table', {
       searchable: false,
       sortable: true,
       paging: true,
-    })
+    });
   }
-})
+});
 
 const handleSearch = (event: Event) => {
   const searchValue = (event.target as HTMLInputElement).value;
@@ -48,43 +43,48 @@ const handleSearch = (event: Event) => {
 };
 
 function goToDetail(invId: number) {
-  router.push(`/marketing/final-report/${invId}`)
+  router.push(`/marketing/final-report/${invId}`);
 }
 
 const confirmDelete = (invId: number) => {
   selectedReportId.value = invId;
 };
 
-// async function deleteFinalReport() {
-//   if (!selectedReportId.value) return;
-//
-//   const success = await finalReportStore.deleteFinalReport(selectedReportId.value);
-//   if (success) {
-//     window.$toast('success', 'Final report berhasil dihapus!');
-//     // await finalReportStore.fetchAll(authStore.token);
-//     router.push('/marketing/final-report');
-//     return true;
-//   }
-//   selectedReportId.value = null;
-// }
+async function deleteFinalReport() {
+  if (!selectedReportId.value) return;
 
-// async function downloadReport() {
-//   const success = await finalReportStore.downloadFinalReport();
-//   if (success) {
-//     window.$toast('success', 'Final report berhasil di-download!')
-//   }
-// }
+  try {
+    await finalReportStore.deleteFinalReport(selectedReportId.value);
+    router.push('/marketing/final-report');
+  } catch (error) {
+    window.$toast('error', 'Gagal menghapus final report!');
+  } finally {
+    selectedReportId.value = null;
+  }
+}
+
+async function downloadReport(id: number) {
+  try {
+    await finalReportStore.downloadFinalReport(id, authStore.token || '');
+    window.$toast('success', 'Final report berhasil di-download!');
+  } catch (error) {
+    window.$toast('error', 'Gagal mengunduh final report!');
+  }
+}
+
 </script>
 
 <template>
   <VNavbar :title="title" :submodules="submodules" />
-<!--  <ConfirmationDialog-->
-<!--    :visible="selectedReportId !== null"-->
-<!--    title="Hapus Laporan Akhir"-->
-<!--    message="Apakah Anda yakin ingin menghapus laporan ini?"-->
-<!--    @confirm="deleteFinalReport"-->
-<!--    @cancel="selectedReportId = null"-->
-<!--  />-->
+
+  <ConfirmationDialog
+    :visible="selectedReportId !== null"
+    title="Hapus Laporan Akhir"
+    message="Apakah Anda yakin ingin menghapus laporan ini?"
+    @confirm="deleteFinalReport"
+    @cancel="selectedReportId = null"
+  />
+
   <div class="p-8 bg-white min-h-screen flex flex-col items-center">
     <div class="w-full max-w-screen-xl mb-12 mt-16">
       <div class="bg-white p-6 rounded-2xl shadow-lg w-full">
@@ -115,8 +115,8 @@ const confirmDelete = (invId: number) => {
             </tr>
             </thead>
             <tbody>
-            <tr v-for="inv in finalReportStore.finalReports" :key="inv.id" class="hover:bg-gray-50">
-              <td class="px-4 py-2 text-center">{{ inv.id }}</td>
+            <tr v-for="(inv, index) in finalReportStore.finalReports" :key="inv.id" class="hover:bg-gray-50">
+              <td class="px-4 py-2 text-center">{{ index+1 }}</td>
               <td class="px-4 py-2 text-left">{{ inv.company }}</td>
               <td class="px-4 py-2 text-left">{{ inv.event }}</td>
               <td class="px-4 py-2 text-left">{{ inv.eventDate }}</td>
@@ -129,14 +129,7 @@ const confirmDelete = (invId: number) => {
                 >
                   Hapus
                 </VButton>
-<!--                <ConfirmationDialog-->
-<!--                  :visible="showDialog"-->
-<!--                  title="Hapus Laporan Akhir"-->
-<!--                  message="Apakah Anda yakin ingin menghapus Laporan Akhir?"-->
-<!--                  @confirm="deleteFinalReport(inv.id)"-->
-<!--                  @cancel="() => (showDialog = false)"-->
-<!--                />-->
-<!--                <VButton variant="primary" size="sm" @click="downloadReport(inv.id)">Download PDF</VButton>-->
+                <VButton variant="primary" size="sm" @click="downloadReport(inv.id)">Download PDF</VButton>
               </td>
             </tr>
             </tbody>

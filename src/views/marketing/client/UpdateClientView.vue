@@ -92,7 +92,7 @@ const submitForm = async () => {
 
     if (isSuccess) {
       console.log('Update successful. Redirecting...');
-      router.push("/marketing/client");
+      router.push(`/marketing/client/${formData.value.id}`);
     } else {
       console.log('Update failed.');
     }
@@ -111,7 +111,7 @@ const submitForm = async () => {
 
     <div v-else class="w-[100%] flex flex-col gap-2 divide-y-2 bg-white drop-shadow-xl p-6 rounded-xl">
       <div class="w-full flex justify-between">
-        <h2 class="mb-2 heading-2">Update Client</h2>
+        <h2 class="mb-2 heading-2">Update Klien</h2>
         <hr class="border-gray-300 border-t-2 mb-4" />
       </div>
 
