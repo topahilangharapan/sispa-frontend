@@ -1,9 +1,8 @@
 <script setup lang="ts">
-
-import { onMounted, ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useInvoiceStore } from '../../../stores/invoice.ts'
 import { useAuthStore } from '../../../stores/auth.ts'
-import { useRoute, useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
 import { DataTable } from 'simple-datatables'
 import VNavbar from '../../../components/VNavbar.vue'
 import VButton from '../../../components/VButton.vue'
@@ -14,24 +13,28 @@ const submodules = ref({ "Invoice": "/finance/invoice" });
 const invoiceStore = useInvoiceStore()
 const authStore = useAuthStore()
 const router = useRouter()
-const route = useRoute()
-const invoiceId = Number(route.params.id);
-// const searchTerm = ref('')
+// const route = useRoute()
 const dataTableInstance = ref<DataTable | null>(null);
-const showDialog = ref(false);
+const showDialog = ref<number | null>(null); // <-- Simpan ID Invoice yang akan dihapus
 
 onMounted(async () => {
-  if (!authStore.token) return
-  await invoiceStore.fetchAll(authStore.token)
+  if (!authStore.token) return;
+  await invoiceStore.fetchAll(authStore.token);
 
   if (document.getElementById('invoice-table') && typeof DataTable !== 'undefined') {
     dataTableInstance.value = new DataTable('#invoice-table', {
       searchable: false,
       sortable: true,
       paging: true,
-    })
+    });
   }
-})
+});
+
+const deleteInvoice = async (id: number) => {
+  await invoiceStore.deleteInvoice(id, authStore.token || '');
+  showDialog.value = null; // <-- Tutup dialog setelah delete
+  await invoiceStore.fetchAll(authStore.token || ''); // <-- Refresh data setelah delete
+};
 
 const handleSearch = (event: Event) => {
   const searchValue = (event.target as HTMLInputElement).value;
@@ -41,22 +44,15 @@ const handleSearch = (event: Event) => {
 };
 
 function goToDetail(invId: number) {
-  router.push(`/finance/invoice/${invId}`)
-}
-
-const deleteInvoice = async () => {
-  await invoiceStore.deleteInvoice(invoiceId, authStore.token || '');
-  showDialog.value = false;
-  router.push('/finance/invoice')
+  router.push(`/finance/invoice/${invId}`);
 }
 
 async function downloadInvoice(id: number, token: string) {
-  console.log("Invoice ID:", id); // Pastikan ini bukan undefined
-  console.log("Auth Token:", token);
-
-  const success = await invoiceStore.downloadInvoice(id, token);
-  if (success) {
-    window.$toast('success', 'Invoice berhasil di-download!')
+  try {
+    await invoiceStore.downloadInvoice(id, token);
+    window.$toast('success', 'Invoice berhasil di-download!');
+  } catch (error) {
+    window.$toast('error', 'Gagal mengunduh invoice!');
   }
 }
 </script>
@@ -102,17 +98,20 @@ async function downloadInvoice(id: number, token: string) {
               <td class="px-4 py-2 text-left">{{ inv.dateCreated }}</td>
               <td class="px-4 py-2 text-center">
                 <VButton variant="primary" size="sm" @click="goToDetail(inv.id)">Detail</VButton>
-                <VButton @click="() => (showDialog = true)" size="sm" variant="delete">
-                  Hapus
-                </VButton>
+
+                <VButton @click="() => (showDialog = inv.id)" size="sm" variant="delete">Hapus</VButton>
+
                 <ConfirmationDialog
-                  :visible="showDialog"
+                  :visible="showDialog === inv.id"
                   title="Hapus Invoice"
                   message="Apakah Anda yakin ingin menghapus Invoice?"
-                  @confirm="deleteInvoice()"
-                  @cancel="() => (showDialog = false)"
+                  @confirm="deleteInvoice(inv.id)"
+                  @cancel="() => (showDialog = null)"
                 />
-                <VButton variant="primary" size="sm" @click="downloadInvoice(inv.id, authStore.token || '')">Download PDF</VButton>
+
+                <VButton variant="primary" size="sm" @click="downloadInvoice(inv.id, authStore.token || '')">
+                  Download PDF
+                </VButton>
               </td>
             </tr>
             </tbody>
