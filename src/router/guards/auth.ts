@@ -27,7 +27,7 @@ export const roleGuard = (to: RouteLocationNormalized, _: RouteLocationNormalize
 
   const allowedRoutes = rolePermissions[userRole.toLowerCase()] || [];
 
-  if (userRole === "admin" || userRole === "management") {
+  if (userRole === "admin" || userRole == "manajemen" || userRole == "finance" || userRole == "marketing" || userRole == "purchasing") {
     next();
     return;
   }

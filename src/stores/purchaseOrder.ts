@@ -13,16 +13,10 @@ export const usePurchaseOrderStore = defineStore('purchaseOrder', {
       error: null as null | string,
       purchaseOrders: [] as PurchaseOrderInterface[],
       selectedPurchaseOrders: [] as PurchaseOrderInterface[],
-      selectedPurchaseOrder: null as PurchaseOrderInterface | null,
+      selectedPurchaseOrder: null as PurchaseOrderInterface | null, 
     }),
     actions: {
       async create(body: PurchaseOrderInterface, token: string): Promise<boolean> {
-        // function base64ToBlob(base64: string, contentType = "application/pdf") {
-        //   const byteCharacters = atob(base64); // Decode Base64
-        //   const byteNumbers = new Array(byteCharacters.length).fill(0).map((_, i) => byteCharacters.charCodeAt(i));
-        //   const byteArray = new Uint8Array(byteNumbers);
-        //   return new Blob([byteArray], { type: contentType });
-        // }
 
         this.loading = true;
         this.error = null;
@@ -42,23 +36,8 @@ export const usePurchaseOrderStore = defineStore('purchaseOrder', {
           const data: CommonResponseInterface<PurchaseOrderRequestResponseInterface> = await response.json();
 
           if (response.ok) {
-            // if (typeof data.data.pdf === 'string') {
-              // const blob = base64ToBlob(data.data.pdf);
-              // const url = URL.createObjectURL(blob);
-              //
-              // const a = document.createElement("a");
-              // a.href = url;
-              // a.download = data.data.fileName;
-              // document.body.appendChild(a);
-              // a.click();
-              // window.URL.revokeObjectURL(url);
-
-              window.$toast('success', "Purchase Order berhasil dibuat!");
-              return true;
-            // } else {
-            //   window.$toast('error', "Data PDF tidak valid.");
-            //   return false;
-            // }
+            window.$toast('success', "Purchase Order berhasil dibuat!");
+            return true; // Login berhasil
           } else {
             window.$toast('error', "Gagal membuat Purchase Order: " + data.message);
             return false; // Login gagal
@@ -74,7 +53,7 @@ export const usePurchaseOrderStore = defineStore('purchaseOrder', {
       async fetchAll(token: string): Promise<boolean> {
         this.loading = true;
         this.error = null;
-
+      
         try {
           const response = await fetch(`${apiUrl}/purchase-order/all`, {
             method: "GET",
@@ -83,9 +62,9 @@ export const usePurchaseOrderStore = defineStore('purchaseOrder', {
               "Content-Type": "application/json",
             },
           });
-
+      
           const data: CommonResponseInterface<PurchaseOrderInterface[]> = await response.json();
-
+      
           if (response.ok) {
             this.purchaseOrders = data.data || [];
             return true; // success
@@ -134,7 +113,7 @@ export const usePurchaseOrderStore = defineStore('purchaseOrder', {
       async deletePurchaseOrder(id: number, token: string): Promise<boolean> {
         this.loading = true;
         this.error = null;
-
+      
         try {
           const response = await fetch(`${apiUrl}/purchase-order/${id}`, {
             method: "DELETE",
@@ -143,14 +122,13 @@ export const usePurchaseOrderStore = defineStore('purchaseOrder', {
               "Content-Type": "application/json",
             },
           });
-
+      
           const data = await response.json();
           if (response.ok) {
-            // Possibly remove from local array if needed
-            this.purchaseOrders = this.purchaseOrders.filter(po => po.id !== id);
+            this.purchaseOrders = this.purchaseOrders.filter(order => order.id !== id);
             return true;
           } else {
-            this.error = data.message || "Failed to delete purchase order.";
+            this.error = data.message || "Failed to mark purchase order as deleted.";
             return false;
           }
         } catch (err) {
@@ -160,6 +138,99 @@ export const usePurchaseOrderStore = defineStore('purchaseOrder', {
           this.loading = false;
         }
       },
-
+      async downloadPurchaseOrder(id: number, token: string): Promise<boolean> {
+        this.loading = true;
+        this.error = null;
+      
+        try {
+          // First, get the purchase order details
+          const detailResponse = await fetch(`${apiUrl}/purchase-order/${id}`, {
+            method: "GET",
+            headers: {
+              "Authorization": `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          });
+      
+          if (!detailResponse.ok) {
+            throw new Error(`Failed to get purchase order details: ${detailResponse.statusText}`);
+          }
+      
+          const detailData = await detailResponse.json();
+          
+          if (!detailData.data) {
+            throw new Error("Purchase order details not found");
+          }
+          
+          // Convert the detail data to the format expected by createPdfReport
+          const requestData = {
+            companyName: detailData.data.companyName,
+            companyAddress: detailData.data.companyAddress,
+            receiver: detailData.data.receiver,
+            dateCreated: detailData.data.dateCreated,
+            terms: detailData.data.terms,
+            placeSigned: detailData.data.placeSigned,
+            dateSigned: detailData.data.dateSigned,
+            signee: detailData.data.signee,
+            items: detailData.data.items.map((item: { title: string; volume: number; unit: string; pricePerUnit: number; description: string }) => ({
+              title: item.title,
+              volume: item.volume.toString(),
+              unit: item.unit,
+              pricePerUnit: item.pricePerUnit.toString(),
+              description: item.description
+            }))
+          };
+          
+          // Now create a new PDF using the create endpoint
+          const createResponse = await fetch(`${apiUrl}/purchase-order/create`, {
+            method: "POST",
+            headers: {
+              "Authorization": `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(requestData)
+          });
+          
+          if (!createResponse.ok) {
+            throw new Error(`Failed to generate PDF: ${createResponse.statusText}`);
+          }
+          
+          const createData = await createResponse.json();
+          
+          if (createData.data && createData.data.pdf) {
+            // Convert base64 to blob
+            function base64ToBlob(base64: string, contentType = "application/pdf") {
+              const byteCharacters = atob(base64);
+              const byteNumbers = new Array(byteCharacters.length).fill(0).map((_, i) => byteCharacters.charCodeAt(i));
+              const byteArray = new Uint8Array(byteNumbers);
+              return new Blob([byteArray], { type: contentType });
+            }
+            
+            const blob = base64ToBlob(createData.data.pdf);
+            const filename = createData.data.fileName || `purchase_order_${id}.pdf`;
+            
+            // Create download link
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            window.$toast("success", "Purchase Order berhasil diunduh!");
+            return true;
+          } else {
+            throw new Error("PDF data not found in response");
+          }
+        } catch (err) {
+          this.error = (err as Error).message;
+          window.$toast("error", `Gagal mengunduh purchase order: ${this.error}`);
+          return false;
+        } finally {
+          this.loading = false;
+        }
+    }
 }
 })
