@@ -1,6 +1,7 @@
 <template>
   <div class="profile-container">
-    <VNavbar/>
+    <VNavbar :title="{ 'User Profile': 'User Profile' }" />
+
     <div class="profile-card">
       <h2>General</h2>
 

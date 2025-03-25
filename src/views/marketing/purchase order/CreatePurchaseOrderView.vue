@@ -42,6 +42,7 @@ const purchaseOrder = ref<PurchaseOrderInterface>({
   dateSigned: today,
   signee: "",
   noPo: "",
+  deletedAt: null, // Added to match the PurchaseOrderInterface
 });
 
 const hasErrors = ref<Record<string, boolean>>({

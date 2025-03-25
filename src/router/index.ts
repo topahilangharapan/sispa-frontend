@@ -28,6 +28,7 @@ import ClientDetailView from '../views/marketing/client/ClientDetailView.vue'
 import UpdateClientView from '../views/marketing/client/UpdateClientView.vue'
 import FinalReportListView from '../views/marketing/final report/FinalReportListView.vue'
 import FinalReportDetailView from '../views/marketing/final report/FinalReportDetailView.vue'
+import CashFlowView from '../views/CashFlowView.vue'
 
 const routes = [
   {
@@ -54,7 +55,7 @@ const routes = [
     beforeEnter: roleGuard
   },
   {
-    path: '/inventory',
+    path: '/purchasing/inventory',
     name: 'Inventory',
     component: InventoryView,
     beforeEnter: roleGuard
@@ -210,7 +211,12 @@ const routes = [
     component: AddClientView,
     beforeEnter: roleGuard
   },
-  { path: '/:catchAll(.*)', redirect: '/dashboard' }
+  {
+    path: '/finance/cashflow',
+    name: 'Cash Flow',
+    component: CashFlowView,
+    beforeEnter: roleGuard
+  }
 ]
 
 const router = createRouter({

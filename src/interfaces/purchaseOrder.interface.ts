@@ -4,9 +4,9 @@ export interface PurchaseOrderItemInterface {
   title: string;
   volume: number;
   unit: string;
+  sum: number;
   pricePerUnit: number;
   description: string;
-  sum: number;
 }
 
 export interface PurchaseOrderInterface {
@@ -20,6 +20,7 @@ export interface PurchaseOrderInterface {
   dateCreated: string;
   dateSigned: string;
   signee: string;
+  deletedAt: string | null;
   noPo: string;
 }
 

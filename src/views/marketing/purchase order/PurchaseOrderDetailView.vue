@@ -18,22 +18,22 @@
           </div>
 
           <div class="detail-field">
-            <label>Company Name</label>
+            <label>Nama Perusahaan</label>
             <p>{{ purchaseOrderStore.selectedPurchaseOrder.companyName }}</p>
           </div>
 
           <div class="detail-field">
-            <label>Address</label>
+            <label>Nama Perusahaan</label>
             <p>{{ purchaseOrderStore.selectedPurchaseOrder.companyAddress }}</p>
           </div>
 
           <div class="detail-field">
-            <label>Receiver</label>
+            <label>Nama Penerima</label>
             <p>{{ purchaseOrderStore.selectedPurchaseOrder.receiver }}</p>
           </div>
 
           <div class="detail-field">
-            <label>Terms</label>
+            <label>Ketentuan</label>
             <p>{{ purchaseOrderStore.selectedPurchaseOrder.terms }}</p>
           </div>
 
@@ -43,17 +43,17 @@
           </div>
 
           <div class="detail-field">
-            <label>Place Signed</label>
+            <label>Tempat Ditandatangani</label>
             <p>{{ purchaseOrderStore.selectedPurchaseOrder.placeSigned }}</p>
           </div>
 
           <div class="detail-field">
-            <label>Date Signed</label>
+            <label>Tanggal Dibuat</label>
             <p>{{ purchaseOrderStore.selectedPurchaseOrder.dateSigned }}</p>
           </div>
 
           <div class="detail-field">
-            <label>Signee</label>
+            <label>Penandatangan</label>
             <p>{{ purchaseOrderStore.selectedPurchaseOrder.signee }}</p>
           </div>
 
@@ -72,7 +72,7 @@
             <tbody>
               <tr
                 v-for="item in purchaseOrderStore.selectedPurchaseOrder.items"
-                :key="item.id"
+                :key="item.tempId"
               >
                 <td>{{ item.title }}</td>
                 <td>{{ item.volume }}</td>
@@ -89,8 +89,19 @@
             <VButton variant="primary" size="md" @click="goBack">
               Back to List
             </VButton>
-            <VButton variant="delete" size="md" @click="deleteOrder">
+            <VButton 
+              class="delete-button"
+              size="sm" 
+              variant="delete"
+              @click="deleteOrder(purchaseOrderStore.selectedPurchaseOrder.id)"
+            >
               Delete
+            </VButton>
+            <VButton variant="primary" size="md" 
+              @click="downloadPurchaseOrder"
+              :disabled="!purchaseOrderStore.selectedPurchaseOrder"
+            >
+              Download PDF
             </VButton>
           </div>
         </div>
@@ -131,18 +142,39 @@
     router.push('/marketing/purchase-order')
   }
 
-  async function deleteOrder() {
-    if (!authStore.token) return
+  async function deleteOrder(orderId: number) {
     const confirmed = confirm('Are you sure you want to delete this purchase order?')
     if (!confirmed) return
 
-    const orderId = purchaseOrderStore.selectedPurchaseOrder?.id
-    if (!orderId) return
-
+    if (!authStore.token) return
     const success = await purchaseOrderStore.deletePurchaseOrder(orderId, authStore.token)
     if (success) {
-      window.$toast('success', 'Purchase order deleted!')
-      router.push('/marketing/purchase-order')
+      window.$toast('success', 'Purchase order marked as deleted!')
+      router.push('/marketing/purchase-order') 
+    }
+  }
+
+  async function downloadPurchaseOrder() {
+    if (!authStore.token || !purchaseOrderStore.selectedPurchaseOrder) return;
+    
+    try {
+      const id = purchaseOrderStore.selectedPurchaseOrder.id;
+      await purchaseOrderStore.downloadPurchaseOrder(id, authStore.token);
+      window.$toast('success', 'Purchase Order berhasil di-download!');
+    } catch (error) {
+      window.$toast('error', 'Gagal mengunduh purchase order!');
+    }
+  }
+
+  async function downloadPurchaseOrder() {
+    if (!authStore.token || !purchaseOrderStore.selectedPurchaseOrder) return;
+    
+    try {
+      const id = purchaseOrderStore.selectedPurchaseOrder.id;
+      await purchaseOrderStore.downloadPurchaseOrder(id, authStore.token);
+      window.$toast('success', 'Purchase Order berhasil di-download!');
+    } catch (error) {
+      window.$toast('error', 'Gagal mengunduh purchase order!');
     }
   }
   </script>
