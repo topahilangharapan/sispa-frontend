@@ -1,6 +1,6 @@
 default:
   tags:
-    - hostinger
+    - saas-linux-small-amd64
 
 .setup-ssh:
   before_script:
