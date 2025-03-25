@@ -284,4 +284,5 @@ tr:hover {
   color: white;
   border-radius: 5px;
 }
+
 </style>
