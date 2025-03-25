@@ -165,18 +165,6 @@
       window.$toast('error', 'Gagal mengunduh purchase order!');
     }
   }
-
-  async function downloadPurchaseOrder() {
-    if (!authStore.token || !purchaseOrderStore.selectedPurchaseOrder) return;
-    
-    try {
-      const id = purchaseOrderStore.selectedPurchaseOrder.id;
-      await purchaseOrderStore.downloadPurchaseOrder(id, authStore.token);
-      window.$toast('success', 'Purchase Order berhasil di-download!');
-    } catch (error) {
-      window.$toast('error', 'Gagal mengunduh purchase order!');
-    }
-  }
   </script>
 
   <style scoped>
