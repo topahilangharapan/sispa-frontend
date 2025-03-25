@@ -104,6 +104,9 @@ export const useVendorStore = defineStore ('vendor', {
           body: JSON.stringify(body),
         })
 
+        console.log(response);
+        
+
         const data: CommonResponseInterface<VendorInterface> = await response.json()
 
         if (response.ok) {
