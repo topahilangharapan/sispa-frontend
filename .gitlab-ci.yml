@@ -25,7 +25,7 @@ build:
   image: node:20.11.0-alpine
   stage: build
   only:
-    - main
+    - deployment
   script:
     - echo "Install dependencies and build Vue project"
     - cd /root/$CI_PROJECT_DIR
