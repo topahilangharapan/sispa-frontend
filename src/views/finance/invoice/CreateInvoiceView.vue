@@ -10,6 +10,7 @@ import VLoading from '../../../components/VLoading.vue'
 import VDropdown from '../../../components/VDropdown.vue'
 import VInputField from '../../../components/VInputField.vue'
 import VButton from '../../../components/VButton.vue'
+import VInputDateField from '../../../components/VInputDateField.vue'
 
 
 const authStore = useAuthStore();
@@ -68,6 +69,7 @@ const invoice = ref<InvoiceInterface>({
 });
 
 const hasErrors = ref({
+  po: true,
   receiver: true,
   placeSigned: true,
   signee: true,
@@ -75,7 +77,10 @@ const hasErrors = ref({
   bankName: true,
   accountNumber: true,
   onBehalf: true,
-  event: true
+  event: true,
+  dateSigned: false,
+  dateCreated: false,
+  datePaid: false,
 });
 
 const updateErrorStatus = (field: keyof typeof hasErrors.value, isError: boolean) => {
@@ -131,6 +136,7 @@ const onSelectPurchaseOrder = (poId: string) => {
         placeholder="Silakan pilih"
         :isEmpty="true"
         @update:modelValue="onSelectPurchaseOrder"
+        @update:hasError="updateErrorStatus('po', $event)"
       />
 
       <div v-if="invoice.purchaseOrderId" class="mt-4 p-4 bg-white rounded-lg shadow-sm border">
@@ -162,16 +168,19 @@ const onSelectPurchaseOrder = (poId: string) => {
           @update:hasError="updateErrorStatus('placeSigned', $event)"
         />
 
-        <VInputField
+        <VInputDateField
           label="Tanggal Dibuat"
           v-model="invoice.dateCreated"
-          type="date"
+          placeholder="DD/MM/YYYY"
+          @update:hasError="updateErrorStatus('dateCreated', $event)"
         />
 
-        <VInputField
+        <VInputDateField
           label="Tanggal Ditandatangani"
           v-model="invoice.dateSigned"
-          type="date"
+          placeholder="DD/MM/YYYY"
+          :minDate="invoice.dateCreated"
+          @update:hasError="updateErrorStatus('dateSigned', $event)"
         />
 
         <VInputField
@@ -182,10 +191,12 @@ const onSelectPurchaseOrder = (poId: string) => {
           @update:hasError="updateErrorStatus('signee', $event)"
         />
 
-        <VInputField
+        <VInputDateField
           label="Tanggal Pembayaran"
           v-model="invoice.datePaid"
-          type="date"
+          placeholder="DD/MM/YYYY"
+          :minDate="invoice.dateCreated"
+          @update:hasError="updateErrorStatus('datePaid', $event)"
         />
 
         <VInputField

@@ -29,4 +29,19 @@ export interface PurchaseOrderRequestResponseInterface {
   fileName: string;
 }
 
+export interface CreatePurchaseOrderInterface {
+  id: number;
+  vendorId: string;
+  clientId: string;
+  companyName: string;
+  companyAddress: string;
+  receiver: string;
+  items: PurchaseOrderItemInterface[];
+  terms: string;
+  placeSigned: string;
+  dateCreated: string;
+  dateSigned: string;
+  signee: string;
+}
+
 

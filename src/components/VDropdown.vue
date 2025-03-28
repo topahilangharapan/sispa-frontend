@@ -47,7 +47,7 @@ watch(selectedValue, () => {
         </svg>
       </div>
       <transition name="fade-slide">
-        <ul v-if="showDropdown" class="absolute left-0 right-0 mt-1 bg-white-100/70 backdrop-blur-md border rounded-lg shadow-lg z-10">
+        <ul v-if="showDropdown" class="absolute left-0 right-0 mt-1 backdrop-blur-3xl border rounded-lg shadow-lg z-10">
           <li
             v-for="option in options"
             :key="option.value"

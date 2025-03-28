@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import type {
+  CreatePurchaseOrderInterface,
   PurchaseOrderInterface,
   PurchaseOrderRequestResponseInterface
 } from '../interfaces/purchaseOrder.interface.ts'
@@ -13,10 +14,10 @@ export const usePurchaseOrderStore = defineStore('purchaseOrder', {
       error: null as null | string,
       purchaseOrders: [] as PurchaseOrderInterface[],
       selectedPurchaseOrders: [] as PurchaseOrderInterface[],
-      selectedPurchaseOrder: null as PurchaseOrderInterface | null, 
+      selectedPurchaseOrder: null as PurchaseOrderInterface | null,
     }),
     actions: {
-      async create(body: PurchaseOrderInterface, token: string): Promise<boolean> {
+      async create(body: CreatePurchaseOrderInterface, token: string): Promise<boolean> {
 
         this.loading = true;
         this.error = null;
@@ -53,7 +54,7 @@ export const usePurchaseOrderStore = defineStore('purchaseOrder', {
       async fetchAll(token: string): Promise<boolean> {
         this.loading = true;
         this.error = null;
-      
+
         try {
           const response = await fetch(`${apiUrl}/purchase-order/all`, {
             method: "GET",
@@ -62,9 +63,9 @@ export const usePurchaseOrderStore = defineStore('purchaseOrder', {
               "Content-Type": "application/json",
             },
           });
-      
+
           const data: CommonResponseInterface<PurchaseOrderInterface[]> = await response.json();
-      
+
           if (response.ok) {
             this.purchaseOrders = data.data || [];
             return true; // success
@@ -113,7 +114,7 @@ export const usePurchaseOrderStore = defineStore('purchaseOrder', {
       async deletePurchaseOrder(id: number, token: string): Promise<boolean> {
         this.loading = true;
         this.error = null;
-      
+
         try {
           const response = await fetch(`${apiUrl}/purchase-order/${id}`, {
             method: "DELETE",
@@ -122,7 +123,7 @@ export const usePurchaseOrderStore = defineStore('purchaseOrder', {
               "Content-Type": "application/json",
             },
           });
-      
+
           const data = await response.json();
           if (response.ok) {
             this.purchaseOrders = this.purchaseOrders.filter(order => order.id !== id);
@@ -141,7 +142,7 @@ export const usePurchaseOrderStore = defineStore('purchaseOrder', {
       async downloadPurchaseOrder(id: number, token: string): Promise<boolean> {
         this.loading = true;
         this.error = null;
-      
+
         try {
           // First, get the purchase order details
           const detailResponse = await fetch(`${apiUrl}/purchase-order/${id}`, {
@@ -151,17 +152,17 @@ export const usePurchaseOrderStore = defineStore('purchaseOrder', {
               "Content-Type": "application/json",
             },
           });
-      
+
           if (!detailResponse.ok) {
             throw new Error(`Failed to get purchase order details: ${detailResponse.statusText}`);
           }
-      
+
           const detailData = await detailResponse.json();
-          
+
           if (!detailData.data) {
             throw new Error("Purchase order details not found");
           }
-          
+
           // Convert the detail data to the format expected by createPdfReport
           const requestData = {
             companyName: detailData.data.companyName,
@@ -180,7 +181,7 @@ export const usePurchaseOrderStore = defineStore('purchaseOrder', {
               description: item.description
             }))
           };
-          
+
           // Now create a new PDF using the create endpoint
           const createResponse = await fetch(`${apiUrl}/purchase-order/create`, {
             method: "POST",
@@ -190,13 +191,13 @@ export const usePurchaseOrderStore = defineStore('purchaseOrder', {
             },
             body: JSON.stringify(requestData)
           });
-          
+
           if (!createResponse.ok) {
             throw new Error(`Failed to generate PDF: ${createResponse.statusText}`);
           }
-          
+
           const createData = await createResponse.json();
-          
+
           if (createData.data && createData.data.pdf) {
             // Convert base64 to blob
             function base64ToBlob(base64: string, contentType = "application/pdf") {
@@ -205,10 +206,10 @@ export const usePurchaseOrderStore = defineStore('purchaseOrder', {
               const byteArray = new Uint8Array(byteNumbers);
               return new Blob([byteArray], { type: contentType });
             }
-            
+
             const blob = base64ToBlob(createData.data.pdf);
             const filename = createData.data.fileName || `purchase_order_${id}.pdf`;
-            
+
             // Create download link
             const url = URL.createObjectURL(blob);
             const a = document.createElement("a");
@@ -218,7 +219,7 @@ export const usePurchaseOrderStore = defineStore('purchaseOrder', {
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
-            
+
             window.$toast("success", "Purchase Order berhasil diunduh!");
             return true;
           } else {

@@ -9,9 +9,10 @@ const props = defineProps({
   isEmpty: { type: Boolean, default: false },
   isNegative: { type: Boolean, default: false },
   isNumberOnly: { type: Boolean, default: false },
-  useThousandSeparator: { type: Boolean, default: false }, // ✅ Tambahkan props ini
+  useThousandSeparator: { type: Boolean, default: false },
   minLength: { type: Number, default: 0 },
-  maxLength: { type: Number, default: 255 }
+  maxLength: { type: Number, default: 255 },
+  disabled: { type: Boolean, default: false } // ✅ Tambahkan props disabled
 });
 
 const emit = defineEmits(['update:modelValue', 'update:hasError']);
@@ -25,17 +26,14 @@ watch(
   }
 );
 
-
-// **Format angka jika isNumberOnly = true & useThousandSeparator = true & useThousandSeparator = true**
 const formattedValue = computed({
   get: () => {
     if (props.type === 'date') return inputValue.value;
     if (props.isNumberOnly && props.useThousandSeparator && inputValue.value !== '') {
-      return Number(inputValue.value).toLocaleString('en-US'); // ✅ Gunakan format ribuan jika diaktifkan
+      return Number(inputValue.value).toLocaleString('en-US');
     }
     return inputValue.value;
   },
-// Pastikan newValue adalah string
   set: (newValue) => {
     const valueStr = String(newValue);
     if (props.isNumberOnly) {
@@ -46,7 +44,6 @@ const formattedValue = computed({
   }
 });
 
-// **Validasi error**
 const errorMessage = computed(() => {
   if (props.isEmpty && !inputValue.value) return 'Field tidak boleh kosong!';
   if (props.isNumberOnly) {
@@ -62,16 +59,15 @@ watch(inputValue, () => {
   let valueToEmit: string | number = inputValue.value;
 
   if (props.type === 'date' && valueToEmit) {
-    valueToEmit = new Date(valueToEmit).toISOString().split('T')[0]; // Format YYYY-MM-DD
+    valueToEmit = new Date(valueToEmit).toISOString().split('T')[0];
   } else if (props.isNumberOnly) {
-    valueToEmit = String(valueToEmit); // Tetap string agar leading zero terjaga
+    valueToEmit = String(valueToEmit);
   }
 
   emit('update:modelValue', valueToEmit);
   emit('update:hasError', !!errorMessage.value);
 });
 
-// **Prevent non-numeric input jika isNumberOnly true**
 const preventNonNumeric = (event: KeyboardEvent) => {
   if (props.isNumberOnly) {
     if (!/[\d]/.test(event.key)) {
@@ -89,8 +85,9 @@ const preventNonNumeric = (event: KeyboardEvent) => {
       v-model="formattedValue"
       :placeholder="placeholder"
       :maxlength="maxLength"
-      class="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-brown-100"
-      @keypress="preventNonNumeric"
+      :disabled="disabled"
+    class="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-brown-100 disabled:bg-gray-200 disabled:cursor-not-allowed"
+    @keypress="preventNonNumeric"
     />
     <p v-if="errorMessage" class="text-red-175 small-text-normal mt-1">{{ errorMessage }}</p>
   </div>
