@@ -4,6 +4,7 @@ import VInputField from '../components/VInputField.vue'
 import VButton from '../components/VButton.vue'
 import VDropdown from '../components/VDropdown.vue'
 import VInputImageField from '../components/VInputImageField.vue'
+import VInputDateField from '../components/VInputDateField.vue'
 
 const colors = reactive({
   'Red 400': { bg: 'bg-red-400', text: 'text-white' },
@@ -32,7 +33,8 @@ const hasErrors = ref({
   minLength: true,
   maxLength: false,
   role: true,
-  image: true
+  image: true,
+  date: true,
 });
 
 // Fungsi untuk update status error tiap input
@@ -85,6 +87,9 @@ const submitForm = () => {
 
   console.log("Mengirim file:", formData);
 };
+
+const selectedDate1 = ref(new Date().toISOString().split('T')[0]);
+const selectedDate2 = ref(new Date().toISOString().split('T')[0]);
 
 </script>
 
@@ -260,6 +265,12 @@ const submitForm = () => {
           <VButton variant="disabled" size="lg" disabled>Disabled Large</VButton>
         </div>
 
+        <div class="grid grid-cols-3 gap-4 mt-4 place-items-center">
+          <VButton variant="outline" size="sm" disabled>Outlined Small</VButton>
+          <VButton variant="outline" size="md" disabled>Outlined Medium</VButton>
+          <VButton variant="outline" size="lg" disabled>Outlined Large</VButton>
+        </div>
+
         <div class="flex justify-center mt-6">
           <VButton @click="submitForm" variant="primary" size="md" :disabled="!isFormValid">
             Submit
@@ -300,6 +311,38 @@ const submitForm = () => {
             />
           </div>
 
+          <div class="flex items-center justify-end mt-4 h-16">
+            <div class="text-normal text-black-grey-700">
+              Masih terdapat error = {{ !isFormValid }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Input Date Preview -->
+    <div class="w-full max-w-8xl mb-12">
+      <div class="bg-white p-6 rounded-2xl shadow-lg">
+        <h2 class="mb-2 heading-2">Input Date</h2>
+        <hr class="border-gray-300 border-t-2 mb-4" />
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <VInputDateField
+              v-model="selectedDate1"
+              label="Pilih Tanggal"
+              placeholder="YYYY-MM-DD"
+            />
+          </div>
+
+          <div>
+            <VInputDateField
+              v-model="selectedDate2"
+              label="Pilih Tanggal >= Field di-kiri"
+              placeholder="YYYY-MM-DD"
+              :minDate="selectedDate1.valueOf()"
+              @update:hasError="updateErrorStatus('date', $event)"
+            />
+          </div>
           <div class="flex items-center justify-end mt-4 h-16">
             <div class="text-normal text-black-grey-700">
               Masih terdapat error = {{ !isFormValid }}

@@ -14,6 +14,7 @@ import VButton from '../../../components/VButton.vue'
 import { useVendorStore } from '../../../stores/vendor.ts'
 import { useClientStore } from '../../../stores/client.ts'
 import VDropdown from '../../../components/VDropdown.vue'
+import VInputDateField from '../../../components/VInputDateField.vue'
 
 const title = ref({ 'Marketing': '/marketing' });
 const submodules = ref({
@@ -187,6 +188,8 @@ const removeItem = (tempId: string | number) => {
   delete hasErrors.value[`pricePerUnit-undefined`];
   delete hasErrors.value[`description-undefined`];
 
+  console.log(hasErrors.value)
+
 };
 
 
@@ -330,28 +333,27 @@ const submitPurchaseOrder = async () => {
           @update:hasError="updateErrorStatus('terms', $event)"
         />
 
-        <VInputField
-          label="Tempat Ditandatangani"
-          v-model="purchaseOrder.placeSigned"
-          placeholder="Masukkan tempat penandatanganan"
-          :isEmpty="true"
-          @update:hasError="updateErrorStatus('placeSigned', $event)"
-        />
-
-        <VInputField
-          label="Tanggal Dibuat"
+        <VInputDateField
           v-model="purchaseOrder.dateCreated"
-          type="date"
-          placeholder="Pilih tanggal dibuat"
+          label="Tanggal Dibuat"
+          placeholder="DD/MM/YYYY"
           @update:hasError="updateErrorStatus('dateCreated', $event)"
         />
 
-        <VInputField
+        <VInputDateField
           label="Tanggal Ditandatangani"
           v-model="purchaseOrder.dateSigned"
-          type="date"
-          placeholder="Pilih tanggal ditandatangani"
+          placeholder="DD/MM/YYYY"
+          :minDate="purchaseOrder.dateCreated"
           @update:hasError="updateErrorStatus('dateSigned', $event)"
+        />
+
+        <VInputField
+          label="Tempat Ditandatangani"
+          v-model="purchaseOrder.placeSigned"
+          placeholder="Masukkan tempat ditandatangani"
+          :isEmpty="true"
+          @update:hasError="updateErrorStatus('placeSigned', $event)"
         />
 
         <VInputField
