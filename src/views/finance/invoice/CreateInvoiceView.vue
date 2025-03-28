@@ -68,6 +68,7 @@ const invoice = ref<InvoiceInterface>({
 });
 
 const hasErrors = ref({
+  po: true,
   receiver: true,
   placeSigned: true,
   signee: true,
@@ -131,6 +132,7 @@ const onSelectPurchaseOrder = (poId: string) => {
         placeholder="Silakan pilih"
         :isEmpty="true"
         @update:modelValue="onSelectPurchaseOrder"
+        @update:hasError="updateErrorStatus('po', $event)"
       />
 
       <div v-if="invoice.purchaseOrderId" class="mt-4 p-4 bg-white rounded-lg shadow-sm border">

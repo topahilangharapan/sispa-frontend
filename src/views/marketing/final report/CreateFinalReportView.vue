@@ -66,8 +66,6 @@ const submitReport = async () => {
   formData.append('data', JSON.stringify(formattedFinalReport));
   images.value.forEach((image) => formData.append('images', image));
 
-  console.log(formData)
-
   if (!authStore.token) {
     console.error('Token tidak tersedia');
     return;
