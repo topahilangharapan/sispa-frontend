@@ -1,5 +1,5 @@
 <template>
-  <VNavbar :title="title"></VNavbar>
+  <VNavbar :title="title" :submodules="submodules"></VNavbar>
 
   <div v-if="purchaseOrderStore.loading">
     <VLoading v-if="purchaseOrderStore.loading" class="flex"/>
@@ -64,17 +64,17 @@
                   <RouterLink :to="`/marketing/purchase-order/${order.id}`">
                     <VButton variant="primary" size="sm">Detail</VButton>
                   </RouterLink>
-                  <VButton 
+                  <VButton
                     class="delete-button"
-                    size="sm" 
+                    size="sm"
                     variant="delete"
                     @click="deleteOrder(order.id)"
                   >
                     Delete
                   </VButton>
-                  <VButton 
-                    variant="primary" 
-                    size="sm" 
+                  <VButton
+                    variant="primary"
+                    size="sm"
                     @click="downloadPurchaseOrder(order.id, authStore.token || '')"
                   >
                     Download PDF
@@ -102,8 +102,12 @@ const purchaseOrderStore = usePurchaseOrderStore()
 const authStore = useAuthStore()
 
 const searchTerm = ref('')
-const title = ref({ 'PurchaseOrder': '/marketing/purchase-order' })
-
+const title = ref({ 'Marketing': '/marketing' });
+const submodules = ref({
+  "Purchase Order": "/marketing/purchase-order",
+  "Final Report": "/marketing/final-report",
+  "Klien": "/marketing/client"
+});
 const dataTableInstance = ref<DataTable | null>(null)
 
 onMounted(async () => {
@@ -128,10 +132,10 @@ onMounted(async () => {
 const filteredPurchaseOrders = computed(() => {
   // Get orders from the store
   const allOrders = purchaseOrderStore.purchaseOrders;
-  
+
   // Debug logging
   console.log('All purchase orders:', allOrders);
-  
+
   // Apply search filter if needed
   let filteredResult = allOrders;
   if (searchTerm.value) {
@@ -139,7 +143,7 @@ const filteredPurchaseOrders = computed(() => {
       order.companyName.toLowerCase().includes(searchTerm.value.toLowerCase())
     );
   }
-  
+
   return filteredResult;
 });
 
@@ -147,7 +151,7 @@ watch(() => purchaseOrderStore.purchaseOrders, () => {
   if (dataTableInstance.value) {
     // Destroy and reinitialize the DataTable to ensure it's in sync
     dataTableInstance.value.destroy();
-    
+
     const tableElement = document.getElementById('default-table');
     if (tableElement) {
       dataTableInstance.value = new DataTable(tableElement as HTMLTableElement, {
@@ -174,7 +178,7 @@ async function deleteOrder(orderId: number) {
   const success = await purchaseOrderStore.deletePurchaseOrder(orderId, authStore.token)
   if (success) {
     window.$toast('success', 'Purchase order marked as deleted!')
-    router.push('/marketing/purchase-order') 
+    router.push('/marketing/purchase-order')
   }
 }
 
@@ -284,4 +288,5 @@ tr:hover {
   color: white;
   border-radius: 5px;
 }
+
 </style>
