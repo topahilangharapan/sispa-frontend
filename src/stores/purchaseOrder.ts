@@ -14,7 +14,7 @@ export const usePurchaseOrderStore = defineStore('purchaseOrder', {
       error: null as null | string,
       purchaseOrders: [] as PurchaseOrderInterface[],
       selectedPurchaseOrders: [] as PurchaseOrderInterface[],
-      selectedPurchaseOrder: null as PurchaseOrderInterface | null,
+      selectedPurchaseOrder: null as PurchaseOrderInterface | null, 
     }),
     actions: {
       async create(body: CreatePurchaseOrderInterface, token: string): Promise<boolean> {
@@ -54,7 +54,7 @@ export const usePurchaseOrderStore = defineStore('purchaseOrder', {
       async fetchAll(token: string): Promise<boolean> {
         this.loading = true;
         this.error = null;
-
+      
         try {
           const response = await fetch(`${apiUrl}/purchase-order/all`, {
             method: "GET",
@@ -63,9 +63,9 @@ export const usePurchaseOrderStore = defineStore('purchaseOrder', {
               "Content-Type": "application/json",
             },
           });
-
+      
           const data: CommonResponseInterface<PurchaseOrderInterface[]> = await response.json();
-
+      
           if (response.ok) {
             this.purchaseOrders = data.data || [];
             return true; // success
@@ -114,7 +114,7 @@ export const usePurchaseOrderStore = defineStore('purchaseOrder', {
       async deletePurchaseOrder(id: number, token: string): Promise<boolean> {
         this.loading = true;
         this.error = null;
-
+      
         try {
           const response = await fetch(`${apiUrl}/purchase-order/${id}`, {
             method: "DELETE",
@@ -123,7 +123,7 @@ export const usePurchaseOrderStore = defineStore('purchaseOrder', {
               "Content-Type": "application/json",
             },
           });
-
+      
           const data = await response.json();
           if (response.ok) {
             this.purchaseOrders = this.purchaseOrders.filter(order => order.id !== id);

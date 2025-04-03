@@ -4,9 +4,9 @@ import { useRouter } from 'vue-router';
 import VNavbar from '../components/VNavbar.vue';
 import { useAuthStore } from '../stores/auth.ts';
 
-const router = useRouter();
-const authStore = useAuthStore();
 
+const authStore = useAuthStore();
+const router = useRouter();
 const title = ref({ 'Dashboard': '/dashboard' });
 
 // Define the available role-based navigation
