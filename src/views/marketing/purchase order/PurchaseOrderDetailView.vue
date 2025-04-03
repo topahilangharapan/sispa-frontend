@@ -153,7 +153,7 @@
       router.push('/marketing/purchase-order') 
     }
   }
-
+  
   async function downloadPurchaseOrder() {
     if (!authStore.token || !purchaseOrderStore.selectedPurchaseOrder) return;
     
@@ -165,6 +165,7 @@
       window.$toast('error', 'Gagal mengunduh purchase order!');
     }
   }
+
   </script>
 
   <style scoped>

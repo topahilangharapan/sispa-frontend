@@ -1,5 +1,5 @@
 <template>
-  <VNavbar :title="title" :submodules="submodules"></VNavbar>
+  <VNavbar :title="title"></VNavbar>
 
   <div v-if="purchaseOrderStore.loading">
     <VLoading v-if="purchaseOrderStore.loading" class="flex"/>
