@@ -38,7 +38,7 @@
           </div>
 
           <div class="detail-field">
-            <label>Date Created</label>
+            <label>Tanggal Dibuat</label>
             <p>{{ purchaseOrderStore.selectedPurchaseOrder.dateCreated }}</p>
           </div>
 
@@ -93,10 +93,17 @@
               class="delete-button"
               size="sm" 
               variant="delete"
-              @click="deleteOrder(purchaseOrderStore.selectedPurchaseOrder.id)"
+              @click="showDialog = purchaseOrderStore.selectedPurchaseOrder.id"
             >
               Delete
             </VButton>
+            <ConfirmationDialog
+              :visible="showDialog === purchaseOrderStore.selectedPurchaseOrder.id"
+              title="Hapus Purchase Order"
+              message="Apakah Anda yakin ingin menghapus Purchase Order?"
+              @confirm="deleteOrder(purchaseOrderStore.selectedPurchaseOrder.id)"
+              @cancel="() => (showDialog = null)"
+            />
             <VButton variant="primary" size="md" 
               @click="downloadPurchaseOrder"
               :disabled="!purchaseOrderStore.selectedPurchaseOrder"
@@ -117,6 +124,7 @@
   import { onMounted, ref } from 'vue'
   import VButton from '../../../components/VButton.vue'
   import VNavbar from '../../../components/VNavbar.vue'
+  import ConfirmationDialog from '../../../components/ConfirmationDialog.vue'
 
   const purchaseOrderStore = usePurchaseOrderStore()
   const authStore = useAuthStore()
@@ -128,6 +136,7 @@
     "Final Report": "/marketing/final-report",
     "Klien": "/marketing/client"
   });
+  const showDialog = ref<number | null>(null)
 
   onMounted(async () => {
     if (!authStore.token) {
@@ -143,14 +152,17 @@
   }
 
   async function deleteOrder(orderId: number) {
-    const confirmed = confirm('Are you sure you want to delete this purchase order?')
-    if (!confirmed) return
-
     if (!authStore.token) return
+    
     const success = await purchaseOrderStore.deletePurchaseOrder(orderId, authStore.token)
+    
+    showDialog.value = null
+    
     if (success) {
-      window.$toast('success', 'Purchase order marked as deleted!')
-      router.push('/marketing/purchase-order') 
+      window.$toast('success', 'Purchase order deleted!')
+      router.push('/marketing/purchase-order')
+    } else {
+      window.$toast('error', 'Failed to delete purchase order')
     }
   }
   

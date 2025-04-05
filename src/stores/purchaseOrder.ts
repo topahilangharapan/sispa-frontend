@@ -15,6 +15,7 @@ export const usePurchaseOrderStore = defineStore('purchaseOrder', {
       purchaseOrders: [] as PurchaseOrderInterface[],
       selectedPurchaseOrders: [] as PurchaseOrderInterface[],
       selectedPurchaseOrder: null as PurchaseOrderInterface | null, 
+      refreshKey: 0,
     }),
     actions: {
       async create(body: CreatePurchaseOrderInterface, token: string): Promise<boolean> {
@@ -111,6 +112,7 @@ export const usePurchaseOrderStore = defineStore('purchaseOrder', {
           this.loading = false;
         }
       },
+      
       async deletePurchaseOrder(id: number, token: string): Promise<boolean> {
         this.loading = true;
         this.error = null;
@@ -126,7 +128,9 @@ export const usePurchaseOrderStore = defineStore('purchaseOrder', {
       
           const data = await response.json();
           if (response.ok) {
+            // Remove the deleted order and increment refreshKey
             this.purchaseOrders = this.purchaseOrders.filter(order => order.id !== id);
+            this.refreshKey++; // Trigger re-render in the UI
             return true;
           } else {
             this.error = data.message || "Failed to mark purchase order as deleted.";
@@ -232,6 +236,7 @@ export const usePurchaseOrderStore = defineStore('purchaseOrder', {
         } finally {
           this.loading = false;
         }
-    }
+    },
+    
 }
 })
