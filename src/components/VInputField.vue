@@ -12,12 +12,21 @@ const props = defineProps({
   useThousandSeparator: { type: Boolean, default: false },
   minLength: { type: Number, default: 0 },
   maxLength: { type: Number, default: 255 },
+  isEmail: { type: Boolean, default: false },
   disabled: { type: Boolean, default: false } // ✅ Tambahkan props disabled
 });
 
 const emit = defineEmits(['update:modelValue', 'update:hasError']);
 
 const inputValue = ref(props.modelValue || '');
+
+watch(
+  () => props.modelValue,
+  (newValue) => {
+    inputValue.value = newValue || '';
+  }
+);
+
 
 watch(
   () => props.modelValue,
@@ -52,6 +61,12 @@ const errorMessage = computed(() => {
   }
   if (props.minLength && String(inputValue.value).length < props.minLength) return `Minimal ${props.minLength} karakter!`;
   if (props.maxLength && String(inputValue.value).length > props.maxLength) return `Maksimal ${props.maxLength} karakter!`;
+  if (props.isEmail && inputValue.value) {
+    const emailValue = String(inputValue.value);
+    if (!emailValue.includes('@')) {
+      return 'Email tidak valid';
+    }
+  }
   return '';
 });
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useVendorStore } from '../../stores/vendor.ts'
 import VNavbar from '../../components/VNavbar.vue'
 import { useAuthStore } from '../../stores/auth.ts'
@@ -15,6 +15,9 @@ const submodules = ref({
 });
 const vendorStore = useVendorStore()
 const authStore = useAuthStore()
+const emailError = ref(false);
+
+
 
 const formData = ref({
   name: '',
@@ -41,7 +44,13 @@ const updateErrorStatus = (field: keyof typeof hasErrors.value, isError: boolean
 const isFormValid = computed(() =>
   Object.values(hasErrors.value).every(error => !error)
 );
-
+watch(() => formData.value.email, (newVal) => {
+  if (typeof newVal === 'string' && newVal.trim() !== '') {
+    emailError.value = !newVal.includes('@');
+  } else {
+    emailError.value = false;
+  }
+});
 const submitForm = async () => {
   if (!isFormValid.value) return;
 
@@ -110,6 +119,7 @@ const submitForm = async () => {
               label="Email"
               placeholder="Enter text here"
               :isEmpty="true"
+              :isEmail="true"
               @update:hasError="updateErrorStatus('email', $event)"
             />
             <VInputField

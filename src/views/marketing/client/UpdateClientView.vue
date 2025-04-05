@@ -1,6 +1,5 @@
 <script setup lang="ts">
-
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useClientStore } from '../../../stores/client.ts'
 import { useAuthStore } from '../../../stores/auth.ts'
 import { useRoute } from 'vue-router'
@@ -21,8 +20,8 @@ const clientStore = useClientStore()
 const authStore = useAuthStore()
 const route = useRoute()
 
+const clientId = ref('')
 const formData = ref({
-  id: '',
   name: '',
   contact: '',
   email: '',
@@ -31,19 +30,36 @@ const formData = ref({
   description: '',
 })
 
+const originalContact = ref('')
+const phoneChanged = ref(false)
+const phoneExistsError = ref(false)
+const emailError = ref(false);
+
+
+
+// Update the watch for email validation with proper type handling
+watch(() => formData.value.email, (newVal) => {
+  // Ensure we're assigning a boolean value
+  if (typeof newVal === 'string' && newVal.trim() !== '') {
+    emailError.value = !newVal.includes('@');
+  } else {
+    emailError.value = false; // No error if there's no email (will be caught by isEmpty validation)
+  }
+});
+
 const isDataLoaded = ref(false)
 onMounted(async () => {
-  const clientId = route.params.id as string
+  clientId.value = route.params.id as string
   if (!authStore.token) {
     console.error('Token tidak tersedia');
     return;
   }
-  await clientStore.getClientById(authStore.token, clientId)
-  console.log(clientId)
+  await clientStore.getClients(authStore.token)
+  await clientStore.getClientById(authStore.token, clientId.value)
+  console.log(clientId.value)
 
   if (clientStore.currentClient) {
     formData.value = {
-      id: clientStore.currentClient.id,
       name: clientStore.currentClient.name,
       contact: clientStore.currentClient.contact,
       email: clientStore.currentClient.email,
@@ -51,6 +67,7 @@ onMounted(async () => {
       industry: clientStore.currentClient.industry,
       description: clientStore.currentClient.description,
     }
+    originalContact.value = clientStore.currentClient.contact
     isDataLoaded.value = true
     console.log(formData.value);
 
@@ -58,6 +75,23 @@ onMounted(async () => {
     console.log('Data client tidak ditemukan')
   }
 })
+
+watch(() => formData.value.contact, async (newVal) => {
+  if (isDataLoaded.value && newVal !== originalContact.value) {
+    phoneChanged.value = true
+    
+    if (newVal.trim() !== '') {
+      phoneExistsError.value = await clientStore.checkPhoneExists(newVal, clientId.value)
+    } else {
+      phoneExistsError.value = false
+    }
+  } else {
+    phoneChanged.value = false
+    phoneExistsError.value = false
+  }
+})
+
+
 
 const hasErrors = ref<{ [key: string]: boolean }>({
   contact: true,
@@ -67,32 +101,39 @@ const hasErrors = ref<{ [key: string]: boolean }>({
   description: true,
 });
 
-
 const updateErrorStatus = (field: string, isError: boolean) => {
   hasErrors.value[field] = isError;
   console.log(`Field ${field} error status:`, isError);
 };
 
 const isFormValid = computed(() => {
-  const isValid = Object.values(hasErrors.value).every(error => !error);
-  console.log('Form is valid:', isValid);
-  return isValid;
+  const baseValid = Object.values(hasErrors.value).every(error => !error);
+  return baseValid && !phoneExistsError.value && !emailError.value;
 });
 
 const submitForm = async () => {
   console.log('Submitting form...');
   if (!isFormValid.value) {
     console.log('Form is not valid. Aborting submit.');
+    
+    if (phoneExistsError.value) {
+      window.$toast('error', 'Nomor telepon sudah digunakan oleh klien lain.')
+    }
+
+    if (emailError.value) {
+      window.$toast('error', 'Email harus mengandung karakter @!');
+    }
+    
     return;
   }
 
   try {
     console.log('Form data to submit:', formData.value);
-    const isSuccess = await clientStore.updateClient(formData.value);
+    const isSuccess = await clientStore.updateClient(formData.value, clientId.value);
 
     if (isSuccess) {
       console.log('Update successful. Redirecting...');
-      router.push(`/marketing/client/${formData.value.id}`);
+      router.push(`/marketing/client/${clientId.value}`);
     } else {
       console.log('Update failed.');
     }
@@ -122,14 +163,19 @@ const submitForm = async () => {
               <label class="mb-1 text-black-grey-700 text-semibold">Nama</label>
               <p class="px-3 py-2 border rounded-lg bg-gray-100">{{ formData.name }}</p>
             </div>
-            <VInputField
-              v-model="formData.contact"
-              label="Kontak"
-              placeholder="Masukkan kontak disini"
-              :isNumberOnly="true"
-              :isEmpty="true"
-              @update:hasError="updateErrorStatus('contact', $event)"
-            />
+            <div class="flex flex-col">
+              <VInputField
+                v-model="formData.contact"
+                label="Kontak"
+                placeholder="Masukkan kontak disini"
+                :isNumberOnly="true"
+                :isEmpty="true"
+                @update:hasError="updateErrorStatus('contact', $event)"
+              />
+              <p v-if="phoneExistsError" class="text-red-500 text-sm mt-1">
+                Nomor telepon sudah digunakan oleh klien lain.
+              </p>
+            </div>
           </div>
           <div>
             <VInputField
@@ -137,6 +183,7 @@ const submitForm = async () => {
               label="Email"
               placeholder="Enter text here"
               :isEmpty="true"
+              :isEmail="true"
               @update:hasError="updateErrorStatus('email', $event)"
             />
             <VInputField
