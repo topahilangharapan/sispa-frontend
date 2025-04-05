@@ -12,6 +12,7 @@ export const useClientStore = defineStore ('client', {
     loading: false,
     error: null as null | string,
     currentClient: null as ClientInterface | null,
+    phoneExists: false,
   }),
   actions: {
     async getClients(token: String) {
@@ -55,11 +56,45 @@ export const useClientStore = defineStore ('client', {
       }
     },
 
-    async updateClient(body: ClientRequestInterface) {
+    async checkPhoneExists(phone: string, currentClientId: string) {
+      this.loading = true
+      this.error = null
+      this.phoneExists = false
+
+      try {
+        // First ensure we have the latest client list
+        if (this.clients.length === 0) {
+          await this.getClients(useAuthStore().token as string)
+        }
+
+        // Check if another client has this phone number
+        const phoneExists = this.clients.some(
+          client => client.contact === phone && client.id !== currentClientId
+        )
+
+        this.phoneExists = phoneExists
+        return phoneExists
+      } catch (err) {
+        this.error = `Failed to check phone number: ${(err as Error).message}`
+        window.$toast('error', this.error)
+        return false
+      } finally {
+        this.loading = false
+      }
+    },
+
+    async updateClient(clientData: ClientRequestInterface, clientId: string) {
       this.loading = true
       this.error = null
 
       try {
+        // Check if phone already exists for another client
+        const phoneExists = await this.checkPhoneExists(clientData.contact, clientId)
+        
+        if (phoneExists) {
+          window.$toast('error', 'Nomor telepon sudah digunakan oleh klien lain.')
+          return false
+        }
 
         const response = await fetch(`${apiUrl}/client/update`, {
           method: 'PUT',
@@ -67,7 +102,10 @@ export const useClientStore = defineStore ('client', {
             'Authorization': `Bearer ${useAuthStore().token}`,
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify(body),
+          body: JSON.stringify({
+            id: clientId,
+            ...clientData
+          }),
         })
 
         const data: CommonResponseInterface<ClientInterface> = await response.json()
@@ -123,6 +161,14 @@ export const useClientStore = defineStore ('client', {
       this.error = null
 
       try {
+        // Check if phone already exists
+        const phoneExists = await this.checkPhoneExists(body.contact, '')
+        
+        if (phoneExists) {
+          window.$toast('error', 'Nomor telepon sudah digunakan oleh klien lain.')
+          return false
+        }
+
         const response = await fetch(apiUrl + '/client/add', {
           method: 'POST',
           headers: {
@@ -150,6 +196,5 @@ export const useClientStore = defineStore ('client', {
         this.loading = false
       }
     },
-
   }
 })
