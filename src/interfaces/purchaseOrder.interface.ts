@@ -11,6 +11,8 @@ export interface PurchaseOrderItemInterface {
 
 export interface PurchaseOrderInterface {
   id: number;
+  vendorId?: string;
+  clientId?: string;
   companyName: string;
   companyAddress: string;
   receiver: string;

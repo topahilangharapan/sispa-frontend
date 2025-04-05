@@ -2,7 +2,7 @@
   <VNavbar :title="title"></VNavbar>
 
   <div v-if="purchaseOrderStore.loading">
-    <VLoading v-if="purchaseOrderStore.loading" class="flex"/>
+    <VLoading class="flex"/>
   </div>
 
   <div class="p-8 bg-white-100 min-h-screen flex flex-col items-center">
@@ -19,19 +19,8 @@
                 @input="handleSearch"
               />
               <span class="absolute inset-y-0 right-0 flex items-center pr-3">
-                <svg
-                  class="w-5 h-5 text-gray-400"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                  ></path>
+                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                 </svg>
               </span>
             </div>
@@ -55,7 +44,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(order, index) in filteredPurchaseOrders" :key="order.id" class="hover:bg-gray-50">
+              <tr v-for="(order, index) in purchaseOrderStore.purchaseOrders" :key="order.id" class="hover:bg-gray-50">
                 <td class="px-4 py-2 text-center">{{ index + 1 }}</td>
                 <td class="px-4 py-2 text-left">{{ order.id }}</td>
                 <td class="px-4 py-2 text-left">{{ order.companyName }}</td>
@@ -64,14 +53,24 @@
                   <RouterLink :to="`/marketing/purchase-order/${order.id}`">
                     <VButton variant="primary" size="sm">Detail</VButton>
                   </RouterLink>
-                  <VButton
+                  
+                  <VButton 
                     class="delete-button"
                     size="sm"
                     variant="delete"
-                    @click="deleteOrder(order.id)"
+                    @click="checkAndDeleteOrder(order)"
                   >
                     Delete
                   </VButton>
+                  
+                  <ConfirmationDialog
+                    :visible="showDialog === order.id"
+                    title="Hapus Purchase Order"
+                    message="Apakah Anda yakin ingin menghapus Purchase Order?"
+                    @confirm="deletePurchaseOrder(order.id)"
+                    @cancel="() => (showDialog = null)"
+                  />
+                  
                   <VButton
                     variant="primary"
                     size="sm"
@@ -90,78 +89,38 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed, watch } from 'vue'
+import { ref, onMounted } from 'vue'
 import { usePurchaseOrderStore } from '../../../stores/purchaseOrder.ts'
 import { useAuthStore } from '../../../stores/auth'
+import { useVendorStore } from '../../../stores/vendor.ts'
 import VNavbar from '../../../components/VNavbar.vue'
 import VButton from '../../../components/VButton.vue'
+import VLoading from '../../../components/VLoading.vue'
 import { DataTable } from 'simple-datatables'
-import router from '../../../router/index.ts'
+import ConfirmationDialog from '../../../components/ConfirmationDialog.vue'
+import { RouterLink } from 'vue-router'
 
 const purchaseOrderStore = usePurchaseOrderStore()
 const authStore = useAuthStore()
+const vendorStore = useVendorStore()
 
-const searchTerm = ref('')
-const title = ref({ 'Marketing': '/marketing' });
-const submodules = ref({
-  "Purchase Order": "/marketing/purchase-order",
-  "Final Report": "/marketing/final-report",
-  "Klien": "/marketing/client"
-});
+const title = ref({ 'Marketing': '/marketing' })
 const dataTableInstance = ref<DataTable | null>(null)
+const showDialog = ref<number | null>(null) // Store the ID of order to delete
 
 onMounted(async () => {
-  try {
-    if (!authStore.token) return
-    await purchaseOrderStore.fetchAll(authStore.token)
+  if (!authStore.token) return
+  await purchaseOrderStore.fetchAll(authStore.token)
 
-    const tableElement = document.getElementById('default-table')
-    if (tableElement) {
-      // Initialize DataTable instance correctly
-      dataTableInstance.value = new DataTable(tableElement as HTMLTableElement, {
-        searchable: false,  // Disable the built-in search
-        sortable: true,
-        paging: true,
-      })
-    }
-  } catch (error) {
-    console.error("Error fetching purchase orders:", error)
+  // Initialize DataTable only once
+  if (document.getElementById('default-table')) {
+    dataTableInstance.value = new DataTable('#default-table', {
+      searchable: false,
+      sortable: true,
+      paging: true,
+    })
   }
 })
-
-const filteredPurchaseOrders = computed(() => {
-  // Get orders from the store
-  const allOrders = purchaseOrderStore.purchaseOrders;
-
-  // Debug logging
-  console.log('All purchase orders:', allOrders);
-
-  // Apply search filter if needed
-  let filteredResult = allOrders;
-  if (searchTerm.value) {
-    filteredResult = filteredResult.filter((order) =>
-      order.companyName.toLowerCase().includes(searchTerm.value.toLowerCase())
-    );
-  }
-
-  return filteredResult;
-});
-
-watch(() => purchaseOrderStore.purchaseOrders, () => {
-  if (dataTableInstance.value) {
-    // Destroy and reinitialize the DataTable to ensure it's in sync
-    dataTableInstance.value.destroy();
-
-    const tableElement = document.getElementById('default-table');
-    if (tableElement) {
-      dataTableInstance.value = new DataTable(tableElement as HTMLTableElement, {
-        searchable: false,
-        sortable: true,
-        paging: true,
-      });
-    }
-  }
-}, { deep: true });
 
 const handleSearch = (event: Event) => {
   const searchValue = (event.target as HTMLInputElement).value
@@ -170,123 +129,70 @@ const handleSearch = (event: Event) => {
   }
 }
 
-async function deleteOrder(orderId: number) {
-  const confirmed = confirm('Are you sure you want to delete this purchase order?')
-  if (!confirmed) return
-
-  if (!authStore.token) return
-  const success = await purchaseOrderStore.deletePurchaseOrder(orderId, authStore.token)
-  if (success) {
-    window.$toast('success', 'Purchase order marked as deleted!')
-    router.push('/marketing/purchase-order')
+const checkAndDeleteOrder = async (order: any) => {
+  // Make sure vendors are loaded first
+  if (!vendorStore.vendors.length && authStore.token) {
+    await vendorStore.getVendors(authStore.token);
   }
-}
-
-async function downloadPurchaseOrder(id: number, token: string) {
-  try {
-    const success = await purchaseOrderStore.downloadPurchaseOrder(id, token);
-    if (!success) {
-      console.error('Download failed according to return value');
-      // No need to show toast here as the store method already does it
+  
+  const vendorId = order.vendorId;
+  
+  // If vendorId exists AND we can find a matching vendor in the database
+  if (vendorId && vendorId !== "") {
+    const vendor = vendorStore.vendors.find(v => String(v.id) === String(vendorId));
+    
+    // If we found the vendor, it means it's still active
+    if (vendor) {
+      // Show warning toast and prevent deletion
+      window.$toast('warning', 'Purchase Order tidak dapat dihapus karena masih terkait dengan vendor yang aktif dalam database.');
+      return; // Important: Exit the function here to prevent showing the dialog
     }
-  } catch (error) {
-    console.error('Exception caught during download:', error);
-    window.$toast('error', 'Gagal mengunduh purchase order!');
+  }
+  
+  // If we get here, it's safe to show the confirmation dialog
+  showDialog.value = order.id;
+};
+
+const deletePurchaseOrder = async (id: number) => {
+  // Get the order by id
+  const orderToDelete = purchaseOrderStore.purchaseOrders.find(order => order.id === id);
+  if (!orderToDelete) return;
+  
+  // Double check vendor connection before proceeding
+  const vendorId = orderToDelete.vendorId;
+  if (vendorId && vendorId !== "") {
+    const vendor = vendorStore.vendors.find(v => String(v.id) === String(vendorId));
+    if (vendor) {
+      // Vendor still exists, cancel deletion
+      showDialog.value = null;
+      window.$toast('warning', 'Purchase Order tidak dapat dihapus karena masih terkait dengan vendor yang aktif.');
+      return;
+    }
+  }
+  
+  // Safe to delete, proceed
+  if (!authStore.token) return;
+  
+  // Process the deletion
+  const success = await purchaseOrderStore.deletePurchaseOrder(id, authStore.token || '');
+  
+  // Close the dialog
+  showDialog.value = null;
+  
+  if (success) {
+    window.$toast('success', 'Purchase order berhasil dihapus!');
+    // Refresh data
+    await purchaseOrderStore.fetchAll(authStore.token || '');
+  } else {
+    window.$toast('error', 'Gagal menghapus purchase order!');
   }
 }
 
+const downloadPurchaseOrder = async (id: number, token: string) => {
+  try {
+    await purchaseOrderStore.downloadPurchaseOrder(id, token)
+  } catch (error) {
+    window.$toast('error', 'Gagal mengunduh purchase order!')
+  }
+}
 </script>
-
-<style scoped>
-.purchaseorder-container {
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  height: 100vh;
-  width: 100%;
-  padding: 20px;
-}
-
-.purchaseorder-card {
-  background: white;
-  width: 100%;
-  max-width: 1200px;
-  padding: 30px;
-  border-radius: 10px;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-  text-align: left;
-  margin-top: 80px;
-}
-
-.search-bar {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  margin-bottom: 20px;
-}
-
-.search-input {
-  width: 300px;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  font-size: 14px;
-  padding-right: 30px;
-}
-
-.search-icon {
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 18px;
-  height: 18px;
-}
-
-.date-filter {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 20px;
-}
-
-th, td {
-  padding: 12px;
-  text-align: left;
-  border: none;
-}
-
-th {
-  background-color: #f4f4f4;
-  font-weight: 600;
-}
-
-tr:hover {
-  background-color: #f9f9f9;
-}
-
-.action-buttons {
-  display: flex;
-  gap: 10px;
-}
-
-.actions {
-  margin-top: 20px;
-  display: flex;
-  justify-content: start;
-  gap: 15px;
-}
-
-.actions button {
-  padding: 8px 20px;
-  background-color: #f0ad4e;
-  color: white;
-  border-radius: 5px;
-}
-
-</style>
