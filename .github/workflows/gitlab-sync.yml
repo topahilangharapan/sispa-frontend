@@ -23,7 +23,7 @@ jobs:
 
       - name: Add GitLab remote
         run: |
-          git remote add upstream https://oauth2:${{ secrets.GITLAB_TOKEN }}@gitlab.cs.ui.ac.id/propensi-2024-2025-genap/kelas-b/b01-radiant-be.git
+          git remote add upstream https://oauth2:${{ secrets.GITLAB_TOKEN }}@gitlab.cs.ui.ac.id/propensi-2024-2025-genap/kelas-b/b01-radiant-fe.git
           git fetch upstream
 
       - name: Reset main branch to GitLab
@@ -32,7 +32,7 @@ jobs:
           git reset --hard upstream/main
 
       - name: Set remote URL with PAT
-        run: git remote set-url origin https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/topahilangharapan/sispa-backend.git
+        run: git remote set-url origin https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/topahilangharapan/sispa-frontend.git
 
       - name: Check remotes
         run: git remote -v
@@ -42,6 +42,6 @@ jobs:
 
       - name: Push to GitHub
         run: |
-          git push https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/topahilangharapan/sispa-backend.git --all --force
-          git push https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/topahilangharapan/sispa-backend.git --tags --force
+          git push https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/topahilangharapan/sispa-frontend.git --all --force
+          git push https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/topahilangharapan/sispa-frontend.git --tags --force
 
