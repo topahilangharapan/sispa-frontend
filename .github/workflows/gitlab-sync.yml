@@ -5,13 +5,13 @@ on:
     - cron: '0 * * * *' # Every hour
   workflow_dispatch: # Manual trigger
 
+permissions:
+  contents: write
+  workflows: write
+
 jobs:
   sync:
     runs-on: ubuntu-latest
-
-    permissions:
-      contents: write
-      workflow: write
 
     steps:
       - name: Checkout GitHub repo
