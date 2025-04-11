@@ -72,7 +72,9 @@ deploy:
   script:
     - echo "Deploying to Hostinger VPS..."
     - ssh "${DEPLOY_USERNAME}@${DEPLOY_SERVER}" "
+      export BACKEND_URL=${BACKEND_URL} &&
       export IMAGE_NAME=${IMAGE_NAME} &&
+      docker rm -f frontend-sispa || true &&
       cd /root/$CI_PROJECT_DIR &&
       docker compose -f docker-compose-deploy.yml up -d --pull always
       "
