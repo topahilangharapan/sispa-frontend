@@ -5,9 +5,7 @@ on:
     - cron: '0 * * * *' # Every hour
   workflow_dispatch: # Manual trigger
 
-permissions:
-  contents: write
-  workflows: write
+permissions: write-all
 
 jobs:
   sync:
