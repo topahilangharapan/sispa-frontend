@@ -13,6 +13,7 @@ export const useVendorStore = defineStore ('vendor', {
     loading: false,
     error: null as null | string,
     currentVendor: null as VendorInterface | null,
+    phoneExists: false,
   }),
   actions: {
     async getVendors(token: String) {
@@ -89,11 +90,45 @@ export const useVendorStore = defineStore ('vendor', {
       }
     },
 
-    async updateVendor(body: VendorRequestInterface) {
+    async checkPhoneExists(phone: string, currentVendorId: string) {
+      this.loading = true
+      this.error = null
+      this.phoneExists = false
+
+      try {
+        // First ensure we have the latest vendor list
+        if (this.vendors.length === 0) {
+          await this.getVendors(useAuthStore().token as string)
+        }
+
+        // Check if another vendor has this phone number
+        const phoneExists = this.vendors.some(
+          vendor => vendor.contact === phone && vendor.id !== currentVendorId
+        )
+
+        this.phoneExists = phoneExists
+        return phoneExists
+      } catch (err) {
+        this.error = `Failed to check phone number: ${(err as Error).message}`
+        window.$toast('error', this.error)
+        return false
+      } finally {
+        this.loading = false
+      }
+    },
+
+    async updateVendor(body: VendorRequestInterface, vendorId: string) {
       this.loading = true
       this.error = null
 
       try {
+
+        const phoneExists = await this.checkPhoneExists(body.contact, vendorId)
+        
+        if (phoneExists) {
+          window.$toast('error', 'Nomor telepon sudah digunakan oleh klien lain.')
+          return false
+        }
 
         const response = await fetch(`${apiUrl}/vendor/update`, {
           method: 'PUT',

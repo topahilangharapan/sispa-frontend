@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, onMounted } from 'vue'
+import { computed, ref, onMounted, watch } from 'vue'
 import { useVendorStore } from '../../stores/vendor.ts'
 import { useRoute } from 'vue-router'
 import VNavbar from '../../components/VNavbar.vue'
@@ -19,6 +19,8 @@ const vendorStore = useVendorStore()
 const authStore = useAuthStore()
 const route = useRoute()
 
+const vendorId = ref('')
+
 const formData = ref({
   id: '',
   name: '',
@@ -28,6 +30,20 @@ const formData = ref({
   service: '',
   description: '',
 })
+
+const originalContact = ref('')
+const phoneChanged = ref(false)
+const phoneExistsError = ref(false)
+const emailError = ref(false);
+
+watch(() => formData.value.email, (newVal) => {
+  // Ensure we're assigning a boolean value
+  if (typeof newVal === 'string' && newVal.trim() !== '') {
+    emailError.value = !newVal.includes('@');
+  } else {
+    emailError.value = false; // No error if there's no email (will be caught by isEmpty validation)
+  }
+});
 
 const isDataLoaded = ref(false)
 onMounted(async () => {
@@ -49,11 +65,27 @@ onMounted(async () => {
       service: vendorStore.currentVendor.service,
       description: vendorStore.currentVendor.description,
     }
+    originalContact.value = vendorStore.currentVendor.contact
     isDataLoaded.value = true
     console.log(formData.value);
 
   } else {
     console.log('Data vendor tidak ditemukan')
+  }
+})
+
+watch(() => formData.value.contact, async (newVal) => {
+  if (isDataLoaded.value && newVal !== originalContact.value) {
+    phoneChanged.value = true
+    
+    if (newVal.trim() !== '') {
+      phoneExistsError.value = await vendorStore.checkPhoneExists(newVal, vendorId.value)
+    } else {
+      phoneExistsError.value = false
+    }
+  } else {
+    phoneChanged.value = false
+    phoneExistsError.value = false
   }
 })
 
@@ -79,12 +111,21 @@ const submitForm = async () => {
   console.log('Submitting form...');
   if (!isFormValid.value) {
     console.log('Form is not valid. Aborting submit.');
+
+    if (phoneExistsError.value) {
+      window.$toast('error', 'Nomor telepon sudah digunakan oleh vendor lain.')
+    }
+
+    if (emailError.value) {
+      window.$toast('error', 'Email harus mengandung karakter @!');
+    }
+    
     return;
   }
 
   try {
     console.log('Form data to submit:', formData.value);
-    const isSuccess = await vendorStore.updateVendor(formData.value);
+    const isSuccess = await vendorStore.updateVendor(formData.value, vendorId.value);
 
     if (isSuccess) {
       console.log('Update successful. Redirecting...');
@@ -133,6 +174,7 @@ const submitForm = async () => {
               label="Email"
               placeholder="Enter text here"
               :isEmpty="true"
+              :isEmail="true"
               @update:hasError="updateErrorStatus('email', $event)"
             />
             <VInputField

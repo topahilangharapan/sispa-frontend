@@ -3,7 +3,7 @@
 
 import { useClientStore } from '../../../stores/client.ts'
 import { useAuthStore } from '../../../stores/auth.ts'
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import VNavbar from '../../../components/VNavbar.vue'
 import VLoading from '../../../components/VLoading.vue'
 import VInputField from '../../../components/VInputField.vue'
@@ -14,6 +14,7 @@ import { useRouter } from 'vue-router'
 const clientStore = useClientStore()
 const authStore = useAuthStore()
 const router = useRouter()
+const emailError = ref(false);
 
 const title = ref({ 'Marketing': '/marketing' });
 const submodules = ref({
@@ -39,6 +40,14 @@ const hasErrors = ref<{ [key: string]: boolean }>({
   address: true,
   industry: true,
   description: true,
+});
+
+watch(() => formData.value.email, (newVal) => {
+  if (typeof newVal === 'string' && newVal.trim() !== '') {
+    emailError.value = !newVal.includes('@');
+  } else {
+    emailError.value = false; 
+  }
 });
 
 const updateErrorStatus = (field: string, isError: boolean) => {
@@ -117,6 +126,7 @@ const submitForm = async () => {
               label="Email"
               placeholder="Enter text here"
               :isEmpty="true"
+              :isEmail="true"
               @update:hasError="updateErrorStatus('email', $event)"
             />
             <VInputField

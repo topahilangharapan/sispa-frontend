@@ -3,6 +3,7 @@ version: '3.8'
 services:
   vue-app:
     image: topahilangharapan/b01-radiant-fe:latest
+    container_name: frontend-sispa
     ports:
       - "8081:80"
 
