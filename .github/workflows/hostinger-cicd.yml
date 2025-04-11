@@ -87,7 +87,7 @@ jobs:
           ssh "${{ secrets.DEPLOY_USERNAME }}@${{ secrets.DEPLOY_SERVER }}" "
             export IMAGE_NAME=${{ secrets.IMAGE_NAME }} &&
             export BACKEND_URL=${{ secrets.BACKEND_URL }} &&
-            docker rm -f frontend-vue-app-1 || true &&
+            docker rm -f sispa-frontend || true &&
             cd ~/frontend &&
             docker compose -f docker-compose-deploy.yml up -d --pull always
           "
