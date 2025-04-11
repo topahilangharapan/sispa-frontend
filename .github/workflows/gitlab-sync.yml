@@ -1,7 +1,5 @@
 name: Sync from GitLab
 
-github_token: ${{ secrets.GH_TOKEN }}
-
 on:
   schedule:
     - cron: '0 * * * *' # Every hour
@@ -42,6 +40,8 @@ jobs:
         run: git branch
 
       - name: Push to GitHub
+        with:
+          token: ${{ secrets.GH_TOKEN }}
         run: |
           git push https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/topahilangharapan/sispa-frontend.git --all --force
           git push https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/topahilangharapan/sispa-frontend.git --tags --force
