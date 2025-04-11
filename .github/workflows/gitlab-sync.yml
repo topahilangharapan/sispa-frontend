@@ -1,5 +1,7 @@
 name: Sync from GitLab
 
+github_token: ${{ secrets.GH_TOKEN }}
+
 on:
   schedule:
     - cron: '0 * * * *' # Every hour
