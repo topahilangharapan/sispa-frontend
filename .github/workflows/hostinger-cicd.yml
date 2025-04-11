@@ -25,6 +25,11 @@ jobs:
           npm install
           npm run build
 
+      - name: List contents of dist directory
+        run: |
+          mkdir dist
+          ls -la dist
+
       - name: Archive production build
         uses: actions/upload-artifact@v4
         with:
