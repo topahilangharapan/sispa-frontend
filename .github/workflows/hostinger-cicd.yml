@@ -50,6 +50,7 @@ jobs:
 
       - name: Prepare dist directory
         run: |
+          ls -la
           mkdir -p dist
           mv frontend-dist/* dist/
           ls -la dist
