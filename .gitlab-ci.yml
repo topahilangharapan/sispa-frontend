@@ -87,4 +87,3 @@ cleaning:
   script:
     - echo "Cleaning up old Docker images..."
     - ssh "${DEPLOY_USERNAME}@${DEPLOY_SERVER}" "docker system prune -f"
-    - echo "Backend URL ${BACKEND_URL}"
