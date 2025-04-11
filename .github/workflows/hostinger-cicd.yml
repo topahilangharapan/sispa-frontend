@@ -85,6 +85,7 @@ jobs:
           rsync -rahv docker-compose-deploy.yml "${{ secrets.DEPLOY_USERNAME }}@${{ secrets.DEPLOY_SERVER }}:~/frontend/"
           ssh "${{ secrets.DEPLOY_USERNAME }}@${{ secrets.DEPLOY_SERVER }}" "
             export IMAGE_NAME=${{ secrets.IMAGE_NAME }} &&
+            docker rm -f b01-radiant-fe-vue-app-1 || true &&
             cd ~/frontend &&
             docker compose -f docker-compose-deploy.yml up -d --pull always
           "
