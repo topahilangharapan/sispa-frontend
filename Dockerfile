@@ -1,5 +1,5 @@
 # Base image
-FROM node:16
+FROM node:20.11.0
 
 # Set build argument (build-time)
 ARG VITE_API_LOCAL_URL
