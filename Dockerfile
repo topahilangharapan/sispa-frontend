@@ -18,5 +18,6 @@ COPY --from=build /app/dist /app
 RUN npm install -g serve
 
 EXPOSE 8081
-CMD ["serve", "-s", "/app", "-l", "8081"]
+CMD ["serve", "-s", "/app", "-l", "0.0.0.0:8081"]
+
 
