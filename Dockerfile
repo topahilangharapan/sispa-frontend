@@ -1,21 +1,26 @@
-# Stage 1: Build
-FROM node:20-alpine as build
-WORKDIR /app
-COPY package*.json ./
-RUN npm install
-COPY . .
+# Base image
+FROM node:16
+
+# Set build argument (build-time)
 ARG VITE_API_LOCAL_URL
-ENV VITE_API_LOCAL_URL=$VITE_API_LOCAL_URL
+
+# Working directory
+WORKDIR /app
+
+# Copy dependencies
+COPY package*.json ./
+
+# Install dependencies
+RUN npm install
+
+# Copy source code
+COPY . .
+
+# Build aplikasi dengan env variable
 RUN npm run build
 
-# Stage 2: Serve with Node.js (Directly on localhost)
-FROM node:20-alpine
+# Expose port
+EXPOSE 8081
 
-WORKDIR /app
-COPY --from=build /app/dist /app
-
-# Install a simple static server (e.g., serve package)
-RUN npm install -g serve
-
-EXPOSE 3000
-CMD ["serve", "-s", "/app", "-l", "3000"]
+# Jalankan aplikasi
+CMD ["npm", "run", "serve", "--", "--port", "8081"]
