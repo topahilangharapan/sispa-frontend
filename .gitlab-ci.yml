@@ -75,7 +75,7 @@ deploy:
       export BACKEND_URL=${BACKEND_URL} &&
       export IMAGE_NAME=${IMAGE_NAME} &&
       cd /root/$CI_PROJECT_DIR &&
-      docker compose -f docker-compose-deploy.yml up -d --pull always
+      docker compose -f docker-compose-deploy.yml up -d --force-recreate --pull always
       "
 
 cleaning:
