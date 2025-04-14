@@ -91,7 +91,8 @@ jobs:
             export BACKEND_URL=${{ secrets.BACKEND_URL }} &&
             docker rm -f frontend-sispa || true &&
             cd ~/frontend &&
-            docker compose -f docker-compose-deploy.yml up -d --force-recreate --pull always
+            docker rm -f frontend-sispa || true &&
+            docker compose -f docker-compose-deploy.yml up -d --pull always
           "
 
   clean:
