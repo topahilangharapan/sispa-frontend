@@ -82,16 +82,15 @@ jobs:
           ssh-keyscan -H "${{ secrets.DEPLOY_SERVER }}" >> ~/.ssh/known_hosts
           chmod 644 ~/.ssh/known_hosts  # Set permissions for known_hosts
 
-      - name: Check directory
-        run: |
-          ls -la
-
       - name: Deploy to Hostinger VPS
         run: |
+          ssh "${{ secrets.DEPLOY_USERNAME }}@${{ secrets.DEPLOY_SERVER }}" "mkdir -p ~/frontend/"
+          rsync -rahv docker-compose-deploy.yml "${{ secrets.DEPLOY_USERNAME }}@${{ secrets.DEPLOY_SERVER }}:~/frontend/"
           ssh "${{ secrets.DEPLOY_USERNAME }}@${{ secrets.DEPLOY_SERVER }}" "
             export IMAGE_NAME=${{ secrets.IMAGE_NAME }} &&
             export BACKEND_URL=${{ secrets.BACKEND_URL }} &&
             docker rm -f frontend-sispa || true &&
+            cd ~/frontend &&
             docker compose -f docker-compose-deploy.yml up -d --pull always
           "
 
