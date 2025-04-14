@@ -17,5 +17,6 @@ COPY --from=build /app/dist /app
 # Install a simple static server (e.g., serve package)
 RUN npm install -g serve
 
-EXPOSE 3000
-CMD ["serve", "-s", "/app", "-l", "3000"]
+EXPOSE 8081
+CMD ["serve", "-s", "/app", "-l", "8081"]
+
