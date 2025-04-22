@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import DesignSystemView from '../views/DesignSystemView.vue'
 import InventoryView from '../views/InventoryView.vue'
+import ItemCategoryView from '../views/inventory/ItemCategoryView.vue'
 import VendorView from '../views/purchasing/VendorView.vue'
 import AddVendorView from '../views/purchasing/AddVendorView.vue'
 import StaffAndFreelancerView from '../views/StaffAndFreelancerView.vue'
@@ -55,9 +56,15 @@ const routes = [
     beforeEnter: roleGuard
   },
   {
-    path: '/purchasing/inventory',
+    path: '/inventory',
     name: 'Inventory',
     component: InventoryView,
+    beforeEnter: roleGuard
+  },
+  {
+    path: '/inventory/category',
+    name: 'Category View',
+    component: ItemCategoryView,
     beforeEnter: roleGuard
   },
   {
@@ -110,7 +117,7 @@ const routes = [
   {
     path: '/marketing',
     name: 'Marketing',
-    component: MarketingView,
+    component: PurchaseOrderListView,
     beforeEnter: roleGuard
   },
   {
