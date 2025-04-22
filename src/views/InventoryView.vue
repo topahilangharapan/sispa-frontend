@@ -4,7 +4,7 @@ import { ref } from 'vue'
 import VLoading from '../components/VLoading.vue'
 
 const title = ref({ 'Inventory': '/inventory' });
-const submodules = ref({ 'Category': '/inventory/category' });
+const submodules = ref({ 'Kategori': '/inventory/category' });
 
 </script>
 
