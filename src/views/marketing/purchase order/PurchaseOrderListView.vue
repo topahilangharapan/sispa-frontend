@@ -1,5 +1,5 @@
 <template>
-  <VNavbar :title="title"></VNavbar>
+  <VNavbar :title="title" :submodules="submodules"></VNavbar>
 
   <div v-if="purchaseOrderStore.loading">
     <VLoading class="flex"/>
@@ -53,8 +53,8 @@
                   <RouterLink :to="`/marketing/purchase-order/${order.id}`">
                     <VButton variant="primary" size="sm">Detail</VButton>
                   </RouterLink>
-                  
-                  <VButton 
+
+                  <VButton
                     class="delete-button"
                     size="sm"
                     variant="delete"
@@ -62,7 +62,7 @@
                   >
                     Delete
                   </VButton>
-                  
+
                   <ConfirmationDialog
                     :visible="showDialog === order.id"
                     title="Hapus Purchase Order"
@@ -70,7 +70,7 @@
                     @confirm="deletePurchaseOrder(order.id)"
                     @cancel="() => (showDialog = null)"
                   />
-                  
+
                   <VButton
                     variant="primary"
                     size="sm"
@@ -104,7 +104,12 @@ const purchaseOrderStore = usePurchaseOrderStore()
 const authStore = useAuthStore()
 const vendorStore = useVendorStore()
 
-const title = ref({ 'Marketing': '/marketing' })
+const title = ref({ 'Marketing': '/marketing' });
+const submodules = ref({
+  "Purchase Order": "/marketing/purchase-order",
+  "Final Report": "/marketing/final-report",
+  "Klien": "/marketing/client"
+});
 const dataTableInstance = ref<DataTable | null>(null)
 const showDialog = ref<number | null>(null) // Store the ID of order to delete
 
@@ -134,13 +139,13 @@ const checkAndDeleteOrder = async (order: any) => {
   if (!vendorStore.vendors.length && authStore.token) {
     await vendorStore.getVendors(authStore.token);
   }
-  
+
   const vendorId = order.vendorId;
-  
+
   // If vendorId exists AND we can find a matching vendor in the database
   if (vendorId && vendorId !== "") {
     const vendor = vendorStore.vendors.find(v => String(v.id) === String(vendorId));
-    
+
     // If we found the vendor, it means it's still active
     if (vendor) {
       // Show warning toast and prevent deletion
@@ -148,7 +153,7 @@ const checkAndDeleteOrder = async (order: any) => {
       return; // Important: Exit the function here to prevent showing the dialog
     }
   }
-  
+
   // If we get here, it's safe to show the confirmation dialog
   showDialog.value = order.id;
 };
@@ -157,7 +162,7 @@ const deletePurchaseOrder = async (id: number) => {
   // Get the order by id
   const orderToDelete = purchaseOrderStore.purchaseOrders.find(order => order.id === id);
   if (!orderToDelete) return;
-  
+
   // Double check vendor connection before proceeding
   const vendorId = orderToDelete.vendorId;
   if (vendorId && vendorId !== "") {
@@ -169,16 +174,16 @@ const deletePurchaseOrder = async (id: number) => {
       return;
     }
   }
-  
+
   // Safe to delete, proceed
   if (!authStore.token) return;
-  
+
   // Process the deletion
   const success = await purchaseOrderStore.deletePurchaseOrder(id, authStore.token || '');
-  
+
   // Close the dialog
   showDialog.value = null;
-  
+
   if (success) {
     window.$toast('success', 'Purchase order berhasil dihapus!');
     // Refresh data
