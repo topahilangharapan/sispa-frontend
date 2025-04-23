@@ -12,7 +12,7 @@ import LoginView from '../views/auth/LoginView.vue'
 import VendorDetail from '../views/purchasing/VendorDetail.vue'
 import ProfileView from '../views/ProfileView.vue'
 import UpdateVendorView from '../views/purchasing/UpdateVendorView.vue'
-import PurchasingView from '../views/PurchasingView.vue'
+import PurchasingView from '../views/purchasing/PurchasingView.vue'
 import FinanceView from '../views/finance/FinanceView.vue'
 import CreateInvoiceView from '../views/finance/invoice/CreateInvoiceView.vue'
 import MarketingView from '../views/marketing/MarketingView.vue'
@@ -29,6 +29,7 @@ import UpdateClientView from '../views/marketing/client/UpdateClientView.vue'
 import FinalReportListView from '../views/marketing/final report/FinalReportListView.vue'
 import FinalReportDetailView from '../views/marketing/final report/FinalReportDetailView.vue'
 import CashFlowView from '../views/CashFlowView.vue'
+import CreateItemView from '../views/purchasing/item/CreateItemView.vue'
 
 const routes = [
   {
@@ -216,7 +217,13 @@ const routes = [
     name: 'Cash Flow',
     component: CashFlowView,
     beforeEnter: roleGuard
-  }
+  },
+  {
+    path: '/purchasing/item/create',
+    name: 'Cash Flow',
+    component: CreateItemView,
+    beforeEnter: roleGuard
+  },
 ]
 
 const router = createRouter({

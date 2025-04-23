@@ -49,6 +49,13 @@ watch(selectedValue, () => {
       <transition name="fade-slide">
         <ul v-if="showDropdown" class="absolute left-0 right-0 mt-1 backdrop-blur-3xl border rounded-lg shadow-lg z-10">
           <li
+            v-if="options.length === 0"
+            class="px-3 py-2 text-gray-500 text-center cursor-default"
+          >
+            Tidak Ada Data
+          </li>
+          <li
+            v-else
             v-for="option in options"
             :key="option.value"
             class="px-3 py-2 hover:bg-black-grey-200/20 cursor-pointer hover:rounded-lg"

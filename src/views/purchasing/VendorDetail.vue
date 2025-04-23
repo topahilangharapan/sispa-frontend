@@ -12,6 +12,7 @@ import ConfirmationDialog from '../../components/ConfirmationDialog.vue'
 const title = ref({ 'Purchasing': '/purchasing' });
 const submodules = ref({
   "Vendor": "/purchasing/vendor",
+  "Item": "/purchasing/item",
 });
 
 const vendorStore = useVendorStore()
@@ -36,8 +37,8 @@ onMounted(async () => {
 
   const token = authStore.token ?? '';
   await vendorStore.getVendorById(token, vendorId)
-  
-  
+
+
   isLoaded.value = true;
 });
 
@@ -63,7 +64,7 @@ onMounted(async () => {
             <VButton @click="() => (showDialog = true)" size="sm" variant="delete">
               Hapus
             </VButton>
-  
+
             <ConfirmationDialog
               :visible="showDialog"
               title="Hapus Vendor"
@@ -74,7 +75,7 @@ onMounted(async () => {
           </div>
         </div>
         <hr class="border-gray-300 border-t-2 mb-4" />
-  
+
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div class="space-y-4">
             <div>
@@ -130,11 +131,11 @@ onMounted(async () => {
           </div>
         </div>
         <div class="flex justify-center mt-8">
-          <VButton 
-            @click="router.push('/purchasing/vendor')" 
-            type="button" 
-            size="md" 
-            variant="delete" 
+          <VButton
+            @click="router.push('/purchasing/vendor')"
+            type="button"
+            size="md"
+            variant="delete"
             class="bg-slate-600 hover:bg-slate-800 text-white"
           >
             Kembali

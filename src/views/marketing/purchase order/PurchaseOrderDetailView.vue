@@ -78,7 +78,6 @@
                 <td>{{ item.volume }}</td>
                 <td>{{ item.unit }}</td>
                 <td>{{ item.pricePerUnit }}</td>
-                <td>{{ item.sum }}</td>
                 <td>{{ item.description }}</td>
               </tr>
             </tbody>
@@ -89,9 +88,9 @@
             <VButton variant="primary" size="md" @click="goBack">
               Back to List
             </VButton>
-            <VButton 
+            <VButton
               class="delete-button"
-              size="sm" 
+              size="sm"
               variant="delete"
               @click="showDialog = purchaseOrderStore.selectedPurchaseOrder.id"
             >
@@ -104,7 +103,7 @@
               @confirm="deleteOrder(purchaseOrderStore.selectedPurchaseOrder.id)"
               @cancel="() => (showDialog = null)"
             />
-            <VButton variant="primary" size="md" 
+            <VButton variant="primary" size="md"
               @click="downloadPurchaseOrder"
               :disabled="!purchaseOrderStore.selectedPurchaseOrder"
             >
@@ -153,11 +152,11 @@
 
   async function deleteOrder(orderId: number) {
     if (!authStore.token) return
-    
+
     const success = await purchaseOrderStore.deletePurchaseOrder(orderId, authStore.token)
-    
+
     showDialog.value = null
-    
+
     if (success) {
       window.$toast('success', 'Purchase order deleted!')
       router.push('/marketing/purchase-order')
@@ -165,10 +164,10 @@
       window.$toast('error', 'Failed to delete purchase order')
     }
   }
-  
+
   async function downloadPurchaseOrder() {
     if (!authStore.token || !purchaseOrderStore.selectedPurchaseOrder) return;
-    
+
     try {
       const id = purchaseOrderStore.selectedPurchaseOrder.id;
       await purchaseOrderStore.downloadPurchaseOrder(id, authStore.token);
