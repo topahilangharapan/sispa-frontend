@@ -6,6 +6,7 @@ import VLoading from '../../components/VLoading.vue'
 const title = ref({ 'Keuangan': '/finance' });
 const submodules = ref({
   "Invoice": "/finance/invoice",
+  "Cash Flow": "/finance/cashflow",
 });
 </script>
 

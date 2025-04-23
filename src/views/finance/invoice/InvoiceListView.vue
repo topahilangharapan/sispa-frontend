@@ -9,7 +9,10 @@ import VButton from '../../../components/VButton.vue'
 import ConfirmationDialog from '../../../components/ConfirmationDialog.vue'
 
 const title = ref({ 'Keuangan': '/finance' });
-const submodules = ref({ "Invoice": "/finance/invoice" });
+const submodules = ref({
+  "Invoice": "/finance/invoice",
+  "Cash Flow": "/finance/cashflow",
+});
 const invoiceStore = useInvoiceStore()
 const authStore = useAuthStore()
 const router = useRouter()
