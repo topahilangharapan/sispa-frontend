@@ -10,7 +10,9 @@ const props = defineProps({
   isNegative: { type: Boolean, default: false },
   isNumberOnly: { type: Boolean, default: false },
   minLength: { type: Number, default: 0 },
-  maxLength: { type: Number, default: 255 }
+  maxLength: { type: Number, default: 255 },
+  disabled: { type: Boolean, default: false },
+
 });
 
 const emit = defineEmits(['update:modelValue', 'update:hasError']);
@@ -59,9 +61,10 @@ const preventNonNumeric = (event: KeyboardEvent) => {
       v-model="inputValue"
       :placeholder="placeholder"
       :maxlength="maxLength"
-      class="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-brown-100"
+      :disabled="disabled"
+      class="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-brown-100 disabled:bg-gray-200 disabled:cursor-not-allowed"
       @keypress="preventNonNumeric"
-    ></textarea>
+    />
     <p v-if="errorMessage" class="text-red-175 small-text-normal mt-1">{{ errorMessage }}</p>
   </div>
 </template>

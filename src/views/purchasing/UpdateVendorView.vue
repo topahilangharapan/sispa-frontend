@@ -13,6 +13,7 @@ import VButton from '../../components/VButton.vue'
 const title = ref({ 'Purchasing': '/purchasing' });
 const submodules = ref({
   "Vendor": "/purchasing/vendor",
+  "Item": "/purchasing/item",
 });
 
 const vendorStore = useVendorStore()
@@ -77,7 +78,7 @@ onMounted(async () => {
 watch(() => formData.value.contact, async (newVal) => {
   if (isDataLoaded.value && newVal !== originalContact.value) {
     phoneChanged.value = true
-    
+
     if (newVal.trim() !== '') {
       phoneExistsError.value = await vendorStore.checkPhoneExists(newVal, vendorId.value)
     } else {
@@ -119,7 +120,7 @@ const submitForm = async () => {
     if (emailError.value) {
       window.$toast('error', 'Email harus mengandung karakter @!');
     }
-    
+
     return;
   }
 
