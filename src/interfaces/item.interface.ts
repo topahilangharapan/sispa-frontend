@@ -27,6 +27,10 @@ export interface ItemInterface {
   description: string;
   category: string;
   status: string;
+  createdAt: Date,
+  updatedAt: Date,
+  createdBy: string,
+  updatedBy: string
 }
 
 

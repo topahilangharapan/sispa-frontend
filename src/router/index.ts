@@ -29,6 +29,8 @@ import FinalReportListView from '../views/marketing/final report/FinalReportList
 import FinalReportDetailView from '../views/marketing/final report/FinalReportDetailView.vue'
 import CashFlowView from '../views/CashFlowView.vue'
 import CreateItemView from '../views/purchasing/item/CreateItemView.vue'
+import ItemDetailView from '../views/purchasing/ItemDetailView.vue'
+import UpdateItemView from '../views/purchasing/item/UpdateItemView.vue'
 import RegisterFreelancerView from '../views/auth/freelancer/RegisterFreelancerView.vue'
 import FreelancerView from '../views/FreelancerView.vue'
 import RegisterFreelancerSuccessView from '../views/auth/freelancer/RegisterFreelancerSuccessView.vue'
@@ -230,6 +232,18 @@ const routes = [
     path: '/purchasing/item/create',
     name: 'Cash Flow',
     component: CreateItemView,
+    beforeEnter: roleGuard
+  },
+  {
+    path: '/purchasing/item/:id',
+    name: 'Item Detail',
+    component: ItemDetailView,
+    beforeEnter: roleGuard
+  },
+  {
+    path: '/purchasing/item/:id/update',
+    name: 'Update Item',
+    component: UpdateItemView,
     beforeEnter: roleGuard
   },
   {
