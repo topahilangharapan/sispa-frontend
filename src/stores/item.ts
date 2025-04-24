@@ -110,5 +110,34 @@ export const useItemStore = defineStore('item', {
       }
     },
 
+    async deleteItem(id: string) {
+      this.loading = true
+      this.error = null
+
+      try {
+        const response = await fetch(apiUrl + `/item/${id}/delete`, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${useAuthStore().token}`,
+            'Content-Type': 'application/json'
+          },
+        });
+
+        if (response.ok) {
+          this.items = this.items.filter((item) => item.id !== id);
+          window.$toast('success', `Berhasil menghapus item dengan ID ${id}`);
+          await router.push("/purchasing/item");
+        } else {
+          const data = await response.json();
+          window.$toast('error', `Gagal menghapus item: ${data.message}`);
+        }
+      } catch (err) {
+        this.error = `Gagal menghapus item: ${(err as Error).message}`;
+        window.$toast('error', this.error);
+      } finally {
+        this.loading = false;
+      }
+    }
+
   }
 })
