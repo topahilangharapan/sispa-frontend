@@ -203,8 +203,6 @@ const removeItem = (tempId: string | number) => {
   delete hasErrors.value[`item-undefined`];
   delete hasErrors.value[`volume-undefined`];
 
-  console.log(hasErrors.value)
-
 };
 
 
