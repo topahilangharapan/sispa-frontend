@@ -18,7 +18,7 @@ const menuItems = [
   { label: "Keuangan", path: "/finance", roles: ["admin","management", "finance"] },
   { label: "Marketing", path: "/marketing/purchase-order", roles: ["admin", "management", "marketing"] },
   { label: "Purchasing", path: "/purchasing/vendor", roles: ["admin", "management", "purchasing"] },
-  { label: "Staf dan Freelancer", path: "/staff-freelancer", roles: ["admin", "management"] },
+  { label: "Freelancer", path: "/freelancer", roles: ["admin", "management"] },
 ];
 
 const settingsItems = [
