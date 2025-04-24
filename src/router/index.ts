@@ -5,7 +5,6 @@ import InventoryView from '../views/InventoryView.vue'
 import ItemCategoryView from '../views/inventory/ItemCategoryView.vue'
 import VendorView from '../views/purchasing/VendorView.vue'
 import AddVendorView from '../views/purchasing/AddVendorView.vue'
-import StaffAndFreelancerView from '../views/StaffAndFreelancerView.vue'
 import DashboardView from '../views/DashboardView.vue'
 import { roleGuard } from './guards/auth.ts'
 import RegisterView from '../views/auth/RegisterView.vue'
@@ -16,7 +15,6 @@ import UpdateVendorView from '../views/purchasing/UpdateVendorView.vue'
 import PurchasingView from '../views/purchasing/PurchasingView.vue'
 import FinanceView from '../views/finance/FinanceView.vue'
 import CreateInvoiceView from '../views/finance/invoice/CreateInvoiceView.vue'
-import MarketingView from '../views/marketing/MarketingView.vue'
 import CreatePurchaseOrderView from '../views/marketing/purchase order/CreatePurchaseOrderView.vue'
 import CreateFinalReportView from '../views/marketing/final report/CreateFinalReportView.vue'
 import InvoiceDetailView from '../views/finance/invoice/InvoiceDetailView.vue'
@@ -32,6 +30,7 @@ import FinalReportDetailView from '../views/marketing/final report/FinalReportDe
 import CashFlowView from '../views/CashFlowView.vue'
 import CreateItemView from '../views/purchasing/item/CreateItemView.vue'
 import RegisterFreelancerView from '../views/auth/freelancer/RegisterFreelancerView.vue'
+import FreelancerView from '../views/FreelancerView.vue'
 import RegisterFreelancerSuccesfulView from '../views/auth/freelancer/RegisterFreelancerSuccesfulView.vue'
 
 const routes = [
@@ -107,9 +106,9 @@ const routes = [
     beforeEnter: roleGuard
   },
   {
-    path: '/staff-freelancer',
-    name: 'Staff and Freelancer',
-    component: StaffAndFreelancerView,
+    path: '/freelancer',
+    name: 'Freelancer',
+    component: FreelancerView,
     beforeEnter: roleGuard
   },
   {
