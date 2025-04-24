@@ -82,9 +82,9 @@ const submitForm = async () => {
             Login
           </VButton>
         </form>
-<!--        <p class="text-normal text-center mt-4">Ingin mendaftarkan akun?-->
-<!--          <span @click="router.push('/auth/register')" class="text-blue-500 cursor-pointer text-normal">Daftar di sini</span>-->
-<!--        </p>-->
+        <p class="text-normal text-center mt-4">Anda adalah Freelancer?
+          <span @click="router.push('/auth/register/freelancer')" class="text-blue-500 cursor-pointer text-normal">Daftar di sini</span>
+        </p>
       </div>
 
     </div>

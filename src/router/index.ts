@@ -31,6 +31,7 @@ import FinalReportListView from '../views/marketing/final report/FinalReportList
 import FinalReportDetailView from '../views/marketing/final report/FinalReportDetailView.vue'
 import CashFlowView from '../views/CashFlowView.vue'
 import CreateItemView from '../views/purchasing/item/CreateItemView.vue'
+import RegisterFreelancerView from '../views/auth/freelancer/RegisterFreelancerView.vue'
 
 const routes = [
   {
@@ -231,6 +232,12 @@ const routes = [
     component: CreateItemView,
     beforeEnter: roleGuard
   },
+  {
+    path: '/auth/register/freelancer',
+    name: 'Register Freelancer',
+    component: RegisterFreelancerView,
+    beforeEnter: roleGuard
+  }
 ]
 
 const router = createRouter({
