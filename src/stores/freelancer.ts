@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import type { CommonResponseInterface } from '../interfaces/common.interface.ts'
 import type {
-  CreateFreelancerRequestInterface, CreateFreelancerResponseInterface,
+  CreateFreelancerRequestInterface, CreateFreelancerResponseInterface, EducationLevelInterface,
   WorkExperienceCategoryInterface
 } from '../interfaces/freelancer.interface.ts'
 
@@ -11,11 +11,12 @@ export const useFreelancerStore = defineStore('freelancer', {
   state: () => ({
     loading: false,
     error: null as null | string,
-    workExperienceCategories: [] as WorkExperienceCategoryInterface[]
+    workExperienceCategories: [] as WorkExperienceCategoryInterface[],
+    educationLevels: [] as EducationLevelInterface[],
   }),
   actions: {
 
-    async add(body: CreateFreelancerRequestInterface, token: string): Promise<boolean> {
+    async add(body: CreateFreelancerRequestInterface): Promise<boolean> {
       this.loading = true;
       this.error = null;
 
@@ -23,7 +24,6 @@ export const useFreelancerStore = defineStore('freelancer', {
         const response = await fetch(apiUrl + "/freelancer/add", {
           method: "POST",
           headers: {
-            Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
           body: JSON.stringify(body),
@@ -48,7 +48,7 @@ export const useFreelancerStore = defineStore('freelancer', {
       }
     },
 
-    async getWorkExperienceCategories(token: string): Promise<boolean> {
+    async getWorkExperienceCategories(): Promise<boolean> {
       this.loading = true;
       this.error = null;
 
@@ -56,7 +56,6 @@ export const useFreelancerStore = defineStore('freelancer', {
         const response = await fetch(`${apiUrl}/work-experience/category/all`, {
           method: "GET",
           headers: {
-            "Authorization": `Bearer ${token}`,
             "Content-Type": "application/json",
           },
         });
@@ -68,6 +67,35 @@ export const useFreelancerStore = defineStore('freelancer', {
           return true;
         } else {
           this.error = data.message || "Failed to fetch Work Experience Categories.";
+          return false;
+        }
+      } catch (err) {
+        this.error = (err as Error).message;
+        return false;
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    async getEducationLevels(): Promise<boolean> {
+      this.loading = true;
+      this.error = null;
+
+      try {
+        const response = await fetch(`${apiUrl}/freelancer/education-level/all`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        const data: CommonResponseInterface<EducationLevelInterface[]> = await response.json();
+
+        if (response.ok) {
+          this.educationLevels = data.data || [];
+          return true;
+        } else {
+          this.error = data.message || "Failed to fetch Education Levels.";
           return false;
         }
       } catch (err) {

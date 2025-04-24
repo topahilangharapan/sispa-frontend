@@ -1,19 +1,42 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '../../../stores/auth.ts'
 import type {
   CreateFreelancerRequestInterface,
-  CreateWorkExperienceRequestInterface
+  CreateWorkExperienceRequestInterface, EducationLevelInterface, WorkExperienceCategoryInterface
 } from '../../../interfaces/freelancer.interface.ts'
 import VButton from '../../../components/VButton.vue'
 import VInputField from '../../../components/VInputField.vue'
 import VDropdown from '../../../components/VDropdown.vue'
 import VLoading from '../../../components/VLoading.vue'
 import VInputDateField from '../../../components/VInputDateField.vue'
+import type { CommonResponseInterface } from '../../../interfaces/common.interface.ts'
+import { useFreelancerStore } from '../../../stores/freelancer.ts'
 
 const router = useRouter();
 const authStore = useAuthStore();
+const freelancerStore = useFreelancerStore();
+
+onMounted(async () => {
+  const savedAuth = localStorage.getItem('auth')
+
+  if (savedAuth) {
+    authStore.$patch(JSON.parse(savedAuth))
+  }
+
+  await freelancerStore.getWorkExperienceCategories();
+  workExperienceCategoryOption.value = freelancerStore?.workExperienceCategories?.map((workExperienceCategory) => ({
+    value: workExperienceCategory.name,
+    label: workExperienceCategory.name,
+  })) || [];
+
+  await freelancerStore.getEducationLevels();
+  educationLevelOption.value = freelancerStore?.educationLevels?.map((educationLevel) => ({
+    value: educationLevel.name,
+    label: educationLevel.name,
+  })) || [];
+});
 
 const workExperiences = ref<CreateWorkExperienceRequestInterface[]>([]);
 let experienceCounter = 0;
@@ -25,7 +48,7 @@ const formData = ref<CreateFreelancerRequestInterface>({
   username: '',
   name: '',
   password: '',
-  role: '',
+  role: 'FREELANCER',
   address: '',
   phoneNumber: '',
   placeOfBirth: '',
@@ -39,8 +62,9 @@ const formData = ref<CreateFreelancerRequestInterface>({
 const hasErrors = ref({
   username: true,
   email: true,
+  name: true,
   password: true,
-  role: true,
+  role: false,
   address: true,
   phoneNumber: true,
   placeOfBirth: true,
@@ -50,16 +74,14 @@ const hasErrors = ref({
   reason: true
 });
 
-const roleOption = [
-  { label: 'Freelancer', value: 'FREELANCER' },
-  { label: 'Client', value: 'CLIENT' },
-];
+const roleOption = ref<{ value: string; label: string }[]>([
+  { value: "FREELANCER", label: "FREELANCER" }
+]);
 
-const categoryOptions = [
-  { label: 'Magang', value: 'MAGANG' },
-  { label: 'Organisasi', value: 'ORGANISASI' },
-  { label: 'Proyek', value: 'PROYEK' },
-];
+
+const workExperienceCategoryOption = ref<{ value: string; label: string }[]>([]);
+
+const educationLevelOption = ref<{ value: string; label: string }[]>([]);
 
 const updateErrorStatus = (field: keyof typeof hasErrors.value, isError: boolean) => {
   hasErrors.value[field] = isError;
@@ -146,9 +168,9 @@ const submitForm = async () => {
         </div>
 
         <div class="grid grid-cols-3 gap-6">
-          <VDropdown v-model="formData.role" label="Role" :options="roleOption" placeholder="Pilih Role" :isEmpty="true" @update:hasError="updateErrorStatus('role', $event)" />
-          <VInputField v-model="formData.name" label="Nama Lengkap" :isEmpty="true" placeholder="Masukkan nama lengkap" />
-          <VInputField v-model="formData.address" label="Alamat" :isEmpty="true" placeholder="Masukkan alamat" />
+          <VDropdown v-model="formData.role" label="Role" :options="roleOption" placeholder="Pilih Role" :isEmpty="true" :disabled="true" @update:hasError="updateErrorStatus('role', $event)" />
+          <VInputField v-model="formData.name" label="Nama Lengkap" :isEmpty="true" placeholder="Masukkan nama lengkap" @update:hasError="updateErrorStatus('name', $event)" />
+          <VInputField v-model="formData.address" label="Alamat" :isEmpty="true" placeholder="Masukkan alamat" @update:hasError="updateErrorStatus('address', $event)"/>
         </div>
 
         <div class="grid grid-cols-3 gap-6">
@@ -158,7 +180,7 @@ const submitForm = async () => {
         </div>
 
         <div class="grid grid-cols-3 gap-6">
-          <VInputField v-model="formData.education" :isEmpty="true"  label="Pendidikan" placeholder="Masukkan pendidikan terakhir" @update:hasError="updateErrorStatus('education', $event)"  />
+          <VDropdown v-model="formData.education" :isEmpty="true" :options="educationLevelOption" label="Pendidikan Terakhir" placeholder="Pilih pendidikan terakhir" @update:hasError="updateErrorStatus('education', $event)"  />
           <VInputField v-model="formData.nik" :isEmpty="true" :isNumberOnly="true" label="NIK" placeholder="Masukkan NIK" @update:hasError="updateErrorStatus('nik', $event)" />
           <VInputField v-model="formData.reason" :isEmpty="true" label="Alasan Bergabung" placeholder="Kenapa ingin bergabung?" @update:hasError="updateErrorStatus('reason', $event)" />
         </div>
@@ -168,9 +190,9 @@ const submitForm = async () => {
           <h3 class="text-2xl font-semibold text-gray-700 mb-4">Pengalaman Kerja</h3>
           <div v-for="(exp, index) in formData.workExperiences" :key="index" class="bg-white border border-gray-300 rounded-xl p-6 mb-6 space-y-4">
             <div class="grid grid-cols-3 gap-6">
-              <VDropdown v-model="exp.category" :isEmpty="true" label="Kategori" :options="categoryOptions" placeholder="Pilih kategori" @update:hasError="updateErrorStatus(`category-${exp.tempId}`, $event)" />
+              <VDropdown v-model="exp.category" :isEmpty="true" label="Kategori" :options="workExperienceCategoryOption" placeholder="Pilih kategori" @update:hasError="updateErrorStatus(`category-${exp.tempId}`, $event)" />
               <VInputField v-model="exp.title" :isEmpty="true" label="Judul" placeholder="Masukkan judul pengalaman" @update:hasError="updateErrorStatus(`title-${exp.tempId}`, $event)"/>
-              <VInputField v-model="exp.description" :isEmpty="true" label="Deskripsi" placeholder="Deskripsi pengalaman" />
+              <VInputField v-model="exp.description" :isEmpty="true" label="Deskripsi" placeholder="Deskripsi pengalaman" @update:hasError="updateErrorStatus(`description-${exp.tempId}`, $event)"/>
             </div>
             <div class="grid grid-cols-3 gap-6">
               <VInputDateField v-model="exp.startDate" :minDate="formData.dateOfBirth" label="Tanggal Mulai" @update:hasError="updateErrorStatus(`startDate-${exp.tempId}`, $event)" />
@@ -184,7 +206,7 @@ const submitForm = async () => {
               <VButton class="bg-red-300 hover:bg-red-200 text-white px-4 py-2 rounded" @click="removeWorkExperience(exp.tempId)">Hapus</VButton>
             </div>
           </div>
-          <VButton class="bg-green-800 hover:bg-green-700 px-5 py-2 rounded text-white" @click="addWorkExperience">+ Tambah Pengalaman</VButton>
+          <VButton class="bg-green-800 hover:bg-green-700 px-5 py-2 rounded text-white" @click="addWorkExperience">Tambah Pengalaman</VButton>
         </div>
 
         <!-- Tombol Submit -->
