@@ -1,4 +1,5 @@
-import type { RegisterRequestInterface, RegisterResponseInterface } from './auth.interface.ts'
+import type { RegisterRequestInterface, RegisterResponseInterface} from './auth.interface.ts'
+import type { UserProfileInterface } from './user.interface.ts'
 
 export interface CreateFreelancerRequestInterface extends RegisterRequestInterface {
   email:string,
@@ -47,4 +48,18 @@ export interface CreateWorkExperienceResponseInterface {
   isStillWorking: boolean,
   startDate: string,
   endDate: string
+}
+
+export interface FreelancerInterface extends UserProfileInterface {
+  email:string,
+  name:string,
+  address: string,
+  phoneNumber: string,
+  placeOfBirth: string,
+  dateOfBirth: string,
+  education: string,
+  workExperiences: CreateWorkExperienceRequestInterface[],
+  reason: string,
+  nik: string
+  isWorking: boolean,
 }
