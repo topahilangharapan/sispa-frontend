@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import type { CommonResponseInterface } from '../interfaces/common.interface.ts'
 import type {
-  CreateFreelancerRequestInterface, CreateFreelancerResponseInterface, EducationLevelInterface,
+  CreateFreelancerRequestInterface, CreateFreelancerResponseInterface, EducationLevelInterface, FreelancerInterface,
   WorkExperienceCategoryInterface
 } from '../interfaces/freelancer.interface.ts'
 
@@ -13,6 +13,7 @@ export const useFreelancerStore = defineStore('freelancer', {
     error: null as null | string,
     workExperienceCategories: [] as WorkExperienceCategoryInterface[],
     educationLevels: [] as EducationLevelInterface[],
+    freelancers: [] as FreelancerInterface[]
   }),
   actions: {
 
@@ -106,7 +107,7 @@ export const useFreelancerStore = defineStore('freelancer', {
       }
     },
 
-    async getFreelancers(token: String) {
+    async getFreelancers(token: string) {
       this.loading = true
       this.error = null
 
