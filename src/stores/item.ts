@@ -15,6 +15,7 @@ export const useItemStore = defineStore('item', {
     error: null as null | string,
     itemCategories: [] as ItemCategoryInterface[],
     items: [] as ItemInterface[],
+    currentItem: null as ItemInterface | null,
   }),
   actions: {
 
@@ -109,6 +110,61 @@ export const useItemStore = defineStore('item', {
         return false;
       } finally {
         this.loading = false;
+      }
+    },
+    async getItemById(token: String, id: String) {
+      this.loading = true
+      this.error = null
+
+      try {
+          const response = await fetch(apiUrl + `/item/${id}`, {
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`
+            },
+          })
+  
+          const data: CommonResponseInterface<ItemInterface> = await response.json()
+          this.currentItem = data.data
+        } catch (err) {
+          this.error = `Failed to fetch items ${err}`
+        } finally {
+          this.loading = false
+        }
+    },
+
+    async updateItem(itemData: CreateItemRequestInterface, itemId: string, token: string) {
+      this.loading = true
+      this.error = null
+
+      try {
+        const response = await fetch(`${apiUrl}/item/update`, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            id: itemId,
+            ...itemData
+          }),
+        })
+
+        const data: CommonResponseInterface<ItemInterface> = await response.json()
+        if (response.ok) {
+          window.$toast('success', `Berhasil mengupdate item dengan ID ${data.data.id}`)
+          await this.getItems(token as string)
+          return true
+        } else {
+          window.$toast('error', `Gagal mengupdate item: ${data.message}`)
+          return false
+        }
+      } catch (err) {
+        this.error = `Gagal mengupdate item: ${(err as Error).message}`
+        window.$toast('error', this.error)
+        return false
+      } finally {
+        this.loading = false
       }
     },
 
