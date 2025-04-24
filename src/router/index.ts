@@ -31,6 +31,7 @@ import CashFlowView from '../views/CashFlowView.vue'
 import CreateItemView from '../views/purchasing/item/CreateItemView.vue'
 import RegisterFreelancerView from '../views/auth/freelancer/RegisterFreelancerView.vue'
 import FreelancerView from '../views/FreelancerView.vue'
+import RegisterFreelancerSuccessView from '../views/auth/freelancer/RegisterFreelancerSuccessView.vue'
 
 const routes = [
   {
@@ -240,7 +241,7 @@ const routes = [
   {
     path: '/auth/register/freelancer/success',
     name: 'Register Freelancer Successful',
-    component: RegisterFreelancerSuccesfulView,
+    component: RegisterFreelancerSuccessView,
     beforeEnter: roleGuard
   }
 ]
