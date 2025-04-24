@@ -58,7 +58,7 @@ const submitForm = async () => {
 
       <!-- Jika loading selesai, tampilkan form login -->
       <div v-else class="w-full">
-        <h2 class="text-xl mb-4 text-center">Login</h2>
+        <h2 class="text-xl mb-4 text-center text-red-400">Login</h2>
         <form @submit.prevent="submitForm" class="space-y-4">
           <VInputField
             v-model="formData.username"

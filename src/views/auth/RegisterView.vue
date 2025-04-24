@@ -88,7 +88,7 @@ const submitForm = async () => {
     <VLoading v-if="authStore.loading" class="flex mr-64"/>
 
     <div v-else class="pl-12 pr-12 pt-8 pb-8 bg-white-100/80 rounded-2xl shadow-lg w-[36rem] backdrop-blur-md">
-      <h2 class="text-xl  mb-4 text-center">Daftar Akun</h2>
+      <h2 class="text-xl mb-4 text-center text-red-400">Daftar Akun</h2>
       <form @submit.prevent="submitForm" class="space-y-4">
         <VInputField
           v-model="formData.username"

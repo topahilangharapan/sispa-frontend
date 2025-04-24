@@ -152,6 +152,10 @@ const submitForm = async () => {
   console.log(payload);
 
   const isSuccess = await freelancerStore.add(payload);
+
+  if (isSuccess) {
+    router.push('/auth/register/freelancer/success')
+  }
 };
 </script>
 
@@ -161,12 +165,13 @@ const submitForm = async () => {
 
     <VLoading v-if="authStore.loading" class="flex" />
 
-    <div v-else class="w-[64rem] max-w-7xl bg-white/80 rounded-2xl shadow-2xl pl-12 pr-12 pt-8 pb-8 backdrop-blur-md">
-      <h2 class="text-3xl font-bold text-center text-gray-800 mb-10">Form Registrasi Freelancer</h2>
+    <div v-else class="w-[64rem] max-w-7xl bg-white/80 rounded-2xl shadow-2xl pl-12 pr-12 pt-8 pb-8 backdrop-blur-md mt-16 mb-16">
+      <h2 class="text-3xl font-bold text-center text-red-400 mb-10">Form Registrasi Freelancer</h2>
 
       <form @submit.prevent="submitForm" class="space-y-6">
 
         <!-- Informasi Akun -->
+        <h3 class="large-text-bold text-black-grey-800 mb-4">Informasi Akun</h3>
         <div class="grid grid-cols-3 gap-6">
           <VInputField v-model="formData.username" label="Username" placeholder="Masukkan username" :isEmpty="true" @update:hasError="updateErrorStatus('username', $event)" />
           <VInputField v-model="formData.email" label="Email" placeholder="Masukkan email" :isEmpty="true" :isEmail="true" @update:hasError="updateErrorStatus('email', $event)" />
@@ -193,7 +198,7 @@ const submitForm = async () => {
 
         <!-- Pengalaman Kerja -->
         <div>
-          <h3 class="text-2xl font-semibold text-gray-700 mb-4">Pengalaman Kerja</h3>
+          <h3 class="large-text-bold text-black-grey-800 mb-4">Pengalaman Kerja</h3>
           <div v-for="(exp, index) in formData.workExperiences" :key="index" class="bg-white border border-gray-300 rounded-xl p-6 mb-6 space-y-4">
             <div class="grid grid-cols-3 gap-6">
               <VDropdown v-model="exp.category" :isEmpty="true" label="Kategori" :options="workExperienceCategoryOption" placeholder="Pilih kategori" @update:hasError="updateErrorStatus(`category-${exp.tempId}`, $event)" />
@@ -202,11 +207,20 @@ const submitForm = async () => {
             </div>
             <div class="grid grid-cols-3 gap-6">
               <VInputDateField v-model="exp.startDate" :minDate="formData.dateOfBirth" label="Tanggal Mulai" @update:hasError="updateErrorStatus(`startDate-${exp.tempId}`, $event)" />
-              <VInputDateField v-model="exp.endDate" :min-date="exp.startDate" label="Tanggal Selesai" :disabled="exp.isStillWorking" @update:hasError="updateErrorStatus(`endDate-${exp.tempId}`, $event)" />
-              <div class="flex items-center gap-2 mt-7">
-                <input type="checkbox" v-model="exp.isStillWorking" class="form-checkbox" />
-                <label>Masih Bekerja</label>
+              <div>
+                <VInputDateField
+                  v-model="exp.endDate"
+                  :min-date="exp.startDate"
+                  label="Tanggal Selesai"
+                  :disabled="exp.isStillWorking"
+                  @update:hasError="updateErrorStatus(`endDate-${exp.tempId}`, $event)"
+                />
+                <div class="flex items-center gap-2 mt-2">
+                  <input type="checkbox" v-model="exp.isStillWorking" class="form-checkbox" />
+                  <label class="text-gray-700 small-text-normal">Masih Bekerja</label>
+                </div>
               </div>
+
             </div>
             <div class="text-right">
               <VButton class="bg-red-300 hover:bg-red-200 text-white px-4 py-2 rounded" @click="removeWorkExperience(exp.tempId)">Hapus</VButton>
