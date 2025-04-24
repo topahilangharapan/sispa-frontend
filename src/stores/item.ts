@@ -4,6 +4,8 @@ import type {
   CreateItemRequestInterface, CreateItemResponseInterface,
   ItemCategoryInterface, ItemInterface
 } from '../interfaces/item.interface.ts'
+import router from '../router'
+import { useAuthStore } from './auth.ts'
 
 const apiUrl = import.meta.env.VITE_API_LOCAL_URL;
 
@@ -110,7 +112,7 @@ export const useItemStore = defineStore('item', {
       }
     },
 
-    async deleteItem(id: string) {
+    async deleteItem(id: number) {
       this.loading = true
       this.error = null
 
