@@ -1,6 +1,8 @@
 import type { RegisterRequestInterface, RegisterResponseInterface } from './auth.interface.ts'
 
 export interface CreateFreelancerRequestInterface extends RegisterRequestInterface {
+  email:string,
+  name:string,
   address: string,
   phoneNumber: string,
   placeOfBirth: string,
@@ -22,6 +24,11 @@ export interface CreateWorkExperienceRequestInterface {
 }
 
 export interface WorkExperienceCategoryInterface {
+  id: number;
+  name: string;
+}
+
+export interface EducationLevelInterface {
   id: number;
   name: string;
 }
