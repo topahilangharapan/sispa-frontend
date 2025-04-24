@@ -4,14 +4,13 @@ import { useRouter } from 'vue-router';
 import { useAuthStore } from '../../../stores/auth.ts'
 import type {
   CreateFreelancerRequestInterface,
-  CreateWorkExperienceRequestInterface, EducationLevelInterface, WorkExperienceCategoryInterface
+  CreateWorkExperienceRequestInterface
 } from '../../../interfaces/freelancer.interface.ts'
 import VButton from '../../../components/VButton.vue'
 import VInputField from '../../../components/VInputField.vue'
 import VDropdown from '../../../components/VDropdown.vue'
 import VLoading from '../../../components/VLoading.vue'
 import VInputDateField from '../../../components/VInputDateField.vue'
-import type { CommonResponseInterface } from '../../../interfaces/common.interface.ts'
 import { useFreelancerStore } from '../../../stores/freelancer.ts'
 
 const router = useRouter();
@@ -144,8 +143,15 @@ watch(workExperiences, (experiences) => {
 const submitForm = async () => {
   if (!isFormValid.value) return;
 
-  formData.value.name = formData.value.username;
+  const payload = {
+    ...formData.value,
+    workExperiences: workExperiences.value, // ambil value-nya, bukan ref-nya
+  };
 
+  // kirim payload ke API atau lanjut proses
+  console.log(payload);
+
+  const isSuccess = await freelancerStore.add(payload);
 };
 </script>
 
@@ -155,7 +161,7 @@ const submitForm = async () => {
 
     <VLoading v-if="authStore.loading" class="flex" />
 
-    <div v-else class="w-[64rem] max-w-7xl bg-white/80 rounded-2xl shadow-2xl p-12 backdrop-blur-md">
+    <div v-else class="w-[64rem] max-w-7xl bg-white/80 rounded-2xl shadow-2xl pl-12 pr-12 pt-8 pb-8 backdrop-blur-md">
       <h2 class="text-3xl font-bold text-center text-gray-800 mb-10">Form Registrasi Freelancer</h2>
 
       <form @submit.prevent="submitForm" class="space-y-6">
@@ -181,7 +187,7 @@ const submitForm = async () => {
 
         <div class="grid grid-cols-3 gap-6">
           <VDropdown v-model="formData.education" :isEmpty="true" :options="educationLevelOption" label="Pendidikan Terakhir" placeholder="Pilih pendidikan terakhir" @update:hasError="updateErrorStatus('education', $event)"  />
-          <VInputField v-model="formData.nik" :isEmpty="true" :isNumberOnly="true" label="NIK" placeholder="Masukkan NIK" @update:hasError="updateErrorStatus('nik', $event)" />
+          <VInputField v-model="formData.nik" :minLength="16" :maxLength="16" :isEmpty="true" :isNumberOnly="true" label="NIK" placeholder="Masukkan NIK" @update:hasError="updateErrorStatus('nik', $event)" />
           <VInputField v-model="formData.reason" :isEmpty="true" label="Alasan Bergabung" placeholder="Kenapa ingin bergabung?" @update:hasError="updateErrorStatus('reason', $event)" />
         </div>
 
