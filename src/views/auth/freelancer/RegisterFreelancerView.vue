@@ -55,10 +55,26 @@ const formData = ref<CreateFreelancerRequestInterface>({
   education: '',
   nik: '',
   reason: '',
-  workExperiences: workExperiences,
+  workExperiences: workExperiences.value,
 });
 
-const hasErrors = ref({
+interface HasErrors {
+  username: boolean;
+  email: boolean;
+  name: boolean;
+  password: boolean;
+  role: boolean;
+  address: boolean;
+  phoneNumber: boolean;
+  placeOfBirth: boolean;
+  dateOfBirth: boolean;
+  education: boolean;
+  nik: boolean;
+  reason: boolean;
+  [key: string]: boolean; // Allows any additional string keys
+}
+
+const hasErrors = ref<HasErrors>({
   username: true,
   email: true,
   name: true,
@@ -82,7 +98,7 @@ const workExperienceCategoryOption = ref<{ value: string; label: string }[]>([])
 
 const educationLevelOption = ref<{ value: string; label: string }[]>([]);
 
-const updateErrorStatus = (field: keyof typeof hasErrors.value, isError: boolean) => {
+const updateErrorStatus = (field: string, isError: boolean) => {
   hasErrors.value[field] = isError;
 };
 
@@ -131,7 +147,7 @@ watch(workExperiences, (experiences) => {
   experiences.forEach((exp) => {
     watch(() => exp.isStillWorking, (val) => {
       if (val) {
-        exp.endDate = null;
+        exp.endDate = "";
         updateErrorStatus(`endDate-${exp.tempId}`, false);
       } else {
         exp.endDate = today;

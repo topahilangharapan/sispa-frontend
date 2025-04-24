@@ -16,7 +16,6 @@ import UpdateVendorView from '../views/purchasing/UpdateVendorView.vue'
 import PurchasingView from '../views/purchasing/PurchasingView.vue'
 import FinanceView from '../views/finance/FinanceView.vue'
 import CreateInvoiceView from '../views/finance/invoice/CreateInvoiceView.vue'
-import MarketingView from '../views/marketing/MarketingView.vue'
 import CreatePurchaseOrderView from '../views/marketing/purchase order/CreatePurchaseOrderView.vue'
 import CreateFinalReportView from '../views/marketing/final report/CreateFinalReportView.vue'
 import InvoiceDetailView from '../views/finance/invoice/InvoiceDetailView.vue'
@@ -32,7 +31,7 @@ import FinalReportDetailView from '../views/marketing/final report/FinalReportDe
 import CashFlowView from '../views/CashFlowView.vue'
 import CreateItemView from '../views/purchasing/item/CreateItemView.vue'
 import RegisterFreelancerView from '../views/auth/freelancer/RegisterFreelancerView.vue'
-import RegisterFreelancerSuccesfulView from '../views/auth/freelancer/RegisterFreelancerSuccesfulView.vue'
+import RegisterFreelancerSuccessView from '../views/auth/freelancer/RegisterFreelancerSuccessView.vue'
 
 const routes = [
   {
@@ -242,7 +241,7 @@ const routes = [
   {
     path: '/auth/register/freelancer/success',
     name: 'Register Freelancer Successful',
-    component: RegisterFreelancerSuccesfulView,
+    component: RegisterFreelancerSuccessView,
     beforeEnter: roleGuard
   }
 ]
