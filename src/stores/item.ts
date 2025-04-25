@@ -123,7 +123,7 @@ export const useItemStore = defineStore('item', {
               'Authorization': `Bearer ${token}`
             },
           })
-  
+
           const data: CommonResponseInterface<ItemInterface> = await response.json()
           this.currentItem = data.data
         } catch (err) {
@@ -195,7 +195,29 @@ export const useItemStore = defineStore('item', {
       } finally {
         this.loading = false;
       }
-    }
+    },
+
+    async getAllItems(token: string) {
+      this.loading = true
+      this.error = null
+
+      try {
+        const response = await fetch(apiUrl+ '/item/all', {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+        })
+
+        const data: CommonResponseInterface<ItemInterface[]> = await response.json()
+        this.items = data.data
+
+      } catch (err) {
+        this.error = `Failed to fetch items ${err}`
+      } finally {
+        this.loading = false
+      }
+    },
 
   }
 })
