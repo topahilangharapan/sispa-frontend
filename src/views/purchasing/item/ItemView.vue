@@ -80,7 +80,7 @@ onMounted(async () => {
               </svg>
             </span>
             </div>
-            <RouterLink :to="``">
+            <RouterLink :to="`/purchasing/item/create`">
               <VButton variant="primary" size="md">+ Tambah Item</VButton>
             </RouterLink>
           </div>

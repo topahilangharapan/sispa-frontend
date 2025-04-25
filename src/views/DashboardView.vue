@@ -11,64 +11,64 @@ const title = ref({ 'Dashboard': '/dashboard' });
 
 // Define the available role-based navigation
 const roleBasedNavigation = ref([
-  { 
-    title: 'Cash Flow Management', 
+  {
+    title: 'Cash Flow Management',
     path: '/finance/cashflow',
     icon: 'cash-flow',
     description: 'View and manage company cash flow',
     color: 'bg-green-500',
     roles: ['finance', 'admin', 'manajemen']
   },
-  { 
-    title: 'Invoice Management', 
+  {
+    title: 'Invoice Management',
     path: '/finance/invoice',
     icon: 'invoice',
     description: 'Create and manage invoices',
     color: 'bg-blue-500',
     roles: ['finance', 'admin', 'manajemen']
   },
-  { 
-    title: 'Document Management', 
+  {
+    title: 'Document Management',
     path: '/marketing',
     icon: 'document',
     description: 'Create purchase orders and final reports',
     color: 'bg-purple-500',
     roles: ['marketing', 'admin', 'manajemen']
   },
-  { 
-    title: 'Client Management', 
+  {
+    title: 'Client Management',
     path: '/marketing/client',
     icon: 'client',
     description: 'Manage clients',
     color: 'bg-yellow-500',
     roles: ['marketing', 'admin', 'manajemen']
   },
-  { 
-    title: 'Vendor Management', 
+  {
+    title: 'Vendor Management',
     path: '/purchasing/vendor',
     icon: 'vendor',
     description: 'Manage vendors',
     color: 'bg-pink-500',
     roles: ['purchasing', 'admin', 'manajemen']
   },
-  { 
-    title: 'Inventory Management', 
-    path: '/purchasing',
+  {
+    title: 'Inventory Management',
+    path: '/purchasing/item',
     icon: 'inventory',
-    description: 'Manage inventory and stock',
+    description: 'Manage inventory',
     color: 'bg-red-500',
     roles: ['purchasing', 'admin', 'manajemen']
   },
-  { 
-    title: 'Staff and Freelancer Management', 
-    path: '/staff-freelancer',
+  {
+    title: 'Freelancer Management',
+    path: '/freelancer',
     icon: 'staff',
     description: 'Manage employees',
     color: 'bg-indigo-500',
     roles: ['admin', 'manajemen']
   },
-  { 
-    title: 'User Registration', 
+  {
+    title: 'User Registration',
     path: '/auth/register',
     icon: 'users',
     description: 'Register and manage system users',
@@ -108,8 +108,8 @@ onMounted(() => {
       <div class="mb-8">
         <h2 class="text-xl font-semibold mb-4">Quick Access</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <div 
-            v-for="(nav, index) in filteredNavigation" 
+          <div
+            v-for="(nav, index) in filteredNavigation"
             :key="index"
             class="bg-white overflow-hidden shadow rounded-lg cursor-pointer hover:shadow-lg transition-shadow duration-300"
             @click="navigateTo(nav.path)"
