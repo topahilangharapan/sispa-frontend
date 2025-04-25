@@ -308,6 +308,54 @@ export const useFreelancerStore = defineStore('freelancer', {
       } finally {
         this.loading = false
       }
+    },
+
+    async rejectFreelancer(id: number, token: string): Promise<boolean> {
+      if (!token) {
+        this.error = "Authentication token required"
+        return false
+      }
+      
+      this.loading = true
+      this.error = null
+      
+      try {
+        const response = await fetch(`${apiUrl}/freelancer/${id}/reject`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        })
+        
+        const data: CommonResponseInterface<FreelancerInterface> = await response.json()
+        
+        if (response.ok) {
+          // Update the selected freelancer if it matches
+          if (this.selectedFreelancer && this.selectedFreelancer.id === id) {
+            this.selectedFreelancer = data.data
+          }
+          
+          // Update the freelancer in the list if it exists
+          const index = this.freelancers.findIndex(f => f.id === id)
+          if (index !== -1) {
+            this.freelancers[index] = data.data
+          }
+          
+          window.$toast('success', 'Freelancer berhasil ditolak')
+          return true
+        } else {
+          window.$toast('error', `Gagal menolak freelancer: ${data.message}`)
+          this.error = data.message
+          return false
+        }
+      } catch (err) {
+        this.error = `Error rejecting freelancer: ${err}`
+        window.$toast('error', `Error rejecting freelancer: ${err}`)
+        return false
+      } finally {
+        this.loading = false
+      }
     }
   }
 })

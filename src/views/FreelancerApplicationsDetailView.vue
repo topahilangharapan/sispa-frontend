@@ -102,18 +102,35 @@
             <VButton variant="primary" size="md" @click="goBack">
               Back to List
             </VButton>
-            <VButton 
-              v-if="!selectedFreelancer.approvedAt" 
-              variant="primary" 
-              size="md" 
-              @click="approveFreelancer"
-              :disabled="freelancerStore.loading"
-            >
-              {{ freelancerStore.loading ? 'Processing...' : 'Approve Freelancer' }}
-            </VButton>
-            <div v-else class="approved-status">
+            
+            <div v-if="!selectedFreelancer.approvedAt && !selectedFreelancer.rejectedAt" class="approval-actions">
+              <VButton 
+                variant="primary" 
+                size="md" 
+                @click="approveFreelancer"
+                :disabled="freelancerStore.loading"
+              >
+                {{ freelancerStore.loading ? 'Processing...' : 'Approve Freelancer' }}
+              </VButton>
+              
+              <VButton 
+                variant="delete" 
+                size="md" 
+                @click="rejectFreelancer"
+                :disabled="freelancerStore.loading"
+              >
+                {{ freelancerStore.loading ? 'Processing...' : 'Reject Freelancer' }}
+              </VButton>
+            </div>
+            
+            <div v-else-if="selectedFreelancer.approvedAt" class="approved-status">
               <span class="approved-badge">✓ Approved</span>
               <span class="approved-date">on {{ formatDate(selectedFreelancer.approvedAt) }}</span>
+            </div>
+            
+            <div v-else-if="selectedFreelancer.rejectedAt" class="rejected-status">
+              <span class="rejected-badge">✗ Rejected</span>
+              <span class="rejected-date">on {{ formatDate(selectedFreelancer.rejectedAt) }}</span>
             </div>
           </div>
         </div>
@@ -160,6 +177,20 @@
     if (!authStore.token || !selectedFreelancer.value) return
     
     const success = await freelancerStore.approveFreelancer(
+      selectedFreelancer.value.id, 
+      authStore.token
+    )
+    
+    if (success) {
+      // Refresh the freelancer data
+      await freelancerStore.getFreelancerById(selectedFreelancer.value.id, authStore.token)
+    }
+  }
+  
+  async function rejectFreelancer() {
+    if (!authStore.token || !selectedFreelancer.value) return
+    
+    const success = await freelancerStore.rejectFreelancer(
       selectedFreelancer.value.id, 
       authStore.token
     )
@@ -251,6 +282,11 @@
     align-items: center;
   }
   
+  .approval-actions {
+    display: flex;
+    gap: 10px;
+  }
+  
   .approved-status {
     display: flex;
     flex-direction: column;
@@ -267,6 +303,27 @@
   }
   
   .approved-date {
+    font-size: 0.8em;
+    color: #666;
+    margin-top: 5px;
+  }
+  
+  .rejected-status {
+    display: flex;
+    flex-direction: column;
+    margin-left: 15px;
+  }
+  
+  .rejected-badge {
+    background-color: #dc3545;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 0.9em;
+  }
+  
+  .rejected-date {
     font-size: 0.8em;
     color: #666;
     margin-top: 5px;
