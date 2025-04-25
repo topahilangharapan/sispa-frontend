@@ -128,6 +128,27 @@ export const useFreelancerStore = defineStore('freelancer', {
         this.loading = false
       }
     },
+    async getApplicants(token: string) {
+      this.loading = true
+      this.error = null
+
+      try {
+        const response = await fetch(apiUrl+ '/freelancer/viewall-applicants', {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+        })
+
+        const data: CommonResponseInterface<FreelancerInterface[]> = await response.json()
+        this.freelancers = data.data
+
+      } catch (err) {
+        this.error = `Failed to fetch freelancers ${err}`
+      } finally {
+        this.loading = false
+      }
+    },
 
   }
 })
