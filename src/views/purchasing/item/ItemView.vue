@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { DataTable } from 'simple-datatables'
-import VNavbar from '../components/VNavbar.vue'
-import VLoading from '../components/VLoading.vue'
-import VButton from '../components/VButton.vue'
 import { useAuthStore } from '../../../stores/auth.ts'
 import { useItemStore } from '../../../stores/item.ts'
+import VButton from '../../../components/VButton.vue'
+import VNavbar from '../../../components/VNavbar.vue'
+import VLoading from '../../../components/VLoading.vue'
 
 const title = ref({ 'Purchasing': '/purchasing' });
 const submodules = ref({
@@ -106,7 +106,7 @@ onMounted(async () => {
               <td class="px-4 py-2 text-left">{{ item.category }}</td>
               <td class="px-4 py-2 text-left">{{ item.status }}</td>
               <td class="px-4 py-2 text-center">
-                <RouterLink :to="`/item/${item.id}`">
+                <RouterLink :to="`/purchasing/item/${item.id}`">
                   <VButton variant="primary" size="sm">Detail</VButton>
                 </RouterLink>
               </td>

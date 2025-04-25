@@ -112,7 +112,7 @@ export const useItemStore = defineStore('item', {
         this.loading = false;
       }
     },
-    async getItemById(token: String, id: String) {
+    async getItemById(token: String, id: string) {
       this.loading = true
       this.error = null
 
@@ -138,6 +138,7 @@ export const useItemStore = defineStore('item', {
       this.error = null
 
       try {
+        console.log("Updating item with data:", itemData, itemId);
         const response = await fetch(`${apiUrl}/item/update`, {
           method: 'PUT',
           headers: {
