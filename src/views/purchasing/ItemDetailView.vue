@@ -21,8 +21,14 @@ const authStore = useAuthStore()
 const route = useRoute();
 const router = useRouter();
 const itemId = route.params.id as string;
+const idNumber = Number(route.params.id); 
 
 const showDialog = ref(false);
+
+const deleteItem= async () => {
+  await itemStore.deleteItem(idNumber);
+  showDialog.value = false;
+};
 
 onMounted(async () => {
   const savedAuth = localStorage.getItem('auth');
@@ -57,6 +63,17 @@ onMounted(async () => {
                 Ubah
               </VButton>
             </RouterLink>
+            <VButton @click="() => (showDialog = true)" size="sm" variant="delete">
+              Hapus
+            </VButton>
+  
+            <ConfirmationDialog
+              :visible="showDialog"
+              title="Hapus Klien"
+              message="Apakah Anda yakin ingin menghapus klien?"
+              @confirm="deleteItem"
+              @cancel="() => (showDialog = false)"
+            />
   
           </div>
         </div>
