@@ -36,6 +36,7 @@ import FreelancerView from '../views/FreelancerView.vue'
 import RegisterFreelancerSuccessView from '../views/auth/freelancer/RegisterFreelancerSuccessView.vue'
 import ItemView from '../views/purchasing/item/ItemView.vue'
 import FreelancerApplicantsView from '../views/FreelancerApplicantsView.vue'
+import FreelancerDetailView from '../views/FreelancerDetailView.vue'
 
 const routes = [
   {
@@ -271,6 +272,18 @@ const routes = [
     name: 'Register Freelancer Successful',
     component: RegisterFreelancerSuccessView,
     beforeEnter: roleGuard
+  },
+  {
+    path: '/freelancer/applications/:id',
+    name: 'FreelancerApplicationDetail',
+    component: () => import('../views/FreelancerApplicationsDetailView.vue')
+  },
+  {
+    path: '/freelancer/:id',
+    name: 'FreelancerDetail',
+    component: FreelancerDetailView,
+    beforeEnter: roleGuard,
+    props: true
   }
 ]
 
