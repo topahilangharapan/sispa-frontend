@@ -21,7 +21,7 @@ const authStore = useAuthStore()
 const route = useRoute();
 const router = useRouter();
 const itemId = route.params.id as string;
-const idNumber = Number(route.params.id); 
+const idNumber = Number(route.params.id);
 
 const showDialog = ref(false);
 
@@ -66,19 +66,19 @@ onMounted(async () => {
             <VButton @click="() => (showDialog = true)" size="sm" variant="delete">
               Hapus
             </VButton>
-  
+
             <ConfirmationDialog
               :visible="showDialog"
-              title="Hapus Klien"
-              message="Apakah Anda yakin ingin menghapus klien?"
+              title="Hapus Item"
+              message="Apakah Anda yakin ingin menghapus item?"
               @confirm="deleteItem"
               @cancel="() => (showDialog = false)"
             />
-  
+
           </div>
         </div>
         <hr class="border-gray-300 border-t-2 mb-4" />
-  
+
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div class="space-y-4">
             <div>
@@ -134,11 +134,11 @@ onMounted(async () => {
           </div>
         </div>
         <div class="flex justify-center mt-8">
-          <VButton 
-            @click="router.push('/purchasing/item')" 
-            type="button" 
-            size="md" 
-            variant="delete" 
+          <VButton
+            @click="router.push('/purchasing/item')"
+            type="button"
+            size="md"
+            variant="delete"
             class="bg-slate-600 hover:bg-slate-800 text-white"
           >
             Kembali

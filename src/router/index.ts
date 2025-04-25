@@ -34,6 +34,7 @@ import UpdateItemView from '../views/purchasing/item/UpdateItemView.vue'
 import RegisterFreelancerView from '../views/auth/freelancer/RegisterFreelancerView.vue'
 import FreelancerView from '../views/FreelancerView.vue'
 import RegisterFreelancerSuccessView from '../views/auth/freelancer/RegisterFreelancerSuccessView.vue'
+import ItemView from '../views/purchasing/item/ItemView.vue'
 import FreelancerApplicantsView from '../views/FreelancerApplicantsView.vue'
 
 const routes = [
@@ -251,6 +252,12 @@ const routes = [
     path: '/purchasing/item/:id/update',
     name: 'Update Item',
     component: UpdateItemView,
+    beforeEnter: roleGuard
+  },
+  {
+    path: '/purchasing/item',
+    name: 'View All Item',
+    component: ItemView,
     beforeEnter: roleGuard
   },
   {
