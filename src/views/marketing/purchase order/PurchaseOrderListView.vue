@@ -53,7 +53,6 @@
                   <RouterLink :to="`/marketing/purchase-order/${order.id}`">
                     <VButton variant="primary" size="sm">Detail</VButton>
                   </RouterLink>
-
                   <VButton
                     class="delete-button"
                     size="sm"
@@ -62,15 +61,6 @@
                   >
                     Delete
                   </VButton>
-
-                  <ConfirmationDialog
-                    :visible="showDialog === order.id"
-                    title="Hapus Purchase Order"
-                    message="Apakah Anda yakin ingin menghapus Purchase Order?"
-                    @confirm="deletePurchaseOrder(order.id)"
-                    @cancel="() => (showDialog = null)"
-                  />
-
                   <VButton
                     variant="primary"
                     size="sm"
@@ -102,8 +92,8 @@ import { RouterLink } from 'vue-router'
 
 const purchaseOrderStore = usePurchaseOrderStore()
 const authStore = useAuthStore()
-const vendorStore = useVendorStore()
 
+const searchTerm = ref('')
 const title = ref({ 'Marketing': '/marketing' });
 const submodules = ref({
   "Purchase Order": "/marketing/purchase-order",
@@ -134,56 +124,12 @@ const handleSearch = (event: Event) => {
   }
 }
 
-const checkAndDeleteOrder = async (order: any) => {
-  // Make sure vendors are loaded first
-  if (!vendorStore.vendors.length && authStore.token) {
-    await vendorStore.getVendors(authStore.token);
-  }
+async function deleteOrder(orderId: number) {
+  const confirmed = confirm('Are you sure you want to delete this purchase order?')
+  if (!confirmed) return
 
-  const vendorId = order.vendorId;
-
-  // If vendorId exists AND we can find a matching vendor in the database
-  if (vendorId && vendorId !== "") {
-    const vendor = vendorStore.vendors.find(v => String(v.id) === String(vendorId));
-
-    // If we found the vendor, it means it's still active
-    if (vendor) {
-      // Show warning toast and prevent deletion
-      window.$toast('warning', 'Purchase Order tidak dapat dihapus karena masih terkait dengan vendor yang aktif dalam database.');
-      return; // Important: Exit the function here to prevent showing the dialog
-    }
-  }
-
-  // If we get here, it's safe to show the confirmation dialog
-  showDialog.value = order.id;
-};
-
-const deletePurchaseOrder = async (id: number) => {
-  // Get the order by id
-  const orderToDelete = purchaseOrderStore.purchaseOrders.find(order => order.id === id);
-  if (!orderToDelete) return;
-
-  // Double check vendor connection before proceeding
-  const vendorId = orderToDelete.vendorId;
-  if (vendorId && vendorId !== "") {
-    const vendor = vendorStore.vendors.find(v => String(v.id) === String(vendorId));
-    if (vendor) {
-      // Vendor still exists, cancel deletion
-      showDialog.value = null;
-      window.$toast('warning', 'Purchase Order tidak dapat dihapus karena masih terkait dengan vendor yang aktif.');
-      return;
-    }
-  }
-
-  // Safe to delete, proceed
-  if (!authStore.token) return;
-
-  // Process the deletion
-  const success = await purchaseOrderStore.deletePurchaseOrder(id, authStore.token || '');
-
-  // Close the dialog
-  showDialog.value = null;
-
+  if (!authStore.token) return
+  const success = await purchaseOrderStore.deletePurchaseOrder(orderId, authStore.token)
   if (success) {
     window.$toast('success', 'Purchase order berhasil dihapus!');
     // Refresh data
@@ -201,3 +147,97 @@ const downloadPurchaseOrder = async (id: number, token: string) => {
   }
 }
 </script>
+
+<style scoped>
+.purchaseorder-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  height: 100vh;
+  width: 100%;
+  padding: 20px;
+}
+
+.purchaseorder-card {
+  background: white;
+  width: 100%;
+  max-width: 1200px;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  text-align: left;
+  margin-top: 80px;
+}
+
+.search-bar {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.search-input {
+  width: 300px;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 14px;
+  padding-right: 30px;
+}
+
+.search-icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 18px;
+  height: 18px;
+}
+
+.date-filter {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+th, td {
+  padding: 12px;
+  text-align: left;
+  border: none;
+}
+
+th {
+  background-color: #f4f4f4;
+  font-weight: 600;
+}
+
+tr:hover {
+  background-color: #f9f9f9;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.actions {
+  margin-top: 20px;
+  display: flex;
+  justify-content: start;
+  gap: 15px;
+}
+
+.actions button {
+  padding: 8px 20px;
+  background-color: #f0ad4e;
+  color: white;
+  border-radius: 5px;
+}
+
+</style>
