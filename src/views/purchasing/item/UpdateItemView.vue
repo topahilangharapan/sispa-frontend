@@ -38,6 +38,7 @@ onMounted(async () => {
     return;
   }
 
+  // First fetch categories
   await itemStore.getItemCategories(authStore.token)
 
   if (itemStore.itemCategories) {
@@ -47,17 +48,25 @@ onMounted(async () => {
     }));
   }
 
-  // Ambil ID item dari parameter URL
-  if (itemId) {
+  // Then fetch the item data
+  if (itemId.value) {
     await itemStore.getItemById(authStore.token, itemId.value);
     if (itemStore.currentItem) {
+        console.log("Current category from API:", itemStore.currentItem.category);
+        // Check if the category from API exists in the options
+        const categoryExists = itemCategoriesOption.value.some(opt => opt.value === itemStore.currentItem?.category);
+        console.log("Category exists in options:", categoryExists);
       itemModel.value = {
         title: itemStore.currentItem.title,
         unit: itemStore.currentItem.unit,
         pricePerUnit: itemStore.currentItem.pricePerUnit,
         description: itemStore.currentItem.description,
-        category: itemStore.currentItem.category
+        category: itemStore.currentItem.category // Make sure this value matches exactly with one of the options
       };
+      
+      // Add a console log to debug the category value
+      console.log("Current item category:", itemStore.currentItem.category);
+      console.log("Available categories:", itemCategoriesOption.value);
     }
   }
 });
