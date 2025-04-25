@@ -57,7 +57,7 @@
                     class="delete-button"
                     size="sm"
                     variant="delete"
-                    @click="checkAndDeleteOrder(order)"
+                    @click="checkAndDeleteOrder(order.id)"
                   >
                     Delete
                   </VButton>
@@ -82,18 +82,15 @@
 import { ref, onMounted } from 'vue'
 import { usePurchaseOrderStore } from '../../../stores/purchaseOrder.ts'
 import { useAuthStore } from '../../../stores/auth'
-import { useVendorStore } from '../../../stores/vendor.ts'
 import VNavbar from '../../../components/VNavbar.vue'
 import VButton from '../../../components/VButton.vue'
 import VLoading from '../../../components/VLoading.vue'
 import { DataTable } from 'simple-datatables'
-import ConfirmationDialog from '../../../components/ConfirmationDialog.vue'
 import { RouterLink } from 'vue-router'
 
 const purchaseOrderStore = usePurchaseOrderStore()
 const authStore = useAuthStore()
 
-const searchTerm = ref('')
 const title = ref({ 'Marketing': '/marketing' });
 const submodules = ref({
   "Purchase Order": "/marketing/purchase-order",
@@ -101,7 +98,6 @@ const submodules = ref({
   "Klien": "/marketing/client"
 });
 const dataTableInstance = ref<DataTable | null>(null)
-const showDialog = ref<number | null>(null) // Store the ID of order to delete
 
 onMounted(async () => {
   if (!authStore.token) return
@@ -124,7 +120,7 @@ const handleSearch = (event: Event) => {
   }
 }
 
-async function deleteOrder(orderId: number) {
+async function checkAndDeleteOrder(orderId: number) {
   const confirmed = confirm('Are you sure you want to delete this purchase order?')
   if (!confirmed) return
 
