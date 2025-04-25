@@ -104,7 +104,7 @@ onMounted(async () => {
                 {{ freelancer.isWorking ? 'Tidak Tersedia' : 'Tersedia' }}
               </td>
               <td class="px-4 py-2 text-center">
-                <RouterLink :to="`/freelancer/${freelancer.id}`">
+                <RouterLink :to="`/freelancer/applications/${freelancer.id}`">
                   <VButton variant="primary" size="sm">Detail</VButton>
                 </RouterLink>
               </td>
