@@ -69,5 +69,6 @@ export interface FreelancerInterface extends UserProfileInterface {
   updatedAt?: string,
   deletedBy?: string,
   deletedAt?: string,
-  approvedAt?: string
+  approvedAt?: string,
+  rejectedAt?: string
 }
