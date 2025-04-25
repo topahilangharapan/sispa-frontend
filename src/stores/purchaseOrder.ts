@@ -16,6 +16,7 @@ export const usePurchaseOrderStore = defineStore('purchaseOrder', {
       selectedPurchaseOrders: [] as PurchaseOrderInterface[],
       selectedPurchaseOrder: null as PurchaseOrderInterface | null, 
       refreshKey: 0,
+      refreshKey: 0,
     }),
     actions: {
       async create(body: CreatePurchaseOrderInterface, token: string): Promise<boolean> {
@@ -113,6 +114,7 @@ export const usePurchaseOrderStore = defineStore('purchaseOrder', {
         }
       },
       
+      
       async deletePurchaseOrder(id: number, token: string): Promise<boolean> {
         this.loading = true;
         this.error = null;
@@ -129,7 +131,9 @@ export const usePurchaseOrderStore = defineStore('purchaseOrder', {
           const data = await response.json();
           if (response.ok) {
             // Remove the deleted order and increment refreshKey
+            // Remove the deleted order and increment refreshKey
             this.purchaseOrders = this.purchaseOrders.filter(order => order.id !== id);
+            this.refreshKey++; // Trigger re-render in the UI
             this.refreshKey++; // Trigger re-render in the UI
             return true;
           } else {
@@ -198,6 +202,7 @@ export const usePurchaseOrderStore = defineStore('purchaseOrder', {
         } finally {
           this.loading = false;
         }
-      }      
+    },
+    
 }
 })

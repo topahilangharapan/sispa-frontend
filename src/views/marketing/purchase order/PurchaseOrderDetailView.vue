@@ -103,7 +103,7 @@
               @confirm="deleteOrder(purchaseOrderStore.selectedPurchaseOrder.id)"
               @cancel="() => (showDialog = null)"
             />
-            <VButton variant="primary" size="md"
+            <VButton variant="primary" size="md" 
               @click="downloadPurchaseOrder"
               :disabled="!purchaseOrderStore.selectedPurchaseOrder"
             >
@@ -152,11 +152,7 @@
 
   async function deleteOrder(orderId: number) {
     if (!authStore.token) return
-
     const success = await purchaseOrderStore.deletePurchaseOrder(orderId, authStore.token)
-
-    showDialog.value = null
-
     if (success) {
       window.$toast('success', 'Purchase order deleted!')
       router.push('/marketing/purchase-order')
