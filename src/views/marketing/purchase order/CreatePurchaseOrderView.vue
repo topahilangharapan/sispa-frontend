@@ -186,10 +186,10 @@ const onSelectItem = (chosenId: string, item: PurchaseOrderItemInterface) => {
   }
 };
 
-const generateItemOptions = (currentItemId: number | null) => {
+const generateItemOptions = (currentItemId: string | null) => {
   const selectedIds = purchaseOrder.value.items
     .map(i => i.id)
-    .filter(id => id !== null && id !== Number(currentItemId));
+    .filter(id => id !== null && id !== currentItemId);
 
   return itemStore.items
     .filter(item => !selectedIds.includes(String(item.id)))
