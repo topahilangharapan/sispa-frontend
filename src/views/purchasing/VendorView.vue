@@ -10,6 +10,7 @@ import { DataTable } from 'simple-datatables'
 const title = ref({ 'Purchasing': '/purchasing' });
 const submodules = ref({
   "Vendor": "/purchasing/vendor",
+  "Item": "/purchasing/item",
 });
 const vendorStore = useVendorStore()
 const authStore = useAuthStore()

@@ -12,6 +12,21 @@ export const roleGuard = (to: RouteLocationNormalized, _: RouteLocationNormalize
   const userRole = authStore.user?.role?.toLowerCase() ?? null;
   const userToken = authStore.token ?? null;
 
+  // 👇 Validasi halaman login dan register freelancer
+  const isAuthPage = to.path === "/auth/login" || to.path.startsWith("/auth/register/freelancer");
+
+  // Jika user sudah login (punya token valid), jangan izinkan akses auth pages
+  if (userToken && userRole && isAuthPage) {
+    next("/dashboard"); // redirect ke dashboard sesuai role
+    return;
+  }
+
+  // Jika belum login dan menuju login atau register freelancer → izinkan
+  if (!userToken && isAuthPage) {
+    next();
+    return;
+  }
+
   // Jika tidak ada token, arahkan ke login
   if (!userToken || !userRole) {
     next("/auth/login");

@@ -1,31 +1,32 @@
 <script setup lang="ts">
-import VNavbar from '../../components/VNavbar.vue'
+
 import { onMounted, ref } from 'vue'
-import VLoading from '../../components/VLoading.vue'
-import VButton from '../../components/VButton.vue'
-import { useVendorStore } from '../../stores/vendor.ts'
+import { useItemStore} from '../../stores/item.ts'
 import { useAuthStore } from '../../stores/auth.ts'
-import { useRoute } from 'vue-router';
-import router from '../../router'
+import { useRoute, useRouter } from 'vue-router'
+import VNavbar from '../../components/VNavbar.vue'
+import VButton from '../../components/VButton.vue'
+import VLoading from '../../components/VLoading.vue'
 import ConfirmationDialog from '../../components/ConfirmationDialog.vue'
 
-const title = ref({ 'Purchasing': '/purchasing' });
+const title = ref({ 'purchasing': '/purchasing' });
 const submodules = ref({
-  "Vendor": "/purchasing/vendor",
-  "Item": "/purchasing/item",
+  "Purchase Order": "/purchasing/purchase-order",
+  "Final Report": "/purchasing/final-report",
+  "Item": "/purchasing/item"
 });
 
-const vendorStore = useVendorStore()
+const itemStore = useItemStore()
 const authStore = useAuthStore()
 const route = useRoute();
-const vendorId = route.params.id as string;
+const router = useRouter();
+const itemId = route.params.id as string;
+const idNumber = Number(route.params.id);
 
 const showDialog = ref(false);
 
-const isLoaded = ref(false);
-
-const deleteVendor = async () => {
-  await vendorStore.deleteVendor(vendorId);
+const deleteItem= async () => {
+  await itemStore.deleteItem(idNumber);
   showDialog.value = false;
 };
 
@@ -35,28 +36,29 @@ onMounted(async () => {
     authStore.$patch(JSON.parse(savedAuth));
   }
 
-  const token = authStore.token ?? '';
-  await vendorStore.getVendorById(token, vendorId)
+  if (!authStore.token) {
+    console.error('Token tidak tersedia');
+    return;
+  }
 
-
-  isLoaded.value = true;
+  await itemStore.getItemById(authStore.token, itemId)
 });
 
 </script>
 
 <template>
   <VNavbar :title="title" :submodules="submodules"></VNavbar>
-  <div v-if="vendorStore.loading">
-    <VLoading :isDone="isLoaded" />
+  <div v-if="itemStore.loading">
+    <VLoading :isDone="!itemStore.loading" />
   </div>
 
-  <div v-else-if="vendorStore.currentVendor" class="p-8 bg-white-100 min-h-screen flex flex-col items-center">
+  <div v-else-if="itemStore.currentItem" class="p-8 bg-white-100 min-h-screen flex flex-col items-center">
     <div class="w-full max-w-3xl mb-12 mt-16">
       <div class="bg-white p-6 rounded-2xl shadow-lg">
         <div class="flex items-center justify-between mb-2">
-          <h2 class="heading-2">Detail Vendor</h2>
+          <h2 class="heading-2">Detail Item</h2>
           <div class="flex space-x-2">
-            <RouterLink :to="`/purchasing/vendor/${vendorId}/update`">
+            <RouterLink :to="`/purchasing/item/${itemId}/update`">
               <VButton size="sm" variant="primary">
                 Ubah
               </VButton>
@@ -67,11 +69,12 @@ onMounted(async () => {
 
             <ConfirmationDialog
               :visible="showDialog"
-              title="Hapus Vendor"
-              message="Apakah Anda yakin ingin menghapus vendor?"
-              @confirm="deleteVendor"
+              title="Hapus Item"
+              message="Apakah Anda yakin ingin menghapus item?"
+              @confirm="deleteItem"
               @cancel="() => (showDialog = false)"
             />
+
           </div>
         </div>
         <hr class="border-gray-300 border-t-2 mb-4" />
@@ -80,59 +83,59 @@ onMounted(async () => {
           <div class="space-y-4">
             <div>
               <p class="large-text-bold">ID</p>
-              <p class="large-text-normal">{{ vendorStore.currentVendor.id }}</p>
+              <p class="large-text-normal">{{ itemStore.currentItem.id }}</p>
             </div>
             <div>
-              <p class="large-text-bold">Nama</p>
-              <p class="large-text-normal">{{ vendorStore.currentVendor.name }}</p>
+              <p class="large-text-bold">Unit</p>
+              <p class="large-text-normal">{{ itemStore.currentItem.unit }}</p>
             </div>
             <div>
-              <p class="large-text-bold">Layanan</p>
-              <p class="large-text-normal">{{ vendorStore.currentVendor.service }}</p>
+              <p class="large-text-bold">Kategori Item</p>
+              <p class="large-text-normal">{{ itemStore.currentItem.category }}</p>
             </div>
           </div>
           <div class="space-y-4">
             <div>
-              <p class="large-text-bold">Kontak</p>
-              <p class="large-text-normal">{{ vendorStore.currentVendor.contact }}</p>
+              <p class="large-text-bold">Nama Item</p>
+              <p class="large-text-normal">{{ itemStore.currentItem.title }}</p>
             </div>
             <div>
-              <p class="large-text-bold">Email</p>
-              <p class="large-text-normal">{{ vendorStore.currentVendor.email }}</p>
+              <p class="large-text-bold">Harga Per Unit</p>
+              <p class="large-text-normal">{{ itemStore.currentItem.pricePerUnit }}</p>
             </div>
             <div>
-              <p class="large-text-bold">Alamat</p>
-              <p class="large-text-normal">{{ vendorStore.currentVendor.address }}</p>
+              <p class="large-text-bold">Status</p>
+              <p class="large-text-normal">{{ itemStore.currentItem.status }}</p>
             </div>
           </div>
         </div>
         <div class="mt-6">
           <p class="large-text-bold">Deskripsi</p>
-          <p class="large-text-normal">{{ vendorStore.currentVendor.description }}</p>
+          <p class="large-text-normal">{{ itemStore.currentItem.description }}</p>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
           <div>
             <p class="large-text-bold">Created By</p>
-            <p class="large-text-normal">{{ vendorStore.currentVendor.createdBy }}</p>
+            <p class="large-text-normal">{{ itemStore.currentItem.createdBy }}</p>
           </div>
           <div>
             <p class="large-text-bold">Updated By</p>
-            <p class="large-text-normal">{{ vendorStore.currentVendor.updatedBy }}</p>
+            <p class="large-text-normal">{{ itemStore.currentItem.updatedBy }}</p>
           </div>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
           <div>
             <p class="large-text-bold">Created At</p>
-            <p class="large-text-normal">{{ new Date(vendorStore.currentVendor.createdAt).toLocaleDateString() }}</p>
+            <p class="large-text-normal">{{ new Date(itemStore.currentItem.createdAt).toLocaleDateString() }}</p>
           </div>
           <div>
             <p class="large-text-bold">Updated At</p>
-            <p class="large-text-normal">{{ new Date(vendorStore.currentVendor.updatedAt).toLocaleDateString() }}</p>
+            <p class="large-text-normal">{{ new Date(itemStore.currentItem.updatedAt).toLocaleDateString() }}</p>
           </div>
         </div>
         <div class="flex justify-center mt-8">
           <VButton
-            @click="router.push('/purchasing/vendor')"
+            @click="router.push('/purchasing/item')"
             type="button"
             size="md"
             variant="delete"
@@ -140,7 +143,7 @@ onMounted(async () => {
           >
             Kembali
           </VButton>
-      </div>
+        </div>
       </div>
     </div>
     </div>

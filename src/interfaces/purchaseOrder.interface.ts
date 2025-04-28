@@ -1,12 +1,12 @@
 export interface PurchaseOrderItemInterface {
-  id: number;
+  id: string;
   tempId: string;
   title: string;
   volume: number;
   unit: string;
-  sum: number;
   pricePerUnit: number;
   description: string;
+  status: string;
 }
 
 export interface PurchaseOrderInterface {

@@ -62,9 +62,9 @@ const errorMessage = computed(() => {
   if (props.minLength && String(inputValue.value).length < props.minLength) return `Minimal ${props.minLength} karakter!`;
   if (props.maxLength && String(inputValue.value).length > props.maxLength) return `Maksimal ${props.maxLength} karakter!`;
   if (props.isEmail && inputValue.value) {
-    const emailValue = String(inputValue.value);
-    if (!emailValue.includes('@')) {
-      return 'Email tidak valid';
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(inputValue.value.toString())) {
+      return 'Format email tidak valid!';
     }
   }
   return '';

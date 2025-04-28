@@ -5,13 +5,30 @@ const props = defineProps({
   modelValue: [String, Number],
   label: { type: String, default: '' },
   options: { type: Array as () => { value: string | number; label: string }[], default: () => [] },
+  availableOptions: { type: Array as () => { value: string | number; label: string }[], default: () => [] }, // ✅ baru
   placeholder: { type: String, default: 'Pilih opsi' },
-  isEmpty: { type: Boolean, default: false }
+  isEmpty: { type: Boolean, default: false },
+  disabled: { type: Boolean, default: false },
+  selectionToShow: { type: Number, default: 5 }
 });
 
 const emit = defineEmits(['update:modelValue', 'update:hasError']);
-const selectedValue = ref(props.modelValue || '');
+const selectedValue = ref<string | number>(props.modelValue !== undefined ? props.modelValue : '');
+
+watch(() => props.modelValue, (newValue) => {
+  if (newValue !== undefined) {
+    selectedValue.value = newValue;
+  } else {
+    selectedValue.value = '';
+  }
+}, { immediate: true });
+
 const showDropdown = ref(false);
+
+// ✅ menentukan mana list yang dipakai
+const displayedOptions = computed(() => {
+  return props.availableOptions.length > 0 ? props.availableOptions : props.options;
+});
 
 const errorMessage = computed(() => {
   if (props.isEmpty && !selectedValue.value) return 'Field tidak boleh kosong!';
@@ -35,7 +52,8 @@ watch(selectedValue, () => {
     <div class="relative">
       <div
         class="px-3 py-2 border rounded-lg flex justify-between items-center cursor-pointer focus:ring-2 focus:outline-none focus:ring-2 focus:ring-brown-100 bg-transparent backdrop-blur-md transition-all"
-        @click="showDropdown = !showDropdown"
+        :class="{ 'cursor-not-allowed opacity-50': disabled }"
+        @click="!disabled && (showDropdown = !showDropdown)"
         tabindex="0"
         @blur="showDropdown = false"
       >
@@ -47,9 +65,20 @@ watch(selectedValue, () => {
         </svg>
       </div>
       <transition name="fade-slide">
-        <ul v-if="showDropdown" class="absolute left-0 right-0 mt-1 backdrop-blur-3xl border rounded-lg shadow-lg z-10">
+        <ul
+          v-if="showDropdown && !disabled"
+          class="absolute left-0 right-0 mt-1 backdrop-blur-3xl border rounded-lg shadow-lg z-10 overflow-y-auto"
+          :style="{ maxHeight: `${props.selectionToShow * 40}px` }"
+        >
           <li
-            v-for="option in options"
+            v-if="displayedOptions.length === 0"
+            class="px-3 py-2 text-gray-500 text-center cursor-default"
+          >
+            Tidak Ada Data
+          </li>
+          <li
+            v-else
+            v-for="option in displayedOptions"
             :key="option.value"
             class="px-3 py-2 hover:bg-black-grey-200/20 cursor-pointer hover:rounded-lg"
             @click="selectOption(option.value)"

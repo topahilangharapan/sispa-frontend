@@ -5,7 +5,7 @@ import { computed, onMounted, ref, toRaw } from 'vue'
 import { usePurchaseOrderStore } from '../../../stores/purchaseOrder.ts'
 import { useRouter } from 'vue-router'
 import type {
-  CreatePurchaseOrderInterface,
+  CreatePurchaseOrderInterface, PurchaseOrderItemInterface
 } from '../../../interfaces/purchaseOrder.interface.ts'
 import VNavbar from '../../../components/VNavbar.vue'
 import VLoading from '../../../components/VLoading.vue'
@@ -15,6 +15,8 @@ import { useVendorStore } from '../../../stores/vendor.ts'
 import { useClientStore } from '../../../stores/client.ts'
 import VDropdown from '../../../components/VDropdown.vue'
 import VInputDateField from '../../../components/VInputDateField.vue'
+import VTextArea from '../../../components/VTextArea.vue'
+import { useItemStore } from '../../../stores/item.ts'
 
 const title = ref({ 'Marketing': '/marketing' });
 const submodules = ref({
@@ -26,7 +28,8 @@ const authStore = useAuthStore();
 const purchaseOrderStore = usePurchaseOrderStore();
 const vendorStore = useVendorStore();
 const clientStore = useClientStore();
-const router = useRouter(); // Inisialisasi router
+const itemStore = useItemStore();
+const router = useRouter();
 
 const selectedVendor = ref();
 const selectedClient = ref();
@@ -34,6 +37,7 @@ const selectedOption = ref();
 
 const vendorOptions = ref<{ value: string; label: string }[]>([]);
 const clientOptions = ref<{ value: string; label: string }[]>([]);
+const itemOptions = ref<{ value: string; label: string }[]>([]);
 
 const setOption = (option : string) => {
   selectedOption.value = option;
@@ -70,6 +74,7 @@ onMounted(async () => {
 
   await vendorStore.getVendors(authStore.token)
   await clientStore.getClients(authStore.token)
+  await itemStore.getItems(authStore.token)
 
   if (vendorStore.vendors) {
     vendorOptions.value = vendorStore.vendors.map(vendor => ({
@@ -84,6 +89,14 @@ onMounted(async () => {
       label: String(client.name),
     }));
   }
+
+  if (itemStore.items) {
+    itemOptions.value = itemStore.items.map(item => ({
+      value: String(item.id),
+      label: String(item.title),
+    }));
+  }
+
 });
 
 const onSelectVendor = (vendorId: string) => {
@@ -145,24 +158,45 @@ let counter = 0;
 
 const addItem = () => {
   const newItem = {
-    id: Date.now(), // Gunakan timestamp sebagai ID sementara
+    id: "",
     tempId: `item-${counter++}`, // ID berurutan
     title: "",
     volume: 0,
     unit: "",
     pricePerUnit: 0,
     description: "",
-    sum: 0, // Nilai awal untuk sum
+    status: "",
   };
-
 
   purchaseOrder.value.items.push(newItem);
 
   // Tambahkan error status berdasarkan ID unik
-  updateErrorStatus(`title-${newItem.tempId}`, true);
+  updateErrorStatus(`item-${newItem.tempId}`, true);
   updateErrorStatus(`volume-${newItem.tempId}`, true);
-  updateErrorStatus(`unit-${newItem.tempId}`, true);
-  updateErrorStatus(`pricePerUnit-${newItem.tempId}`, true);
+};
+
+const onSelectItem = (chosenId: string, item: PurchaseOrderItemInterface) => {
+
+  const selected = itemStore.items.find(opt => opt.id === Number(chosenId));
+  if (selected) {
+    item.title = selected.title;
+    item.unit = selected.unit;
+    item.pricePerUnit = selected.pricePerUnit;
+    item.status = selected.status;
+  }
+};
+
+const generateItemOptions = (currentItemId: string | null) => {
+  const selectedIds = purchaseOrder.value.items
+    .map(i => i.id)
+    .filter(id => id !== null && id !== currentItemId);
+
+  return itemStore.items
+    .filter(item => !selectedIds.includes(String(item.id)))
+    .map(item => ({
+      value: String(item.id),
+      label: item.title,
+    }));
 };
 
 
@@ -175,21 +209,12 @@ const removeItem = (tempId: string | number) => {
   purchaseOrder.value.items.splice(index, 1);
 
   // Hapus error status berdasarkan tempId
-  delete hasErrors.value[`title-${tempId}`];
+  delete hasErrors.value[`item-${tempId}`];
   delete hasErrors.value[`volume-${tempId}`];
-  delete hasErrors.value[`unit-${tempId}`];
-  delete hasErrors.value[`pricePerUnit-${tempId}`];
-  delete hasErrors.value[`description-${tempId}`];
 
   // Hapus error status berdasarkan tempId
-  delete hasErrors.value[`title-undefined`];
+  delete hasErrors.value[`item-undefined`];
   delete hasErrors.value[`volume-undefined`];
-  delete hasErrors.value[`unit-undefined`];
-  delete hasErrors.value[`pricePerUnit-undefined`];
-  delete hasErrors.value[`description-undefined`];
-
-  console.log(hasErrors.value)
-
 };
 
 
@@ -401,12 +426,52 @@ const submitPurchaseOrder = async () => {
 
             <h3 class="font-semibold text-gray-700">Item {{ index + 1 }}</h3>
 
+            <VDropdown
+              v-model="item.id"
+              label="Item"
+              :options="itemOptions"
+              :availableOptions="generateItemOptions(item.id)"
+              placeholder="Silakan pilih"
+              :isEmpty="true"
+              @update:modelValue="(val) => onSelectItem(val, item)"
+              @update:hasError="updateErrorStatus(`item-${item.tempId}`, $event)"
+            />
             <VInputField
               label="Nama Item"
               v-model="item.title"
               placeholder="Masukkan nama item"
               :isEmpty="true"
-              @update:hasError="updateErrorStatus(`title-${item.tempId}`, $event)"
+              :disabled="true"
+            />
+            <VInputField
+              label="Status Item"
+              v-model="item.status"
+              placeholder="Masukkan status item"
+              :isEmpty="true"
+              :disabled="true"
+            />
+            <VInputField
+              label="Satuan"
+              v-model="item.unit"
+              placeholder="Masukkan satuan"
+              :isEmpty="true"
+              :disabled="true"
+            />
+            <VInputField
+              label="Harga per Satuan"
+              v-model="item.pricePerUnit"
+              placeholder="Masukkan harga per satuan"
+              :isEmpty="true"
+              :isNumberOnly="true"
+              :isNegative="false"
+              :useThousandSeparator="true"
+              :disabled="true"
+            />
+            <VTextArea
+              label="Deskripsi"
+              v-model="item.description"
+              placeholder="Masukkan deskripsi"
+              :disabled="true"
             />
             <VInputField
               label="Volume"
@@ -417,29 +482,6 @@ const submitPurchaseOrder = async () => {
               :isNegative="false"
               :useThousandSeparator="true"
               @update:hasError="updateErrorStatus(`volume-${item.tempId}`, $event)"
-            />
-            <VInputField
-              label="Satuan"
-              v-model="item.unit"
-              placeholder="Masukkan satuan"
-              :isEmpty="true"
-              @update:hasError="updateErrorStatus(`unit-${item.tempId}`, $event)"
-            />
-            <VInputField
-              label="Harga per Satuan"
-              v-model="item.pricePerUnit"
-              placeholder="Masukkan harga per satuan"
-              :isEmpty="true"
-              :isNumberOnly="true"
-              :isNegative="false"
-              :useThousandSeparator="true"
-              @update:hasError="updateErrorStatus(`pricePerUnit-${item.tempId}`, $event)"
-            />
-            <VInputField
-              label="Deskripsi"
-              v-model="item.description"
-              placeholder="Masukkan deskripsi"
-              @update:hasError="updateErrorStatus(`description-${item.tempId}`, $event)"
             />
           </div>
         </div>

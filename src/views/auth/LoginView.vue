@@ -58,7 +58,7 @@ const submitForm = async () => {
 
       <!-- Jika loading selesai, tampilkan form login -->
       <div v-else class="w-full">
-        <h2 class="text-xl mb-4 text-center">Login</h2>
+        <h2 class="text-xl mb-4 text-center text-red-400">Login</h2>
         <form @submit.prevent="submitForm" class="space-y-4">
           <VInputField
             v-model="formData.username"
@@ -82,9 +82,9 @@ const submitForm = async () => {
             Login
           </VButton>
         </form>
-<!--        <p class="text-normal text-center mt-4">Ingin mendaftarkan akun?-->
-<!--          <span @click="router.push('/auth/register')" class="text-blue-500 cursor-pointer text-normal">Daftar di sini</span>-->
-<!--        </p>-->
+        <p class="text-normal text-center mt-4">Anda adalah Freelancer?
+          <span @click="router.push('/auth/register/freelancer')" class="text-blue-500 cursor-pointer text-normal">Daftar di sini</span>
+        </p>
       </div>
 
     </div>
