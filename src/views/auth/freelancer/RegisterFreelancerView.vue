@@ -171,7 +171,7 @@ const submitForm = async () => {
   const isSuccess = await freelancerStore.add(payload);
 
   if (isSuccess) {
-    router.push('/auth/register/freelancer/success')
+    await router.push('/auth/register/freelancer/success')
   }
 };
 </script>
