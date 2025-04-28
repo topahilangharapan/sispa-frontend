@@ -60,6 +60,15 @@ export interface FreelancerInterface extends UserProfileInterface {
   education: string,
   workExperiences: CreateWorkExperienceRequestInterface[],
   reason: string,
-  nik: string
+  nik: string,
   isWorking: boolean,
+  username: string,
+  createdBy?: string,
+  createdAt?: string,
+  updatedBy?: string,
+  updatedAt?: string,
+  deletedBy?: string,
+  deletedAt?: string,
+  approvedAt?: string,
+  rejectedAt?: string
 }

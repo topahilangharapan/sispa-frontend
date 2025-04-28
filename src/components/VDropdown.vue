@@ -13,7 +13,16 @@ const props = defineProps({
 });
 
 const emit = defineEmits(['update:modelValue', 'update:hasError']);
-const selectedValue = ref(props.modelValue || '');
+const selectedValue = ref<string | number>(props.modelValue !== undefined ? props.modelValue : '');
+
+watch(() => props.modelValue, (newValue) => {
+  if (newValue !== undefined) {
+    selectedValue.value = newValue;
+  } else {
+    selectedValue.value = '';
+  }
+}, { immediate: true });
+
 const showDropdown = ref(false);
 
 // ✅ menentukan mana list yang dipakai
