@@ -12,6 +12,7 @@ import VDropdown from '../../../components/VDropdown.vue'
 import VLoading from '../../../components/VLoading.vue'
 import VInputDateField from '../../../components/VInputDateField.vue'
 import { useFreelancerStore } from '../../../stores/freelancer.ts'
+import VTextArea from '../../../components/VTextArea.vue'
 
 const router = useRouter();
 const authStore = useAuthStore();
@@ -219,7 +220,7 @@ const submitForm = async () => {
             <div class="grid grid-cols-3 gap-6">
               <VDropdown v-model="exp.category" :isEmpty="true" label="Kategori" :options="workExperienceCategoryOption" placeholder="Pilih kategori" @update:hasError="updateErrorStatus(`category-${exp.tempId}`, $event)" />
               <VInputField v-model="exp.title" :isEmpty="true" label="Judul" placeholder="Masukkan judul pengalaman" @update:hasError="updateErrorStatus(`title-${exp.tempId}`, $event)"/>
-              <VInputField v-model="exp.description" :isEmpty="true" label="Deskripsi" placeholder="Deskripsi pengalaman" @update:hasError="updateErrorStatus(`description-${exp.tempId}`, $event)"/>
+              <VTextArea v-model="exp.description" :isEmpty="true" label="Deskripsi" placeholder="Deskripsi pengalaman" @update:hasError="updateErrorStatus(`description-${exp.tempId}`, $event)"/>
             </div>
             <div class="grid grid-cols-3 gap-6">
               <VInputDateField v-model="exp.startDate" :minDate="formData.dateOfBirth" label="Tanggal Mulai" @update:hasError="updateErrorStatus(`startDate-${exp.tempId}`, $event)" />

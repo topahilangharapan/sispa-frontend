@@ -5,10 +5,11 @@ const props = defineProps({
   modelValue: [String, Number],
   label: { type: String, default: '' },
   options: { type: Array as () => { value: string | number; label: string }[], default: () => [] },
+  availableOptions: { type: Array as () => { value: string | number; label: string }[], default: () => [] }, // ✅ baru
   placeholder: { type: String, default: 'Pilih opsi' },
   isEmpty: { type: Boolean, default: false },
   disabled: { type: Boolean, default: false },
-  selectionToShow: { type: Number, default: 5 } // ✅ baru
+  selectionToShow: { type: Number, default: 5 }
 });
 
 const emit = defineEmits(['update:modelValue', 'update:hasError']);
@@ -23,6 +24,11 @@ watch(() => props.modelValue, (newValue) => {
 }, { immediate: true });
 
 const showDropdown = ref(false);
+
+// ✅ menentukan mana list yang dipakai
+const displayedOptions = computed(() => {
+  return props.availableOptions.length > 0 ? props.availableOptions : props.options;
+});
 
 const errorMessage = computed(() => {
   if (props.isEmpty && !selectedValue.value) return 'Field tidak boleh kosong!';
@@ -64,16 +70,15 @@ watch(selectedValue, () => {
           class="absolute left-0 right-0 mt-1 backdrop-blur-3xl border rounded-lg shadow-lg z-10 overflow-y-auto"
           :style="{ maxHeight: `${props.selectionToShow * 40}px` }"
         >
-
-        <li
-            v-if="options.length === 0"
+          <li
+            v-if="displayedOptions.length === 0"
             class="px-3 py-2 text-gray-500 text-center cursor-default"
           >
             Tidak Ada Data
           </li>
           <li
             v-else
-            v-for="option in options"
+            v-for="option in displayedOptions"
             :key="option.value"
             class="px-3 py-2 hover:bg-black-grey-200/20 cursor-pointer hover:rounded-lg"
             @click="selectOption(option.value)"

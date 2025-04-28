@@ -14,8 +14,7 @@ export const usePurchaseOrderStore = defineStore('purchaseOrder', {
       error: null as null | string,
       purchaseOrders: [] as PurchaseOrderInterface[],
       selectedPurchaseOrders: [] as PurchaseOrderInterface[],
-      selectedPurchaseOrder: null as PurchaseOrderInterface | null, 
-      refreshKey: 0,
+      selectedPurchaseOrder: null as PurchaseOrderInterface | null,
       refreshKey: 0,
     }),
     actions: {
@@ -56,7 +55,7 @@ export const usePurchaseOrderStore = defineStore('purchaseOrder', {
       async fetchAll(token: string): Promise<boolean> {
         this.loading = true;
         this.error = null;
-      
+
         try {
           const response = await fetch(`${apiUrl}/purchase-order/all`, {
             method: "GET",
@@ -65,9 +64,9 @@ export const usePurchaseOrderStore = defineStore('purchaseOrder', {
               "Content-Type": "application/json",
             },
           });
-      
+
           const data: CommonResponseInterface<PurchaseOrderInterface[]> = await response.json();
-      
+
           if (response.ok) {
             this.purchaseOrders = data.data || [];
             return true; // success
@@ -113,12 +112,12 @@ export const usePurchaseOrderStore = defineStore('purchaseOrder', {
           this.loading = false;
         }
       },
-      
-      
+
+
       async deletePurchaseOrder(id: number, token: string): Promise<boolean> {
         this.loading = true;
         this.error = null;
-      
+
         try {
           const response = await fetch(`${apiUrl}/purchase-order/${id}`, {
             method: "DELETE",
@@ -127,7 +126,7 @@ export const usePurchaseOrderStore = defineStore('purchaseOrder', {
               "Content-Type": "application/json",
             },
           });
-      
+
           const data = await response.json();
           if (response.ok) {
             // Remove the deleted order and increment refreshKey
@@ -150,7 +149,7 @@ export const usePurchaseOrderStore = defineStore('purchaseOrder', {
       async downloadPurchaseOrder(id: number, token: string): Promise<boolean> {
         this.loading = true;
         this.error = null;
-      
+
         try {
           // Use the download endpoint to fetch the existing purchase order and generate the PDF
           const response = await fetch(`${apiUrl}/purchase-order/${id}/download`, {
@@ -160,14 +159,14 @@ export const usePurchaseOrderStore = defineStore('purchaseOrder', {
               "Content-Type": "application/json",
             },
           });
-      
+
           if (!response.ok) {
             const errorData = await response.json();
             throw new Error(errorData.message || `Failed to download PDF: ${response.statusText}`);
           }
-      
+
           const data = await response.json();
-      
+
           if (data.data && data.data.pdf) {
             // Convert base64 to blob
             function base64ToBlob(base64: string, contentType = "application/pdf") {
@@ -176,10 +175,10 @@ export const usePurchaseOrderStore = defineStore('purchaseOrder', {
               const byteArray = new Uint8Array(byteNumbers);
               return new Blob([byteArray], { type: contentType });
             }
-      
+
             const blob = base64ToBlob(data.data.pdf);
             const filename = data.data.fileName || `purchase_order_${id}.pdf`;
-      
+
             // Create download link
             const url = URL.createObjectURL(blob);
             const a = document.createElement("a");
@@ -189,7 +188,7 @@ export const usePurchaseOrderStore = defineStore('purchaseOrder', {
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
-      
+
             window.$toast("success", "Purchase Order berhasil diunduh!");
             return true;
           } else {
@@ -203,6 +202,6 @@ export const usePurchaseOrderStore = defineStore('purchaseOrder', {
           this.loading = false;
         }
     },
-    
+
 }
 })

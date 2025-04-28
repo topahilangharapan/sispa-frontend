@@ -186,6 +186,19 @@ const onSelectItem = (chosenId: string, item: PurchaseOrderItemInterface) => {
   }
 };
 
+const generateItemOptions = (currentItemId: string | null) => {
+  const selectedIds = purchaseOrder.value.items
+    .map(i => i.id)
+    .filter(id => id !== null && id !== currentItemId);
+
+  return itemStore.items
+    .filter(item => !selectedIds.includes(String(item.id)))
+    .map(item => ({
+      value: String(item.id),
+      label: item.title,
+    }));
+};
+
 
 
 const removeItem = (tempId: string | number) => {
@@ -202,7 +215,6 @@ const removeItem = (tempId: string | number) => {
   // Hapus error status berdasarkan tempId
   delete hasErrors.value[`item-undefined`];
   delete hasErrors.value[`volume-undefined`];
-
 };
 
 
@@ -418,6 +430,7 @@ const submitPurchaseOrder = async () => {
               v-model="item.id"
               label="Item"
               :options="itemOptions"
+              :availableOptions="generateItemOptions(item.id)"
               placeholder="Silakan pilih"
               :isEmpty="true"
               @update:modelValue="(val) => onSelectItem(val, item)"
