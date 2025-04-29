@@ -19,6 +19,16 @@ export interface ItemCategoryInterface {
   name: string;
 }
 
+export interface ItemStatusInterface {
+  id: number;
+  name: string;
+}
+
+export interface UpdateItemStatusRequestDTO {
+  id: number;
+  idItemStatus: number;
+}
+
 export interface ItemInterface {
   id: number;
   title: string;

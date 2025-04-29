@@ -1,34 +1,66 @@
 <script setup lang="ts">
-
-import { onMounted, ref } from 'vue'
-import { useItemStore} from '../../stores/item.ts'
+import { onMounted, ref, computed } from 'vue'
+import { useItemStore } from '../../stores/item.ts'
+import { useItemStatusStore } from '../../stores/itemStatus.ts'
 import { useAuthStore } from '../../stores/auth.ts'
 import { useRoute, useRouter } from 'vue-router'
 import VNavbar from '../../components/VNavbar.vue'
 import VButton from '../../components/VButton.vue'
 import VLoading from '../../components/VLoading.vue'
+import VDropdown from '../../components/VDropdown.vue'
 import ConfirmationDialog from '../../components/ConfirmationDialog.vue'
 
-const title = ref({ 'purchasing': '/purchasing' });
+const title = ref({ 'Purchasing': '/purchasing' });
 const submodules = ref({
-  "Purchase Order": "/purchasing/purchase-order",
-  "Final Report": "/purchasing/final-report",
-  "Item": "/purchasing/item"
+  "Vendor": "/purchasing/vendor",
+  "Item": "/purchasing/item",
+  "Kategori": "/purchasing/category"
 });
 
 const itemStore = useItemStore()
+const itemStatusStore = useItemStatusStore()
 const authStore = useAuthStore()
 const route = useRoute();
 const router = useRouter();
 const itemId = route.params.id as string;
 const idNumber = Number(route.params.id);
 
-const showDialog = ref(false);
+const showDeleteDialog = ref(false);
+const showUpdateStatusDialog = ref(false);
 
-const deleteItem= async () => {
-  await itemStore.deleteItem(idNumber);
-  showDialog.value = false;
+const itemStatusOptions = computed(() => {
+  const currentStatus = itemStore.currentItem?.status;
+  return itemStatusStore.statuses
+    .filter(status => status.name !== currentStatus)
+    .map(status => ({
+      label: status.name,
+      value: status.id,
+    }));
+});
+
+const selectedStatus = ref<number | null>(null);
+
+const onSelectStatus = (statusId: number) => {
+  selectedStatus.value = statusId;
 };
+
+const deleteItem = async () => {
+  await itemStore.deleteItem(idNumber);
+  showDeleteDialog.value = false;
+  router.push('/purchasing/item');
+};
+
+const updateItemStatus = async () => {
+  if (!selectedStatus.value) return;
+  await itemStatusStore.updateItemStatus(idNumber, selectedStatus.value, authStore.token!);
+  showUpdateStatusDialog.value = false;
+  await itemStore.getItemById(authStore.token!, itemId);
+  console.log('Payload update status:', {
+    itemId: idNumber,
+    idItemStatus: selectedStatus.value,
+  });
+};
+
 
 onMounted(async () => {
   const savedAuth = localStorage.getItem('auth');
@@ -41,13 +73,14 @@ onMounted(async () => {
     return;
   }
 
-  await itemStore.getItemById(authStore.token, itemId)
+  await itemStore.getItemById(authStore.token, itemId);
+  await itemStatusStore.fetchAll(authStore.token);
 });
-
 </script>
 
 <template>
-  <VNavbar :title="title" :submodules="submodules"></VNavbar>
+  <VNavbar :title="title" :submodules="submodules" />
+
   <div v-if="itemStore.loading">
     <VLoading :isDone="!itemStore.loading" />
   </div>
@@ -58,25 +91,30 @@ onMounted(async () => {
         <div class="flex items-center justify-between mb-2">
           <h2 class="heading-2">Detail Item</h2>
           <div class="flex space-x-2">
+            <VButton size="sm" variant="primary" @click="showUpdateStatusDialog = true">
+              Update Status
+            </VButton>
+
             <RouterLink :to="`/purchasing/item/${itemId}/update`">
               <VButton size="sm" variant="primary">
                 Ubah
               </VButton>
             </RouterLink>
-            <VButton @click="() => (showDialog = true)" size="sm" variant="delete">
+
+            <VButton @click="() => (showDeleteDialog = true)" size="sm" variant="delete">
               Hapus
             </VButton>
 
             <ConfirmationDialog
-              :visible="showDialog"
+              :visible="showDeleteDialog"
               title="Hapus Item"
               message="Apakah Anda yakin ingin menghapus item?"
               @confirm="deleteItem"
-              @cancel="() => (showDialog = false)"
+              @cancel="() => (showDeleteDialog = false)"
             />
-
           </div>
         </div>
+
         <hr class="border-gray-300 border-t-2 mb-4" />
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -109,10 +147,14 @@ onMounted(async () => {
             </div>
           </div>
         </div>
+
+        <!-- Description -->
         <div class="mt-6">
           <p class="large-text-bold">Deskripsi</p>
           <p class="large-text-normal">{{ itemStore.currentItem.description }}</p>
         </div>
+
+        <!-- Created and Updated -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
           <div>
             <p class="large-text-bold">Created By</p>
@@ -133,6 +175,8 @@ onMounted(async () => {
             <p class="large-text-normal">{{ new Date(itemStore.currentItem.updatedAt).toLocaleDateString() }}</p>
           </div>
         </div>
+
+        <!-- Back Button -->
         <div class="flex justify-center mt-8">
           <VButton
             @click="router.push('/purchasing/item')"
@@ -144,7 +188,30 @@ onMounted(async () => {
             Kembali
           </VButton>
         </div>
+
+        <div v-if="showUpdateStatusDialog" class="fixed inset-0 flex items-center justify-center z-50 bg-opacity-50 backdrop-blur-md">
+          <div class="bg-white p-6 rounded-2xl w-96">
+            <h3 class="text-lg font-bold mb-4 text-center">Update Status Item</h3>
+            <VDropdown
+              v-model="selectedStatus as number"
+              label="Status Item"
+              :options="itemStatusOptions"
+              placeholder="Pilih status baru"
+              :isEmpty="true"
+              @update:modelValue="onSelectStatus"
+            />
+
+            <div class="flex justify-end space-x-2">
+              <VButton size="sm" variant="primary" @click="updateItemStatus" :disabled="!selectedStatus">
+                Simpan
+              </VButton>
+              <VButton size="sm" variant="delete" @click="showUpdateStatusDialog = false">
+                Batal
+              </VButton>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-    </div>
+  </div>
 </template>
