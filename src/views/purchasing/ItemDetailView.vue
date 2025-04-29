@@ -52,9 +52,9 @@ const deleteItem = async () => {
 
 const updateItemStatus = async () => {
   if (!selectedStatus.value) return;
-  await itemStatusStore.updateItemStatus(idNumber, selectedStatus.value, authStore.token);
+  await itemStatusStore.updateItemStatus(idNumber, selectedStatus.value, authStore.token!);
   showUpdateStatusDialog.value = false;
-  await itemStore.getItemById(authStore.token, itemId);
+  await itemStore.getItemById(authStore.token!, itemId);
   console.log('Payload update status:', {
     itemId: idNumber,
     idItemStatus: selectedStatus.value,
@@ -189,11 +189,11 @@ onMounted(async () => {
           </VButton>
         </div>
 
-        <div v-if="showUpdateStatusDialog" class="fixed inset-0 flex items-center justify-center z-50 bg-gray-200 bg-opacity-50">
+        <div v-if="showUpdateStatusDialog" class="fixed inset-0 flex items-center justify-center z-50 bg-opacity-50 backdrop-blur-md">
           <div class="bg-white p-6 rounded-2xl w-96">
             <h3 class="text-lg font-bold mb-4 text-center">Update Status Item</h3>
             <VDropdown
-              v-model="selectedStatus"
+              v-model="selectedStatus as number"
               label="Status Item"
               :options="itemStatusOptions"
               placeholder="Pilih status baru"

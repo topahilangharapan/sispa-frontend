@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import type { CommonResponseInterface } from '../interfaces/common.interface.ts'
-import type { ItemStatusInterface, UpdateItemStatusRequestDTO } from '../interfaces/item.interface.ts'
+import type { ItemStatusInterface } from '../interfaces/item.interface.ts'
 
 const apiUrl = import.meta.env.VITE_API_LOCAL_URL;
 
@@ -60,7 +60,7 @@ export const useItemStatusStore = defineStore('itemStatus', {
           }),
         });
 
-        const data: CommonResponseInterface<ItemResponseDTO> = await response.json();
+        const data: CommonResponseInterface<ItemStatusInterface> = await response.json();
 
         if (response.ok) {
           window.$toast('success', `Berhasil mengupdate status item dengan ID ${data.data.id}`);
