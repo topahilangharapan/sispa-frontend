@@ -15,6 +15,7 @@ const title = ref({ 'Purchasing': '/purchasing' });
 const submodules = ref({
   "Vendor": "/purchasing/vendor",
   "Item": "/purchasing/item",
+  "Kategori": "/purchasing/category"
 });
 
 const router = useRouter()
