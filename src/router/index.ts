@@ -33,10 +33,10 @@ import ItemDetailView from '../views/purchasing/ItemDetailView.vue'
 import UpdateItemView from '../views/purchasing/item/UpdateItemView.vue'
 import RegisterFreelancerView from '../views/auth/freelancer/RegisterFreelancerView.vue'
 import FreelancerView from '../views/FreelancerView.vue'
-import RegisterFreelancerSuccessView from '../views/auth/freelancer/RegisterFreelancerSuccessView.vue'
 import ItemView from '../views/purchasing/item/ItemView.vue'
 import FreelancerApplicantsView from '../views/FreelancerApplicantsView.vue'
 import FreelancerDetailView from '../views/FreelancerDetailView.vue'
+import MessageResponse from '../components/MessageResponse.vue'
 
 const routes = [
   {
@@ -268,12 +268,6 @@ const routes = [
     beforeEnter: roleGuard
   },
   {
-    path: '/auth/register/freelancer/success',
-    name: 'Register Freelancer Successful',
-    component: RegisterFreelancerSuccessView,
-    beforeEnter: roleGuard
-  },
-  {
     path: '/freelancer/applications/:id',
     name: 'FreelancerApplicationDetail',
     component: () => import('../views/FreelancerApplicationsDetailView.vue')
@@ -284,6 +278,12 @@ const routes = [
     component: FreelancerDetailView,
     beforeEnter: roleGuard,
     props: true
+  },
+  {
+    path: '/component/message',
+    name: 'Message Response',
+    component: MessageResponse,
+    beforeEnter: roleGuard
   }
 ]
 

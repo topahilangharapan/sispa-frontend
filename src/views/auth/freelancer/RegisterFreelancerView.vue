@@ -165,13 +165,16 @@ const submitForm = async () => {
     workExperiences: workExperiences.value, // ambil value-nya, bukan ref-nya
   };
 
-  // kirim payload ke API atau lanjut proses
-  console.log(payload);
-
   const isSuccess = await freelancerStore.add(payload);
 
+  const title = 'Registrasi Berhasil!'
+  const information = 'Terima kasih sudah mendaftar.;Tim SPA akan menghubungi Anda untuk informasi selanjutnya.;Jika ada pertanyaan, silakan kirim email ke adrasa.cantya@ui.ac.id.'
+  const url = '/dashboard'
+
+  const urlVar = `?title=${title}&information=${information}&url=${url}`;
+
   if (isSuccess) {
-    await router.push('/auth/register/freelancer/success')
+    await router.push(`/component/message${urlVar}`)
   }
 };
 </script>
