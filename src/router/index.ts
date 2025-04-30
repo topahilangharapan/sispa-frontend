@@ -1,8 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import DesignSystemView from '../views/DesignSystemView.vue'
-import InventoryView from '../views/InventoryView.vue'
-import ItemCategoryView from '../views/inventory/ItemCategoryView.vue'
+import ItemCategoryView from '../views/purchasing/ItemCategoryView.vue'
 import VendorView from '../views/purchasing/VendorView.vue'
 import AddVendorView from '../views/purchasing/AddVendorView.vue'
 import DashboardView from '../views/DashboardView.vue'
@@ -33,10 +32,10 @@ import ItemDetailView from '../views/purchasing/ItemDetailView.vue'
 import UpdateItemView from '../views/purchasing/item/UpdateItemView.vue'
 import RegisterFreelancerView from '../views/auth/freelancer/RegisterFreelancerView.vue'
 import FreelancerView from '../views/FreelancerView.vue'
-import RegisterFreelancerSuccessView from '../views/auth/freelancer/RegisterFreelancerSuccessView.vue'
 import ItemView from '../views/purchasing/item/ItemView.vue'
 import FreelancerApplicantsView from '../views/FreelancerApplicantsView.vue'
 import FreelancerDetailView from '../views/FreelancerDetailView.vue'
+import MessageResponse from '../components/MessageResponse.vue'
 
 const routes = [
   {
@@ -60,18 +59,6 @@ const routes = [
     path: '/dashboard',
     name: 'Dashboard',
     component: DashboardView,
-    beforeEnter: roleGuard
-  },
-  {
-    path: '/inventory',
-    name: 'Inventory',
-    component: InventoryView,
-    beforeEnter: roleGuard
-  },
-  {
-    path: '/inventory/category',
-    name: 'Category View',
-    component: ItemCategoryView,
     beforeEnter: roleGuard
   },
   {
@@ -108,6 +95,12 @@ const routes = [
     path: '/purchasing/vendor/:id',
     name: 'Vendor Detail',
     component: VendorDetail,
+    beforeEnter: roleGuard
+  },
+  {
+    path: '/purchasing/category',
+    name: 'Category View',
+    component: ItemCategoryView,
     beforeEnter: roleGuard
   },
   {
@@ -268,12 +261,6 @@ const routes = [
     beforeEnter: roleGuard
   },
   {
-    path: '/auth/register/freelancer/success',
-    name: 'Register Freelancer Successful',
-    component: RegisterFreelancerSuccessView,
-    beforeEnter: roleGuard
-  },
-  {
     path: '/freelancer/applications/:id',
     name: 'FreelancerApplicationDetail',
     component: () => import('../views/FreelancerApplicationsDetailView.vue')
@@ -284,6 +271,12 @@ const routes = [
     component: FreelancerDetailView,
     beforeEnter: roleGuard,
     props: true
+  },
+  {
+    path: '/component/message',
+    name: 'Message Response',
+    component: MessageResponse,
+    beforeEnter: roleGuard
   }
 ]
 

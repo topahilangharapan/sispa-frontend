@@ -12,8 +12,12 @@ const newCategoryName = ref('')
 const dataTableInstance = ref<DataTable | null>(null)
 const tableKey = ref(0)
 
-const title = ref({ Inventory: '/inventory' })
-const submodules = ref({ 'Kategori': '/inventory/item-category' })
+const title = ref({ 'Purchasing': '/purchasing' });
+const submodules = ref({
+  "Vendor": "/purchasing/vendor",
+  "Item": "/purchasing/item",
+  "Kategori": "/purchasing/category"
+});
 
 const handleSearch = (event: Event) => {
   const searchValue = (event.target as HTMLInputElement).value

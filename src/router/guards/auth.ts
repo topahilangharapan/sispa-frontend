@@ -13,7 +13,7 @@ export const roleGuard = (to: RouteLocationNormalized, _: RouteLocationNormalize
   const userToken = authStore.token ?? null;
 
   // 👇 Validasi halaman login dan register freelancer
-  const isAuthPage = to.path === "/auth/login" || to.path.startsWith("/auth/register/freelancer");
+  const isAuthPage = to.path === "/auth/login" || to.path.startsWith("/auth/register/freelancer") || to.path.startsWith("/component") ;
 
   // Jika user sudah login (punya token valid), jangan izinkan akses auth pages
   if (userToken && userRole && isAuthPage) {
@@ -38,6 +38,7 @@ export const roleGuard = (to: RouteLocationNormalized, _: RouteLocationNormalize
     marketing: ["/dashboard", "/marketing"],
     finance: ["/dashboard", "/finance"],
     purchasing: ["/dashboard", "/purchasing"],
+    freelancer: ["/dashboard"],
   };
 
   const allowedRoutes = rolePermissions[userRole.toLowerCase()] || [];
