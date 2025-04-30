@@ -36,12 +36,17 @@ onMounted(async () => {
     value: educationLevel.name,
     label: educationLevel.name,
   })) || [];
+
+  console.log(minBirthDate)
+  console.log(today)
 });
 
 const workExperiences = ref<CreateWorkExperienceRequestInterface[]>([]);
 let experienceCounter = 0;
 
 const today = new Date().toISOString().split('T')[0];
+const todayDate = new Date();
+const minBirthDate = new Date(todayDate.getFullYear() - 17, todayDate.getMonth(), todayDate.getDate()).toISOString().split('T')[0];
 
 const formData = ref<CreateFreelancerRequestInterface>({
   email: '',
@@ -207,7 +212,7 @@ const submitForm = async () => {
         <div class="grid grid-cols-3 gap-6">
           <VInputField v-model="formData.phoneNumber" label="Nomor Telepon" :isEmpty="true" :isNumberOnly="true" placeholder="Masukkan nomor telepon" @update:hasError="updateErrorStatus('phoneNumber', $event)"  />
           <VInputField v-model="formData.placeOfBirth" label="Tempat Lahir" :isEmpty="true"  placeholder="Masukkan tempat lahir" @update:hasError="updateErrorStatus('placeOfBirth', $event)"  />
-          <VInputDateField v-model="formData.dateOfBirth" label="Tanggal Lahir" @update:hasError="updateErrorStatus('dateOfBirth', $event)"  />
+          <VInputDateField v-model="formData.dateOfBirth" :maxDate="minBirthDate" label="Tanggal Lahir" @update:hasError="updateErrorStatus('dateOfBirth', $event)"  />
         </div>
 
         <div class="grid grid-cols-3 gap-6">
