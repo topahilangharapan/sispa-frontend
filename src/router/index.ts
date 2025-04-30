@@ -1,8 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import DesignSystemView from '../views/DesignSystemView.vue'
-import InventoryView from '../views/InventoryView.vue'
-import ItemCategoryView from '../views/inventory/ItemCategoryView.vue'
+import ItemCategoryView from '../views/purchasing/ItemCategoryView.vue'
 import VendorView from '../views/purchasing/VendorView.vue'
 import AddVendorView from '../views/purchasing/AddVendorView.vue'
 import DashboardView from '../views/DashboardView.vue'
@@ -63,18 +62,6 @@ const routes = [
     beforeEnter: roleGuard
   },
   {
-    path: '/inventory',
-    name: 'Inventory',
-    component: InventoryView,
-    beforeEnter: roleGuard
-  },
-  {
-    path: '/inventory/category',
-    name: 'Category View',
-    component: ItemCategoryView,
-    beforeEnter: roleGuard
-  },
-  {
     path: '/finance',
     name: 'Finance',
     component: FinanceView,
@@ -108,6 +95,12 @@ const routes = [
     path: '/purchasing/vendor/:id',
     name: 'Vendor Detail',
     component: VendorDetail,
+    beforeEnter: roleGuard
+  },
+  {
+    path: '/purchasing/category',
+    name: 'Category View',
+    component: ItemCategoryView,
     beforeEnter: roleGuard
   },
   {

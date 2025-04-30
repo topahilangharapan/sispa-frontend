@@ -12,6 +12,8 @@ import VButton from '../../components/VButton.vue'
 const title = ref({ 'Purchasing': '/purchasing' });
 const submodules = ref({
   "Vendor": "/purchasing/vendor",
+  "Item": "/purchasing/item",
+  "Kategori": "/purchasing/category"
 });
 const vendorStore = useVendorStore()
 const authStore = useAuthStore()

@@ -14,7 +14,7 @@ const isActive = (path: string) => route.path === path;
 // Daftar menu dengan role yang bisa mengaksesnya
 const menuItems = [
   { label: "Dashboard", path: "/dashboard", roles: ["admin", "management", "purchasing", "finance", "hr", "marketing"] },
-  { label: "Inventaris", path: "/inventory", roles: ["admin", "management", "purchasing"] },
+  // { label: "Inventaris", path: "/inventory", roles: ["admin", "management", "purchasing"] },
   { label: "Keuangan", path: "/finance", roles: ["admin","management", "finance"] },
   { label: "Marketing", path: "/marketing/purchase-order", roles: ["admin", "management", "marketing"] },
   { label: "Purchasing", path: "/purchasing/vendor", roles: ["admin", "management", "purchasing"] },
