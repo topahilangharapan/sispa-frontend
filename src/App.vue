@@ -9,7 +9,7 @@ const route = useRoute();
 
 // Cek apakah halaman mengandung "auth"
 const hideSidebar = computed(() =>
-  route.path.includes('/auth') || route.path.includes('/design-system')
+  route.path.includes('/auth') || route.path.includes('/design-system') || route.path.includes('/component')
 );
 
 const toastRef = ref<InstanceType<typeof VToast> | null>(null);
