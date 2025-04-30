@@ -26,11 +26,11 @@ const errorMessage = computed(() => {
     const minAllowedDate = new Date(props.minDate).setHours(0, 0, 0, 0);
     const maxAllowedDate = new Date(props.maxDate).setHours(0, 0, 0, 0);
 
-    if (inputDate < minAllowedDate) {
+    if (inputDate < minAllowedDate && props.minDate != null) {
       return `Tanggal harus setelah atau sama dengan ${props.minDate}`;
     }
 
-    if (inputDate > maxAllowedDate) {
+    if (inputDate > maxAllowedDate && props.maxDate != null) {
       return `Tanggal harus sebelum atau sama dengan ${props.maxDate}`;
     }
   }
