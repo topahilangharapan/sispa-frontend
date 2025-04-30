@@ -6,7 +6,8 @@ const props = defineProps({
   label: { type: String, default: '' },
   placeholder: { type: String, default: 'Pilih tanggal' },
   disabled: { type: Boolean, default: false },
-  minDate: { type: String, default: null }
+  minDate: { type: String, default: null },
+  maxDate: { type: String, default: null },
 });
 
 const emit = defineEmits(['update:modelValue', 'update:hasError']);
@@ -20,12 +21,17 @@ watch(
 );
 
 const errorMessage = computed(() => {
-  if (props.minDate && inputValue.value) {
+  if ((props.minDate || props.maxDate) && inputValue.value) {
     const inputDate = new Date(inputValue.value).setHours(0, 0, 0, 0);
     const minAllowedDate = new Date(props.minDate).setHours(0, 0, 0, 0);
+    const maxAllowedDate = new Date(props.maxDate).setHours(0, 0, 0, 0);
 
     if (inputDate < minAllowedDate) {
       return `Tanggal harus setelah atau sama dengan ${props.minDate}`;
+    }
+
+    if (inputDate > maxAllowedDate) {
+      return `Tanggal harus sebelum atau sama dengan ${props.maxDate}`;
     }
   }
   return '';
