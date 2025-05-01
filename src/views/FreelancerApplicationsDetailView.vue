@@ -86,7 +86,11 @@
                 </div>
                 <div class="detail-field">
                   <label>Periode</label>
-                  <p>{{ formatDateIndonesian(experience.startDate) }} - {{ experience.isStillWorking ? 'Sekarang' : formatDateIndonesian(experience.endDate) }}</p>
+                  <p>
+                    {{ formatDateIndonesian(experience.startDate) }} - 
+                    {{ experience.isStillWorking ? 'Sekarang' : 
+                       (experience.endDate && experience.endDate !== "-" ? formatDateIndonesian(experience.endDate) : '') }}
+                  </p>
                 </div>
               </div>
             </div>
@@ -208,21 +212,30 @@
   }
   
   function formatDateIndonesian(dateString: string): string {
-    if (!dateString) return '';
+    if (!dateString || dateString === "-") return '';
     
-    const date = new Date(dateString);
-    
-    // Array of Indonesian month names
-    const months = [
-      'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
-      'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
-    ];
-    
-    const day = date.getDate();
-    const month = months[date.getMonth()];
-    const year = date.getFullYear();
-    
-    return `${day} ${month} ${year}`;
+    try {
+      const date = new Date(dateString);
+      
+      // Check if the date is valid
+      if (isNaN(date.getTime())) {
+        return '';
+      }
+      
+      // Array of Indonesian month names
+      const months = [
+        'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+          'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+      ];
+      
+      const day = date.getDate();
+      const month = months[date.getMonth()];
+      const year = date.getFullYear();
+      
+      return `${day} ${month} ${year}`;
+    } catch (error) {
+      return '';
+    }
   }
   </script>
   
