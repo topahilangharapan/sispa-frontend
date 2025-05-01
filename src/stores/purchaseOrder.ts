@@ -112,8 +112,8 @@ export const usePurchaseOrderStore = defineStore('purchaseOrder', {
           this.loading = false;
         }
       },
-
-
+      
+      
       async deletePurchaseOrder(id: number, token: string): Promise<boolean> {
         this.loading = true;
         this.error = null;
@@ -130,9 +130,7 @@ export const usePurchaseOrderStore = defineStore('purchaseOrder', {
           const data = await response.json();
           if (response.ok) {
             // Remove the deleted order and increment refreshKey
-            // Remove the deleted order and increment refreshKey
             this.purchaseOrders = this.purchaseOrders.filter(order => order.id !== id);
-            this.refreshKey++; // Trigger re-render in the UI
             this.refreshKey++; // Trigger re-render in the UI
             return true;
           } else {
