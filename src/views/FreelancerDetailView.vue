@@ -13,9 +13,9 @@
       <div v-if="selectedFreelancer" class="detail-content">
         <!-- Personal Information -->
         <div class="section">
-          <h3>Personal Information</h3>
+          <h3>Informasi Personal</h3>
           <div class="detail-field">
-            <label>Name</label>
+            <label>Nama</label>
             <p>{{ selectedFreelancer.name }}</p>
           </div>
 
@@ -25,22 +25,22 @@
           </div>
 
           <div class="detail-field">
-            <label>Phone Number</label>
+            <label>Nomer Telefon</label>
             <p>{{ selectedFreelancer.phoneNumber }}</p>
           </div>
 
           <div class="detail-field">
-            <label>Address</label>
+            <label>Alamat</label>
             <p>{{ selectedFreelancer.address }}</p>
           </div>
 
           <div class="detail-field">
-            <label>Place of Birth</label>
+            <label>Tempat Lahir</label>
             <p>{{ selectedFreelancer.placeOfBirth }}</p>
           </div>
 
           <div class="detail-field">
-            <label>Date of Birth</label>
+            <label>Tanggal Lahir</label>
             <p>{{ selectedFreelancer.dateOfBirth }}</p>
           </div>
 
@@ -52,16 +52,16 @@
 
         <!-- Education and Status -->
         <div class="section">
-          <h3>Education & Status</h3>
+          <h3>Status dan Pendidikan</h3>
           <div class="detail-field">
-            <label>Education Level</label>
+            <label>Pendidikan Terakhir</label>
             <p>{{ selectedFreelancer.education }}</p>
           </div>
 
           <div class="detail-field">
-            <label>Working Status</label>
+            <label>Status Bekerja</label>
             <div class="status-container">
-              <p>{{ selectedFreelancer.isWorking ? 'Currently Working' : 'Not Working' }}</p>
+              <p>{{ selectedFreelancer.isWorking ? 'Tersedia' : 'Tidak Tersedia' }}</p>
               <VButton 
                 :variant="selectedFreelancer.isWorking ? 'outline' : 'primary'" 
                 size="sm" 
@@ -74,43 +74,43 @@
           </div>
 
           <div class="detail-field">
-            <label>Reason for Joining</label>
+            <label>Alasan Bergabung</label>
             <p>{{ selectedFreelancer.reason }}</p>
           </div>
         </div>
 
         <!-- Work Experience -->
         <div class="section">
-          <h3>Work Experience</h3>
+          <h3>Pengalaman Bekerja</h3>
           <div v-if="selectedFreelancer.workExperiences && selectedFreelancer.workExperiences.length > 0">
             <div v-for="(experience, index) in selectedFreelancer.workExperiences" 
                  :key="experience.tempId" 
                  class="experience-card">
-              <h4>Experience {{ index + 1 }}</h4>
+              <h4>Pengalaman {{ index + 1 }}</h4>
               <div class="detail-field">
-                <label>Category</label>
+                <label>Kategori</label>
                 <p>{{ experience.category }}</p>
               </div>
               <div class="detail-field">
-                <label>Title</label>
+                <label>Judul</label>
                 <p>{{ experience.title }}</p>
               </div>
               <div class="detail-field">
-                <label>Description</label>
+                <label>Deskripsi</label>
                 <p>{{ experience.description }}</p>
               </div>
               <div class="detail-field">
-                <label>Period</label>
-                <p>{{ experience.startDate }} - {{ experience.isStillWorking ? 'Present' : experience.endDate }}</p>
+                <label>Periode</label>
+                <p>{{ formatDateIndonesian(experience.startDate) }} - {{ experience.isStillWorking ? 'Sekarang' : formatDateIndonesian(experience.endDate) }}</p>
               </div>
             </div>
           </div>
-          <p v-else>No work experience recorded.</p>
+          <p v-else>Tidak memiliki pengalaman kerja</p>
         </div>
 
         <div class="actions">
           <VButton variant="primary" size="md" @click="goBack">
-            Back to List
+            Kembali
           </VButton>
         </div>
       </div>
@@ -180,6 +180,24 @@ async function updateWorkingStatus() {
   } finally {
     updateStatusLoading.value = false
   }
+}
+
+function formatDateIndonesian(dateString: string): string {
+  if (!dateString) return '';
+  
+  const date = new Date(dateString);
+  
+  // Array of Indonesian month names
+  const months = [
+    'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+    'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+  ];
+  
+  const day = date.getDate();
+  const month = months[date.getMonth()];
+  const year = date.getFullYear();
+  
+  return `${day} ${month} ${year}`;
 }
 </script>
 
