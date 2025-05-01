@@ -277,6 +277,18 @@ const routes = [
     name: 'Message Response',
     component: MessageResponse,
     beforeEnter: roleGuard
+  },
+  {
+    path: '/freelancer/applications/:id',
+    name: 'FreelancerApplicationDetail',
+    component: () => import('../views/FreelancerApplicationsDetailView.vue')
+  },
+  {
+    path: '/freelancer/:id',
+    name: 'FreelancerDetail',
+    component: FreelancerDetailView,
+    beforeEnter: roleGuard,
+    props: true
   }
 ]
 
