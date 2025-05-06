@@ -39,6 +39,12 @@ const vendorOptions = ref<{ value: string; label: string }[]>([]);
 const clientOptions = ref<{ value: string; label: string }[]>([]);
 const itemOptions = ref<{ value: string; label: string }[]>([]);
 
+const selectedItemIds = ref<string[]>([]);
+
+const availableItemOptions = computed(() =>
+  itemOptions.value.filter(option => !selectedItemIds.value.includes(option.value))
+);
+
 const setOption = (option : string) => {
   selectedOption.value = option;
   purchaseOrder.value.vendorId = "";
@@ -168,6 +174,7 @@ const addItem = () => {
     status: "",
   };
 
+
   purchaseOrder.value.items.push(newItem);
 
   // Tambahkan error status berdasarkan ID unik
@@ -183,27 +190,26 @@ const onSelectItem = (chosenId: string, item: PurchaseOrderItemInterface) => {
     item.unit = selected.unit;
     item.pricePerUnit = selected.pricePerUnit;
     item.status = selected.status;
+
+    const prevId = String(item.id);
+
+    const index = selectedItemIds.value.indexOf(prevId);
+    if (index !== -1) selectedItemIds.value.splice(index, 1);
+
+    if (chosenId) selectedItemIds.value.push(String(chosenId));
   }
 };
-
-const generateItemOptions = (currentItemId: string | null) => {
-  const selectedIds = purchaseOrder.value.items
-    .map(i => i.id)
-    .filter(id => id !== null && id !== currentItemId);
-
-  return itemStore.items
-    .filter(item => !selectedIds.includes(String(item.id)))
-    .map(item => ({
-      value: String(item.id),
-      label: item.title,
-    }));
-};
-
-
 
 const removeItem = (tempId: string | number) => {
   const index = purchaseOrder.value.items.findIndex(item => item.tempId === tempId);
   if (index === -1) return;
+
+  const removedItem = purchaseOrder.value.items[index];
+
+  if (removedItem.id) {
+    const idx = selectedItemIds.value.indexOf(String(removedItem.id));
+    if (idx !== -1) selectedItemIds.value.splice(idx, 1);
+  }
 
   // Hapus item dari daftar
   purchaseOrder.value.items.splice(index, 1);
@@ -430,7 +436,7 @@ const submitPurchaseOrder = async () => {
               v-model="item.id"
               label="Item"
               :options="itemOptions"
-              :availableOptions="generateItemOptions(item.id)"
+              :availableOptions="availableItemOptions"
               placeholder="Silakan pilih"
               :isEmpty="true"
               @update:modelValue="(val) => onSelectItem(val, item)"

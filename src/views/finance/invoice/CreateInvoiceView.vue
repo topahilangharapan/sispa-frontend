@@ -113,7 +113,6 @@ const submitInvoice = async () => {
 };
 
 const onSelectPurchaseOrder = (poId: string) => {
-  invoice.value.purchaseOrderId = Number(poId);
   selectedPurchaseOrder.value = purchaseOrderStore.purchaseOrders.find(po => po.id === Number(poId)) || null;
 
 };
@@ -135,7 +134,7 @@ const onSelectPurchaseOrder = (poId: string) => {
         :options="purchaseOrderOption"
         placeholder="Silakan pilih"
         :isEmpty="true"
-        @update:modelValue="onSelectPurchaseOrder"
+        @update:modelValue="(val) => onSelectPurchaseOrder(val)"
         @update:hasError="updateErrorStatus('po', $event)"
       />
 
