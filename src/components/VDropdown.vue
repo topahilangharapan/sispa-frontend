@@ -5,7 +5,7 @@ const props = defineProps({
   modelValue: [String, Number],
   label: { type: String, default: '' },
   options: { type: Array as () => { value: string | number; label: string }[], default: () => [] },
-  availableOptions: { type: Array as () => { value: string | number; label: string }[], default: () => [] }, // ✅ baru
+  availableOptions: { type: Array as () => { value: string | number; label: string }[], default: () => null }, // ✅ baru
   placeholder: { type: String, default: 'Pilih opsi' },
   isEmpty: { type: Boolean, default: false },
   disabled: { type: Boolean, default: false },
@@ -25,10 +25,12 @@ watch(() => props.modelValue, (newValue) => {
 
 const showDropdown = ref(false);
 
-// ✅ menentukan mana list yang dipakai
 const displayedOptions = computed(() => {
-  return props.availableOptions.length > 0 ? props.availableOptions : props.options;
+  return Array.isArray(props.availableOptions)
+    ? props.availableOptions
+    : props.options;
 });
+
 
 const errorMessage = computed(() => {
   if (props.isEmpty && !selectedValue.value) return 'Field tidak boleh kosong!';
