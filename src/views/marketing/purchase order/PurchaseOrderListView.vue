@@ -91,7 +91,6 @@ import { RouterLink } from 'vue-router'
 const purchaseOrderStore = usePurchaseOrderStore()
 const authStore = useAuthStore()
 
-const searchTerm = ref('')
 const title = ref({ 'Marketing': '/marketing' });
 const submodules = ref({
   "Purchase Order": "/marketing/purchase-order",
