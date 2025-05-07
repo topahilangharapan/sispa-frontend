@@ -172,6 +172,7 @@ const addItem = () => {
     pricePerUnit: 0,
     description: "",
     status: "",
+    tempTempId: "",
   };
 
 
