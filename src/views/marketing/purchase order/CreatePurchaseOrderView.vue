@@ -191,12 +191,15 @@ const onSelectItem = (chosenId: string, item: PurchaseOrderItemInterface) => {
     item.pricePerUnit = selected.pricePerUnit;
     item.status = selected.status;
 
-    const prevId = String(item.id);
+    const prevId = String(item.tempTempId);
 
     const index = selectedItemIds.value.indexOf(prevId);
+
     if (index !== -1) selectedItemIds.value.splice(index, 1);
 
     if (chosenId) selectedItemIds.value.push(String(chosenId));
+
+    item.tempTempId = item.id;
   }
 };
 
