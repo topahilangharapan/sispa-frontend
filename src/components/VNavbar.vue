@@ -11,7 +11,8 @@ import {
   Users,
   User,
   LogOut,
-  Archive
+  Archive,
+  LibraryBig
 } from 'lucide-vue-next';
 
 const showDropdown = ref(false);
@@ -29,8 +30,8 @@ const submoduleIcons = {
   'Invoice': FileText,
   'Cash Flow': ShoppingCart,
   'Vendor': Users,
-  'Item': ShoppingCart,
-  'Kategori': Archive,
+  'Item': Archive,
+  'Kategori': LibraryBig,
   'Pendaftar': Users,
 };
 
@@ -55,7 +56,7 @@ onMounted(async () => {
       'Klien': '/marketing/client',
     };
   } else if (path.startsWith('/finance')) {
-    title.value = { Finance: '/finance' };
+    title.value = { Keuangan: '/finance' };
     submodules.value = {
       'Invoice': '/finance/invoice',
       'Cash Flow': '/finance/cashflow',

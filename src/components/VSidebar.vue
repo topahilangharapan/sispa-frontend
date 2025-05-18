@@ -25,7 +25,7 @@ const isActive = (label: string) => {
 // Tambahkan icon untuk setiap menu
 const menuItems = [
   { label: "Dashboard", path: "/dashboard", icon: "layout-dashboard", roles: ["admin", "management", "purchasing", "finance", "hr", "marketing"] },
-  { label: "Keuangan", path: "/finance", icon: "credit-card", roles: ["admin","management", "finance"] },
+  { label: "Keuangan", path: "/finance/invoice", icon: "credit-card", roles: ["admin","management", "finance"] },
   { label: "Marketing", path: "/marketing/purchase-order", icon: "megaphone", roles: ["admin", "management", "marketing"] },
   { label: "Purchasing", path: "/purchasing/vendor", icon: "shopping-cart", roles: ["admin", "management", "purchasing"] },
   { label: "Freelancer", path: "/freelancer", icon: "users", roles: ["admin", "management"] },
