@@ -4,11 +4,6 @@ import { onMounted, ref } from 'vue'
 import VLoading from '../components/VLoading.vue'
 import { useAuthStore } from '../stores/auth.ts'
 
-const title = ref({ 'Cash Flow': '/finance/cashFlow' });
-const submodules = ref({
-  "Cash Flow": "/finance/cashFlow",
-});
-
 const isLoaded = ref(true);
 
 onMounted(async () => {
@@ -23,7 +18,7 @@ onMounted(async () => {
 
 
 <template>
-  <VNavbar :title="title" :submodules="submodules"></VNavbar>/
+  <VNavbar></VNavbar>/
   <div>
     <VLoading :isDone="isLoaded" />
   </div>

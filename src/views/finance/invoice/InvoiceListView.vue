@@ -7,12 +7,6 @@ import { DataTable } from 'simple-datatables'
 import VNavbar from '../../../components/VNavbar.vue'
 import VButton from '../../../components/VButton.vue'
 import ConfirmationDialog from '../../../components/ConfirmationDialog.vue'
-
-const title = ref({ 'Keuangan': '/finance' });
-const submodules = ref({
-  "Invoice": "/finance/invoice",
-  "Cash Flow": "/finance/cashflow",
-});
 const invoiceStore = useInvoiceStore()
 const authStore = useAuthStore()
 const router = useRouter()
@@ -61,7 +55,7 @@ async function downloadInvoice(id: number, token: string) {
 </script>
 
 <template>
-  <VNavbar :title="title" :submodules="submodules" />
+  <VNavbar/>
   <div class="p-8 bg-white min-h-screen flex flex-col items-center">
     <div class="w-full max-w-screen-xl mb-12 mt-16">
       <div class="bg-white p-6 rounded-2xl shadow-lg w-full">

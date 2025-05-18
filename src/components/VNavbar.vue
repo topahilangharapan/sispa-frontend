@@ -8,10 +8,8 @@ const showDropdown = ref(false);
 const name = ref('');
 const authStore = useAuthStore();
 
-defineProps({
-  title: Object as () => Record<string, string>, // Title punya format { 'Nama Title': 'URL' }
-  submodules: Object as () => Record<string, string>
-});
+const title = ref<Record<string, string>>({});
+const submodules = ref<Record<string, string>>({});
 
 onMounted(async () => {
   const savedAuth = localStorage.getItem('auth');
@@ -19,6 +17,40 @@ onMounted(async () => {
     authStore.$patch(JSON.parse(savedAuth));
   }
   name.value = authStore.user?.name || '';
+
+  const path = router.currentRoute.value.path;
+
+  if (path.startsWith('/marketing')) {
+    title.value = { Marketing: '/marketing' };
+    submodules.value = {
+      'Purchase Order': '/marketing/purchase-order',
+      'Final Report': '/marketing/final-report',
+      'Klien': '/marketing/client',
+    };
+  } else if (path.startsWith('/finance')) {
+    title.value = { Finance: '/finance' };
+    submodules.value = {
+      'Invoice': '/finance/invoice',
+      'Cash Flow': '/finance/cashflow',
+    };
+  } else if (path.startsWith('/purchasing')) {
+    title.value = { Purchasing: '/purchasing' };
+    submodules.value = {
+      'Vendor': '/purchasing/vendor',
+      'Item': '/purchasing/item',
+      'Kategori': '/purchasing/category',
+    };
+  } else if (path.startsWith('/freelancer')) {
+    title.value = { Freelance: '/freelancer' };
+    submodules.value = {
+      'Pendaftar': '/freelancer/applications',
+    };
+  } else if (path.startsWith('/dashboard')) {
+      title.value = { Dashboard: '/dashboard' };
+      submodules.value = {
+        '': '/freelance/',
+      };
+  }
 });
 
 const logout = async () => {
@@ -33,6 +65,7 @@ const navigateTo = (url: string) => {
 const isActive = (url: string) => {
   return router.currentRoute.value.path === url;
 };
+
 </script>
 
 <template>

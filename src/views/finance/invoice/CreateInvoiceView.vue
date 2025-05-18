@@ -22,10 +22,6 @@ const today = new Date().toISOString().split('T')[0];
 
 const purchaseOrderOption = ref<{ value: string; label: string }[]>([]);
 const selectedPurchaseOrder = ref();
-const title = ref({ 'Keuangan': '/finance' });
-const submodules = ref({
-  "Invoice": "/finance/invoice",
-});
 
 onMounted(async () => {
   const savedAuth = localStorage.getItem('auth')
@@ -119,7 +115,7 @@ const onSelectPurchaseOrder = (poId: string) => {
 </script>
 
 <template>
-  <VNavbar :title=title :submodules=submodules class="fixed top-0 left-0 w-full z-50" />
+  <VNavbar/>
   <VLoading v-if="purchaseOrderStore.loading || invoiceStore.loading" class="flex" />
 
   <div v-else class="p-8 mt-12 w-full min-h-screen">

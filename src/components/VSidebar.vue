@@ -9,7 +9,18 @@ const router = useRouter();
 const route = useRoute();
 const authStore = useAuthStore();
 
-const isActive = (path: string) => route.path === path;
+const isActive = (label: string) => {
+  const currentPath = route.path.toLowerCase();
+
+  if (currentPath.startsWith('/marketing')) return label === 'Marketing';
+  if (currentPath.startsWith('/dashboard')) return label === 'Dashboard';
+  if (currentPath.startsWith('/finance')) return label === 'Keuangan';
+  if (currentPath.startsWith('/purchasing')) return label === 'Purchasing';
+  if (currentPath.startsWith('/freelancer')) return label === 'Freelancer';
+
+  return false;
+};
+
 
 // Daftar menu dengan role yang bisa mengaksesnya
 const menuItems = [
@@ -62,7 +73,7 @@ const logout = async () => {
           v-for="item in filteredMenuItems"
           :key="item.path"
           :label="item.label"
-          :active="isActive(item.path)"
+          :active="isActive(item.label)"
           @click="router.push(item.path)"
         />
       </ul>
