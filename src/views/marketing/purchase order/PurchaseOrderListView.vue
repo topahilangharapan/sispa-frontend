@@ -36,7 +36,7 @@
           <table id="default-table" class="w-full">
             <thead>
               <tr class="bg-gray-100">
-                <th class="px-4 py-2 text-center">No</th>
+                <th class="px-4 py-2 left">No</th>
                 <th class="px-4 py-2 text-left">PO ID</th>
                 <th class="px-4 py-2 text-left">Nama Perusahaan</th>
                 <th class="px-4 py-2 text-left">Tanggal</th>
@@ -49,7 +49,7 @@
                 <td class="px-4 py-2 text-left">{{ order.id }}</td>
                 <td class="px-4 py-2 text-left">{{ order.companyName }}</td>
                 <td class="px-4 py-2 text-left">{{ order.dateCreated }}</td>
-                <td class="px-4 py-2 text-center">
+                <td class="px-4 py-2 text-center space-x-4">
                   <RouterLink :to="`/marketing/purchase-order/${order.id}`">
                     <VButton variant="primary" size="sm">Detail</VButton>
                   </RouterLink>

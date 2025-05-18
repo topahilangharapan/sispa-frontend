@@ -93,7 +93,7 @@ async function downloadInvoice(id: number, token: string) {
               <td class="px-4 py-2 text-left">{{ inv.noPo }}</td>
               <td class="px-4 py-2 text-left">{{ inv.event }}</td>
               <td class="px-4 py-2 text-left">{{ inv.dateCreated }}</td>
-              <td class="px-4 py-2 text-center">
+              <td class="px-4 py-2 text-center space-x-4">
                 <VButton variant="primary" size="sm" @click="goToDetail(inv.id)">Detail</VButton>
 
                 <VButton @click="() => (showDialog = inv.id)" size="sm" variant="delete">Hapus</VButton>
