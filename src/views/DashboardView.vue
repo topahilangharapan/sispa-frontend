@@ -3,96 +3,93 @@ import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import VNavbar from '../components/VNavbar.vue';
 import { useAuthStore } from '../stores/auth.ts';
-
+import {
+  LayoutDashboard,
+  CreditCard,
+  FileText,
+  ShoppingCart,
+  Megaphone,
+  Users,
+  UserPlus,
+  LogOut,
+  Archive
+} from 'lucide-vue-next';
 
 const authStore = useAuthStore();
 const router = useRouter();
 const title = ref({ 'Dashboard': '/dashboard' });
 
-// Define the available role-based navigation
 const roleBasedNavigation = ref([
   {
-    title: 'Cash Flow Management',
+    title: 'Manajemen Arus Kas',
     path: '/finance/cashflow',
-    icon: 'cash-flow',
+    icon: ShoppingCart,
     description: 'View and manage company cash flow',
-    color: 'bg-green-500',
     roles: ['finance', 'admin', 'manajemen']
   },
   {
-    title: 'Invoice Management',
+    title: 'Manajemen Invoice',
     path: '/finance/invoice',
-    icon: 'invoice',
+    icon: FileText,
     description: 'Create and manage invoices',
-    color: 'bg-blue-500',
     roles: ['finance', 'admin', 'manajemen']
   },
   {
-    title: 'Document Management',
+    title: 'Manajemen Dokumen',
     path: '/marketing',
-    icon: 'document',
+    icon: FileText,
     description: 'Create purchase orders and final reports',
-    color: 'bg-purple-500',
     roles: ['marketing', 'admin', 'manajemen']
   },
   {
-    title: 'Client Management',
+    title: 'Manajemen Klien',
     path: '/marketing/client',
-    icon: 'client',
+    icon: Users,
     description: 'Manage clients',
-    color: 'bg-yellow-500',
     roles: ['marketing', 'admin', 'manajemen']
   },
   {
-    title: 'Vendor Management',
+    title: 'Manajemen Vendor',
     path: '/purchasing/vendor',
-    icon: 'vendor',
+    icon: Users,
     description: 'Manage vendors',
-    color: 'bg-pink-500',
     roles: ['purchasing', 'admin', 'manajemen']
   },
   {
-    title: 'Inventory Management',
+    title: 'Manajemen Inventaris',
     path: '/purchasing/item',
-    icon: 'inventory',
-    description: 'Manage inventory',
-    color: 'bg-red-500',
+    icon: Archive,
+    description: 'Manage inventory items',
     roles: ['purchasing', 'admin', 'manajemen']
   },
   {
-    title: 'Freelancer Management',
+    title: 'Manajemen Freelancer',
     path: '/freelancer',
-    icon: 'staff',
-    description: 'Manage employees',
-    color: 'bg-indigo-500',
+    icon: Users,
+    description: 'Manage employees and freelancers',
     roles: ['admin', 'manajemen']
   },
   {
-    title: 'User Registration',
+    title: 'Registrasi User',
     path: '/auth/register',
-    icon: 'users',
+    icon: UserPlus,
     description: 'Register and manage system users',
-    color: 'bg-gray-700',
     roles: ['admin']
   }
 ]);
 
-// Get current user roles from the auth store
 const userRoles = computed<string[]>(() => authStore.user?.role?.toLowerCase().split(',') || []);
 
-// Filter navigation items based on roles
 const filteredNavigation = computed(() => {
   return roleBasedNavigation.value.filter(navItem =>
     navItem.roles.some(role => userRoles.value.includes(role))
   );
 });
 
-// Navigation function
 const navigateTo = (path: string) => {
   router.push(path);
 };
 
-// On mounted, check authentication (optional step)
 onMounted(() => {
   const savedAuth = localStorage.getItem('auth');
   if (savedAuth) {
@@ -100,29 +97,32 @@ onMounted(() => {
   }
 });
 </script>
-
 <template>
-  <VNavbar :title="title"></VNavbar>
-  <div>
-    <div class="p-6">
-      <div class="mb-8">
-        <h2 class="text-xl font-semibold mb-4">Quick Access</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <div
-            v-for="(nav, index) in filteredNavigation"
-            :key="index"
-            class="bg-white overflow-hidden shadow rounded-lg cursor-pointer hover:shadow-lg transition-shadow duration-300"
-            @click="navigateTo(nav.path)"
-          >
-            <div :class="nav.color + ' p-4 text-white flex items-center justify-center h-24'">
-              <span class="text-2xl font-bold">{{ nav.title }}</span>
+  <VNavbar :title="title" />
+  <section class="p-6 min-h-screen mt-26">
+    <div class="max-w-7xl mx-auto">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div
+          v-for="(nav, index) in filteredNavigation"
+          :key="index"
+          class="group bg-white-100 rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 cursor-pointer border border-brown-100"
+          @click="navigateTo(nav.path)"
+        >
+          <div class="p-6 flex items-center gap-4">
+            <!-- ICON WRAPPER -->
+            <div class="w-14 h-14 flex items-center justify-center rounded-xl bg-red-200 group-hover:bg-red-175 transition-colors">
+              <component :is="nav.icon" class="w-6 h-6 text-white-100" />
             </div>
-            <div class="p-4">
-              <p class="text-gray-600">{{ nav.description }}</p>
+            <!-- TEXT WRAPPER -->
+            <div>
+              <h3 class="text-lg font-semibold text-red-400 group-hover:text-red-200 transition-colors">
+                {{ nav.title }}
+              </h3>
+              <p class="text-sm text-black-grey-600">{{ nav.description }}</p>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
+  </section>
 </template>

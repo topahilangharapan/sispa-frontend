@@ -9,22 +9,33 @@ const router = useRouter();
 const route = useRoute();
 const authStore = useAuthStore();
 
-const isActive = (path: string) => route.path === path;
+const isActive = (label: string) => {
+  const currentPath = route.path.toLowerCase();
 
-// Daftar menu dengan role yang bisa mengaksesnya
+  if (currentPath.startsWith('/marketing')) return label === 'Marketing';
+  if (currentPath.startsWith('/dashboard')) return label === 'Dashboard';
+  if (currentPath.startsWith('/finance')) return label === 'Keuangan';
+  if (currentPath.startsWith('/purchasing')) return label === 'Purchasing';
+  if (currentPath.startsWith('/freelancer')) return label === 'Freelancer';
+
+  return false;
+};
+
+
+// Tambahkan icon untuk setiap menu
 const menuItems = [
-  { label: "Dashboard", path: "/dashboard", roles: ["admin", "management", "purchasing", "finance", "hr", "marketing"] },
-  // { label: "Inventaris", path: "/inventory", roles: ["admin", "management", "purchasing"] },
-  { label: "Keuangan", path: "/finance", roles: ["admin","management", "finance"] },
-  { label: "Marketing", path: "/marketing/purchase-order", roles: ["admin", "management", "marketing"] },
-  { label: "Purchasing", path: "/purchasing/vendor", roles: ["admin", "management", "purchasing"] },
-  { label: "Freelancer", path: "/freelancer", roles: ["admin", "management"] },
+  { label: "Dashboard", path: "/dashboard", icon: "layout-dashboard", roles: ["admin", "management", "purchasing", "finance", "hr", "marketing"] },
+  { label: "Keuangan", path: "/finance/invoice", icon: "credit-card", roles: ["admin","management", "finance"] },
+  { label: "Marketing", path: "/marketing/purchase-order", icon: "megaphone", roles: ["admin", "management", "marketing"] },
+  { label: "Purchasing", path: "/purchasing/vendor", icon: "shopping-cart", roles: ["admin", "management", "purchasing"] },
+  { label: "Freelancer", path: "/freelancer", icon: "users", roles: ["admin", "management"] },
 ];
 
 const settingsItems = [
-  { label: "Daftarkan Akun", path: "/auth/register", roles: ["admin"] },
-  { label: "Logout", action: () => logout(), roles: ["admin", "management", "purchasing", "finance", "hr", "marketing", "freelancer"] },
+  { label: "Daftarkan Akun", path: "/auth/register", icon: "user-plus", roles: ["admin"] },
+  { label: "Logout", icon: "log-out", action: () => logout(), roles: ["admin", "management", "purchasing", "finance", "hr", "marketing", "freelancer"] },
 ];
+
 
 const userRoles = computed<string[]>(() => authStore.user?.role?.toLowerCase().split(',') || []);
 
@@ -62,7 +73,8 @@ const logout = async () => {
           v-for="item in filteredMenuItems"
           :key="item.path"
           :label="item.label"
-          :active="isActive(item.path)"
+          :icon="item.icon"
+          :active="isActive(item.label)"
           @click="router.push(item.path)"
         />
       </ul>
@@ -73,6 +85,7 @@ const logout = async () => {
           v-for="item in filteredSettingsItems"
           :key="item.label"
           :label="item.label"
+          :icon="item.icon"
           @click="item.action ? item.action() : router.push(item.path)"
         />
       </ul>

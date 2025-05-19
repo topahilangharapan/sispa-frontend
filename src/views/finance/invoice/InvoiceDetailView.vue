@@ -1,6 +1,6 @@
 <template>
     <div class="invoice-container">
-      <VNavbar :title="title" :submodules="submodules"></VNavbar>
+      <VNavbar/>
 
       <div class="invoice-card">
         <h2>Invoice</h2>
@@ -132,10 +132,6 @@
   import VButton from '../../../components/VButton.vue'
   import VNavbar from '../../../components/VNavbar.vue'
   import ConfirmationDialog from '../../../components/ConfirmationDialog.vue'
-
-  const title = ref({ 'Inventory': '/inventory' });
-  const submodules = ref({ '': '' });
-
   const invoiceStore = useInvoiceStore()
   const authStore = useAuthStore()
   const router = useRouter()
