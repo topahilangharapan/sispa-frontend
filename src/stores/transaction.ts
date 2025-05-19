@@ -1,4 +1,8 @@
 import {defineStore} from "pinia";
+
+import { useAuthStore } from './auth.ts'
+import router from '../router'
+import type { TransactionInterface } from '../interfaces/transaction.interface.ts'
 import type { CommonResponseInterface } from '../interfaces/common.interface.ts'
 import type { CategoryInterface } from '../interfaces/category.interface.ts'
 import type {
@@ -10,8 +14,10 @@ const apiUrl = import.meta.env.VITE_API_LOCAL_URL;
 
 export const useTransactionStore = defineStore ('transaction', {
   state: () => ({
+    transactions: [] as TransactionInterface[],
     loading: false,
     error: null as null | string,
+    currentTransaction: null as TransactionInterface | null,
     categories: [] as CategoryInterface[],
   }),
   actions: {
@@ -70,6 +76,27 @@ export const useTransactionStore = defineStore ('transaction', {
         return false;
       } finally {
         this.loading = false;
+      }
+    },
+
+    async getTransactionById(token: String, id: String) {
+      this.loading = true
+      this.error = null
+
+      try {
+        const response = await fetch(apiUrl + `/transaction/detail`, {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+        })
+
+        const data: CommonResponseInterface<TransactionInterface> = await response.json()
+        this.currentTransaction = data.data
+      } catch (err) {
+        this.error = `Failed to fetch transaction ${err}`
+      } finally {
+        this.loading = false
       }
     },
   }
