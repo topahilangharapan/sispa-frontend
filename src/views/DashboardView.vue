@@ -4,14 +4,10 @@ import { useRouter } from 'vue-router';
 import VNavbar from '../components/VNavbar.vue';
 import { useAuthStore } from '../stores/auth.ts';
 import {
-  LayoutDashboard,
-  CreditCard,
   FileText,
   ShoppingCart,
-  Megaphone,
   Users,
   UserPlus,
-  LogOut,
   Archive
 } from 'lucide-vue-next';
 
@@ -20,63 +16,64 @@ const router = useRouter();
 const title = ref({ 'Dashboard': '/dashboard' });
 
 const roleBasedNavigation = ref([
-  {
-    title: 'Manajemen Arus Kas',
-    path: '/finance/cashflow',
-    icon: ShoppingCart,
-    description: 'View and manage company cash flow',
-    roles: ['finance', 'admin', 'manajemen']
-  },
-  {
-    title: 'Manajemen Invoice',
-    path: '/finance/invoice',
-    icon: FileText,
-    description: 'Create and manage invoices',
-    roles: ['finance', 'admin', 'manajemen']
-  },
-  {
-    title: 'Manajemen Dokumen',
-    path: '/marketing',
-    icon: FileText,
-    description: 'Create purchase orders and final reports',
-    roles: ['marketing', 'admin', 'manajemen']
-  },
-  {
-    title: 'Manajemen Klien',
-    path: '/marketing/client',
-    icon: Users,
-    description: 'Manage clients',
-    roles: ['marketing', 'admin', 'manajemen']
-  },
-  {
-    title: 'Manajemen Vendor',
-    path: '/purchasing/vendor',
-    icon: Users,
-    description: 'Manage vendors',
-    roles: ['purchasing', 'admin', 'manajemen']
-  },
-  {
-    title: 'Manajemen Inventaris',
-    path: '/purchasing/item',
-    icon: Archive,
-    description: 'Manage inventory items',
-    roles: ['purchasing', 'admin', 'manajemen']
-  },
-  {
-    title: 'Manajemen Freelancer',
-    path: '/freelancer',
-    icon: Users,
-    description: 'Manage employees and freelancers',
-    roles: ['admin', 'manajemen']
-  },
-  {
-    title: 'Registrasi User',
-    path: '/auth/register',
-    icon: UserPlus,
-    description: 'Register and manage system users',
-    roles: ['admin']
-  }
-]);
+    {
+      title: 'Manajemen Arus Kas',
+      path: '/finance/cashflow',
+      icon: ShoppingCart,
+      description: 'Lihat dan kelola arus kas perusahaan',
+      roles: ['finance', 'admin', 'manajemen']
+    },
+    {
+      title: 'Manajemen Invoice',
+      path: '/finance/invoice',
+      icon: FileText,
+      description: 'Buat dan kelola invoice',
+      roles: ['finance', 'admin', 'manajemen']
+    },
+    {
+      title: 'Manajemen Dokumen',
+      path: '/marketing/purchase-order',
+      icon: FileText,
+      description: 'Buat purchase order dan laporan akhir',
+      roles: ['marketing', 'admin', 'manajemen']
+    },
+    {
+      title: 'Manajemen Klien',
+      path: '/marketing/client',
+      icon: Users,
+      description: 'Kelola data klien',
+      roles: ['marketing', 'admin', 'manajemen']
+    },
+    {
+      title: 'Manajemen Vendor',
+      path: '/purchasing/vendor',
+      icon: Users,
+      description: 'Kelola data vendor',
+      roles: ['purchasing', 'admin', 'manajemen']
+    },
+    {
+      title: 'Manajemen Inventaris',
+      path: '/purchasing/item',
+      icon: Archive,
+      description: 'Kelola data inventaris barang',
+      roles: ['purchasing', 'admin', 'manajemen']
+    },
+    {
+      title: 'Manajemen Freelancer',
+      path: '/freelancer',
+      icon: Users,
+      description: 'Kelola data freelancer',
+      roles: ['admin', 'manajemen']
+    },
+    {
+      title: 'Registrasi User',
+      path: '/auth/register',
+      icon: UserPlus,
+      description: 'Registrasi pengguna sistem',
+      roles: ['admin']
+    }
+  ]
+);
 
 const userRoles = computed<string[]>(() => authStore.user?.role?.toLowerCase().split(',') || []);
 
