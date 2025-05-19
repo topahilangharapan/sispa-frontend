@@ -12,13 +12,12 @@ import { useTransactionStore } from '../../stores/transaction.ts'
 const title = ref({ 'Finance': '/finance' });
 const submodules = ref({
   "Invoice": "/finance/invoice",
-  "Cashflow": "/finance/cashflow",
+  "Cashflow": "/finance/cash-flow",
 });
 
 const transactionStore = useTransactionStore()
 const authStore = useAuthStore()
 const route = useRoute();
-const transactionId = route.params.id as string;
 
 const showDialog = ref(false);
 
@@ -31,7 +30,7 @@ onMounted(async () => {
   }
 
   const token = authStore.token ?? '';
-  await transactionStore.getTransactionById(token, transactionId)
+  await transactionStore.getTransactionById(token, id)
 
   isLoaded.value = true;
 });
@@ -40,7 +39,7 @@ onMounted(async () => {
 
 <template>
   <VNavbar :title="title" :submodules="submodules"></VNavbar>
-  <div v-if="vendorStore.loading">
+  <div v-if="transactionStore.loading">
     <VLoading :isDone="isLoaded" />
   </div>
 
@@ -82,7 +81,7 @@ onMounted(async () => {
           </div>
           <div class="space-y-4">
             <div>
-              <p class="large-text-bold">Rekening</p>
+              <p class="large-text-bold">Nomor Rekening</p>
               <p class="large-text-normal">{{ transactionStore.currentTransaction.account.name }}</p>
             </div>
             <div>
@@ -103,7 +102,7 @@ onMounted(async () => {
         </div>
         <div class="flex justify-center mt-8">
           <VButton
-            @click="router.push('/finance/cashflow')"
+            @click="router.push('/finance/cash-flow')"
             type="button"
             size="md"
             variant="delete"
