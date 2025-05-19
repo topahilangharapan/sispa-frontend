@@ -39,7 +39,6 @@ onMounted(async () => {
   const token = authStore.token ?? '';
   await vendorStore.getVendorById(token, vendorId)
 
-
   isLoaded.value = true;
 });
 

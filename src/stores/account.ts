@@ -9,6 +9,7 @@ export const useAccountStore = defineStore ('account', {
     accounts: [] as AccountInterface[],
     loading: false,
     error: null as null | string,
+    currentAccount: null as AccountInterface | null,
   }),
   actions: {
     async getAccounts(token: string) {
@@ -28,6 +29,29 @@ export const useAccountStore = defineStore ('account', {
       } catch (err) {
         this.error = `Gagal mengambil data Account: ${err}`
         window.$toast('error', this.error);
+      } finally {
+        this.loading = false
+      }
+    },
+
+    async getAccountById(token: string, id: number) {
+      this.loading = true
+      this.error = null
+
+      try {
+        const response = await fetch(apiUrl + `/account/${id}`, {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+        })
+
+        console.log(response)
+
+        const data: CommonResponseInterface<AccountInterface> = await response.json()
+        this.currentAccount = data.data
+      } catch (err) {
+        this.error = `Failed to fetch account ${err}`
       } finally {
         this.loading = false
       }

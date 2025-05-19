@@ -3,6 +3,7 @@ import {defineStore} from "pinia";
 import { useAuthStore } from './auth.ts'
 import router from '../router'
 import type { BalancePerBankInterface, TransactionInterface } from '../interfaces/transaction.interface.ts'
+import type { TransactionInterface } from '../interfaces/transaction.interface.ts'
 import type { CommonResponseInterface } from '../interfaces/common.interface.ts'
 import type { CategoryInterface } from '../interfaces/category.interface.ts'
 import type {
@@ -135,6 +136,5 @@ export const useTransactionStore = defineStore ('transaction', {
       this.error = null;
       this.loading = false;
     },
-
   }
 })
