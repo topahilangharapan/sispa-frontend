@@ -62,12 +62,6 @@ const routes = [
     beforeEnter: roleGuard
   },
   {
-    path: '/finance',
-    name: 'Finance',
-    component: FinanceView,
-    beforeEnter: roleGuard
-  },
-  {
     path: '/finance/invoice/create',
     name: 'Create Invoice',
     component: CreateInvoiceView,
@@ -167,7 +161,7 @@ const routes = [
   {
     path: '/finance',
     name: 'Finance',
-    component: FinanceView,
+    component: InvoiceListView,
     beforeEnter: roleGuard
   },
   {
