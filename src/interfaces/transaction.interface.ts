@@ -1,3 +1,7 @@
+export interface BalancePerBankInterface {
+    bankName: string;
+    totalBalance: number;
+}
 export interface AddTransactionRequestInterface {
   amount: number;
   description: string;
