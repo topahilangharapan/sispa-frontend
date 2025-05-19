@@ -12,7 +12,6 @@ import VendorDetail from '../views/purchasing/VendorDetail.vue'
 import ProfileView from '../views/ProfileView.vue'
 import UpdateVendorView from '../views/purchasing/UpdateVendorView.vue'
 import PurchasingView from '../views/purchasing/PurchasingView.vue'
-import FinanceView from '../views/finance/FinanceView.vue'
 import CreateInvoiceView from '../views/finance/invoice/CreateInvoiceView.vue'
 import CreatePurchaseOrderView from '../views/marketing/purchase order/CreatePurchaseOrderView.vue'
 import CreateFinalReportView from '../views/marketing/final report/CreateFinalReportView.vue'
@@ -36,6 +35,7 @@ import ItemView from '../views/purchasing/item/ItemView.vue'
 import FreelancerApplicantsView from '../views/FreelancerApplicantsView.vue'
 import FreelancerDetailView from '../views/FreelancerDetailView.vue'
 import MessageResponse from '../components/MessageResponse.vue'
+import AddTransactionView from '../views/finance/transaction/AddTransactionView.vue'
 
 const routes = [
   {
@@ -219,7 +219,7 @@ const routes = [
     beforeEnter: roleGuard
   },
   {
-    path: '/finance/cashflow',
+    path: '/finance/cash-flow',
     name: 'Cash Flow',
     component: CashFlowView,
     beforeEnter: roleGuard
@@ -257,6 +257,7 @@ const routes = [
   {
     path: '/freelancer/applications/:id',
     name: 'FreelancerApplicationDetail',
+    beforeEnter: roleGuard,
     component: () => import('../views/FreelancerApplicationsDetailView.vue')
   },
   {
@@ -275,6 +276,7 @@ const routes = [
   {
     path: '/freelancer/applications/:id',
     name: 'FreelancerApplicationDetail',
+    beforeEnter: roleGuard,
     component: () => import('../views/FreelancerApplicationsDetailView.vue')
   },
   {
@@ -283,7 +285,13 @@ const routes = [
     component: FreelancerDetailView,
     beforeEnter: roleGuard,
     props: true
-  }
+  },
+  {
+    path: '/finance/cash-flow/transaction/add',
+    name: 'Add Transaction',
+    component: AddTransactionView,
+    beforeEnter: roleGuard
+  },
 ]
 
 const router = createRouter({

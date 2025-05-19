@@ -36,9 +36,6 @@ onMounted(async () => {
     value: educationLevel.name,
     label: educationLevel.name,
   })) || [];
-
-  console.log(minBirthDate)
-  console.log(today)
 });
 
 const workExperiences = ref<CreateWorkExperienceRequestInterface[]>([]);
