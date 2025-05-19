@@ -37,6 +37,7 @@ import FreelancerDetailView from '../views/FreelancerDetailView.vue'
 import MessageResponse from '../components/MessageResponse.vue'
 import AddTransactionView from '../views/finance/transaction/AddTransactionView.vue'
 
+
 const routes = [
   {
     path: '/',
@@ -226,7 +227,7 @@ const routes = [
   },
   {
     path: '/purchasing/item/create',
-    name: 'Cash Flow',
+    name: 'Create Item',
     component: CreateItemView,
     beforeEnter: roleGuard
   },

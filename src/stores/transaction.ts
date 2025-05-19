@@ -2,7 +2,7 @@ import {defineStore} from "pinia";
 
 import { useAuthStore } from './auth.ts'
 import router from '../router'
-import type { TransactionInterface } from '../interfaces/transaction.interface.ts'
+import type { BalancePerBankInterface, TransactionInterface } from '../interfaces/transaction.interface.ts'
 import type { CommonResponseInterface } from '../interfaces/common.interface.ts'
 import type { CategoryInterface } from '../interfaces/category.interface.ts'
 import type {
@@ -19,6 +19,7 @@ export const useTransactionStore = defineStore ('transaction', {
     error: null as null | string,
     currentTransaction: null as TransactionInterface | null,
     categories: [] as CategoryInterface[],
+    balances: [] as BalancePerBankInterface[],
   }),
   actions: {
     async getCategories(token: string) {
@@ -99,5 +100,41 @@ export const useTransactionStore = defineStore ('transaction', {
         this.loading = false
       }
     },
+    async fetchBalances(token: string): Promise<boolean> {
+      this.loading = true;
+      this.error = null;
+
+      try {
+        const response = await fetch(`${apiUrl}/transaction/balance-per-bank`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+
+        const data: CommonResponseInterface<BalancePerBankInterface[]> = await response.json();
+
+        if (response.ok) {
+          this.balances = data.data || [];
+          return true;
+        } else {
+          this.error = data.message || "Failed to fetch balance per bank.";
+          return false;
+        }
+      } catch (err) {
+        this.error = (err as Error).message;
+        return false;
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    clear() {
+      this.balances = [];
+      this.error = null;
+      this.loading = false;
+    },
+
   }
 })
