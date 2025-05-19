@@ -59,7 +59,7 @@ onMounted(async () => {
     title.value = { Keuangan: '/finance' };
     submodules.value = {
       'Invoice': '/finance/invoice',
-      'Cash Flow': '/finance/cashflow',
+      'Cash Flow': '/finance/cash-flow',
     };
   } else if (path.startsWith('/purchasing')) {
     title.value = { Purchasing: '/purchasing' };
