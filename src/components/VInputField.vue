@@ -39,24 +39,28 @@ const formattedValue = computed({
   get: () => {
     if (props.type === 'date') return inputValue.value;
     if (props.isNumberOnly && props.useThousandSeparator && inputValue.value !== '') {
-      return Number(inputValue.value).toLocaleString('en-US');
+      const parts = String(inputValue.value).split('.');
+      const integerPart = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+      const decimalPart = parts[1] ? '.' + parts[1] : '';
+      return integerPart + decimalPart;
     }
     return inputValue.value;
   },
   set: (newValue) => {
-    const valueStr = String(newValue);
+    const valueStr = String(newValue).replace(/,/g, '');
     if (props.isNumberOnly) {
-      inputValue.value = valueStr.replace(/\D/g, '');
+      inputValue.value = valueStr.replace(/[^\d.]/g, '');
     } else {
       inputValue.value = valueStr;
     }
   }
 });
 
+
 const errorMessage = computed(() => {
   if (props.isEmpty && !inputValue.value) return 'Field tidak boleh kosong!';
   if (props.isNumberOnly) {
-    if (!/^-?\d*$/.test(String(inputValue.value))) return 'Hanya boleh angka!';
+    if (!/^\d*\.?\d*$/.test(String(inputValue.value))) return 'Hanya boleh angka dan desimal!';
     if (!props.isNegative && Number(inputValue.value) < 0) return 'Nilai tidak boleh negatif!';
   }
   if (props.minLength && String(inputValue.value).length < props.minLength) return `Minimal ${props.minLength} karakter!`;
@@ -84,12 +88,23 @@ watch(inputValue, () => {
 });
 
 const preventNonNumeric = (event: KeyboardEvent) => {
-  if (props.isNumberOnly) {
-    if (!/[\d]/.test(event.key)) {
-      event.preventDefault();
-    }
+  if (!props.isNumberOnly) return;
+
+  const allowedKeys = [
+    'Backspace', 'Tab', 'ArrowLeft', 'ArrowRight', 'Delete',
+    '.', // titik dari keyboard biasa
+    'Decimal' // titik dari numpad
+  ];
+  if (allowedKeys.includes(event.key)) return;
+
+  const isDot = event.key === '.' || event.code === 'NumpadDecimal';
+  const alreadyHasDot = inputValue.value.toString().includes('.');
+
+  if (!/\d/.test(event.key) && !(isDot && !alreadyHasDot)) {
+    event.preventDefault();
   }
 };
+
 </script>
 
 <template>

@@ -1,0 +1,9 @@
+export interface AccountInterface {
+  id: string;
+  name: string;
+  no: string;
+  bank: string;
+  balance: number;
+  adminFee: number;
+  interestRate: number;
+}
