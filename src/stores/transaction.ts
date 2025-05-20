@@ -1,13 +1,10 @@
 import {defineStore} from "pinia";
 
-import { useAuthStore } from './auth.ts'
-import router from '../router'
 import type {
   BalancePerBankInterface,
   IdTransactionInterface,
   TransactionInterface
 } from '../interfaces/transaction.interface.ts'
-import type { BalancePerBankInterface, TransactionInterface } from '../interfaces/transaction.interface.ts'
 import type { CommonResponseInterface } from '../interfaces/common.interface.ts'
 import type {
   AddTransactionRequestInterface,
@@ -85,7 +82,7 @@ export const useTransactionStore = defineStore ('transaction', {
       }
     },
 
-    async getTransactionById(token: String, body: IdTransactionInterface): Promise<TransactionInterface> {
+    async getTransactionById(token: string, body: IdTransactionInterface): Promise<TransactionInterface> {
       this.loading = true
       this.error = null
 

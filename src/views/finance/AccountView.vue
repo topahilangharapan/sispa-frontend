@@ -4,7 +4,7 @@ import VNavbar from '../../components/VNavbar.vue'
 import VLoading from '../../components/VLoading.vue'
 import { useAccountStore } from '../../stores/account.js'
 import { useAuthStore } from '../../stores/auth.js'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import VButton from '../../components/VButton.vue'
 
 const title = ref({ 'Cash Flow': '/finance/cash-flow' });
