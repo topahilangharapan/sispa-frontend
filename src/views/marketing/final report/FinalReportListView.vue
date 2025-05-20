@@ -87,7 +87,7 @@ async function downloadReport(id: number, token: string) {
     @cancel="selectedReportId = null"
   />
 
-  <div class="p-8 bg-white min-h-screen flex flex-col items-center">
+  <div class="p-8 min-h-screen flex flex-col items-center">
     <div class="w-full max-w-screen-xl mb-12 mt-16">
       <div class="bg-white p-6 rounded-2xl shadow-lg w-full">
         <div class="flex items-center justify-between mb-4">

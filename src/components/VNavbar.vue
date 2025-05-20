@@ -16,8 +16,8 @@ import {
   Landmark,
   Package,
   Layers,
-  Grid
-} from 'lucide-vue-next';
+  Grid, ReceiptText
+} from 'lucide-vue-next'
 
 const showDropdown = ref(false);
 const name = ref('');
@@ -32,17 +32,13 @@ const submoduleIcons = {
   'Purchase Order': ShoppingCart,
   'Final Report': FileText,
   'Klien': Users,
-  'Invoice': Receipt,
+  'Invoice': ReceiptText,
   'Cash Flow': Landmark,
   'Vendor': Package,
   'Item': Layers,
   'Kategori': Grid,
   'Pendaftar': Users,
 };
-
-// Icon untuk dropdown profile & logout
-const profileIcon = User;
-const logoutIcon = LogOut;
 
 // Close dropdown when clicking outside
 const closeDropdown = (event: MouseEvent) => {

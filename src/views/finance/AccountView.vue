@@ -38,7 +38,7 @@ onMounted(async () => {
 
   <div class="p-6 space-y-6">
 
-    <div class="bg-white rounded-xl shadow p-4 flex items-center space-x-4">
+    <div class="rounded-xl shadow p-4 flex items-center space-x-4">
       <div class="w-12 h-12 bg-gray-200 rounded-full">
       </div>
       <div>

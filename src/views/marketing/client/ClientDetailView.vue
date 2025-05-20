@@ -52,7 +52,7 @@ onMounted(async () => {
     <VLoading :isDone="!clientStore.loading" />
   </div>
 
-  <div v-else-if="clientStore.currentClient" class="p-8 bg-white-100 min-h-screen flex flex-col items-center">
+  <div v-else-if="clientStore.currentClient" class="p-8 min-h-screen flex flex-col items-center">
     <div class="w-full max-w-3xl mb-12 mt-16">
       <div class="bg-white p-6 rounded-2xl shadow-lg">
         <div class="flex items-center justify-between mb-2">
@@ -66,7 +66,7 @@ onMounted(async () => {
             <VButton @click="() => (showDialog = true)" size="sm" variant="delete">
               Hapus
             </VButton>
-  
+
             <ConfirmationDialog
               :visible="showDialog"
               title="Hapus Klien"
@@ -74,11 +74,11 @@ onMounted(async () => {
               @confirm="deleteClient"
               @cancel="() => (showDialog = false)"
             />
-  
+
           </div>
         </div>
         <hr class="border-gray-300 border-t-2 mb-4" />
-  
+
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div class="space-y-4">
             <div>
@@ -134,11 +134,11 @@ onMounted(async () => {
           </div>
         </div>
         <div class="flex justify-center mt-8">
-          <VButton 
-            @click="router.push('/marketing/client')" 
-            type="button" 
-            size="md" 
-            variant="delete" 
+          <VButton
+            @click="router.push('/marketing/client')"
+            type="button"
+            size="md"
+            variant="delete"
             class="bg-slate-600 hover:bg-slate-800 text-white"
           >
             Kembali
