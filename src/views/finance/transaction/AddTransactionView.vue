@@ -82,7 +82,7 @@ const hasErrors = ref<HasErrors>({
 const accountOptions = computed(() => {
   return accountStore.accounts.map((account: AccountInterface) => ({
     value: account.id,
-    label: `${account.name} - Rp${account.balance.toLocaleString()}`
+    label: `${account.bank} | ${account.no} ${account.name}`
   }));
 });
 
@@ -338,7 +338,7 @@ const submitForm = async () => {
                 </div>
                 <div>
                   <h3 class="font-semibold text-gray-800">{{ selectedAccount.name }}</h3>
-                  <p class="text-sm text-gray-500">ID: {{ selectedAccountId }}</p>
+                  <p class="text-sm text-gray-500">No: {{ selectedAccount.no }}</p>
                 </div>
               </div>
 

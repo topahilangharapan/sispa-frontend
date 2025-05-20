@@ -24,3 +24,11 @@ export interface TransactionCategoryInterface {
   id: number;
   name: string;
 }
+
+export interface CashFlowChartInterface {
+  amount: number;
+  bank: string;
+  quartal: number;
+  month: number;
+  year: number;
+}

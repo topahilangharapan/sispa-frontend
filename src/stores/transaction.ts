@@ -1,9 +1,8 @@
 import {defineStore} from "pinia";
 import type { CommonResponseInterface } from '../interfaces/common.interface.ts'
-import type { CategoryInterface } from '../interfaces/category.interface.ts'
 import type {
   AddTransactionRequestInterface,
-  AddTransactionResponseInterface
+  AddTransactionResponseInterface, CashFlowChartInterface, TransactionCategoryInterface
 } from '../interfaces/transaction.interface.ts'
 
 const apiUrl = import.meta.env.VITE_API_LOCAL_URL;
@@ -12,7 +11,8 @@ export const useTransactionStore = defineStore ('transaction', {
   state: () => ({
     loading: false,
     error: null as null | string,
-    categories: [] as CategoryInterface[],
+    categories: [] as TransactionCategoryInterface[],
+    cashFlowCharts: [] as CashFlowChartInterface[],
   }),
   actions: {
     async getCategories(token: string) {
@@ -27,7 +27,7 @@ export const useTransactionStore = defineStore ('transaction', {
           },
         })
 
-        const data: CommonResponseInterface<CategoryInterface[]> = await response.json()
+        const data: CommonResponseInterface<TransactionCategoryInterface[]> = await response.json()
 
         this.categories = data.data
       } catch (err) {
@@ -70,6 +70,29 @@ export const useTransactionStore = defineStore ('transaction', {
         return false;
       } finally {
         this.loading = false;
+      }
+    },
+
+    async getCashFlowChart(token: string) {
+      this.loading = true
+      this.error = null
+
+      try {
+        const response = await fetch(apiUrl+ '/transaction/cash-flow/chart-data', {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+        })
+
+        const data: CommonResponseInterface<CashFlowChartInterface[]> = await response.json()
+
+        this.cashFlowCharts = data.data
+      } catch (err) {
+        this.error = `Gagal mengambil data Cash Flow Charts: ${err}`
+        window.$toast('error', this.error);
+      } finally {
+        this.loading = false
       }
     },
   }

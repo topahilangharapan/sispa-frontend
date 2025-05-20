@@ -36,6 +36,7 @@ import FreelancerApplicantsView from '../views/FreelancerApplicantsView.vue'
 import FreelancerDetailView from '../views/FreelancerDetailView.vue'
 import MessageResponse from '../components/MessageResponse.vue'
 import AddTransactionView from '../views/finance/transaction/AddTransactionView.vue'
+import CashFlowChart from '../components/CashFlowChart.vue'
 
 const routes = [
   {
@@ -291,6 +292,11 @@ const routes = [
     name: 'Add Transaction',
     component: AddTransactionView,
     beforeEnter: roleGuard
+  },
+  {
+    path: '/component/cash-flow/chart',
+    name: 'Cash Flow Chart Component',
+    component: CashFlowChart,
   },
 ]
 
