@@ -319,9 +319,11 @@ const submitForm = async () => {
             <!-- Judul langkah -->
             <p
               class="text-sm font-medium mt-2 text-center"
-              :class="
-                currentStep >= step.number ? 'text-blue-800' : 'text-gray-500'
-              "
+              :class="{
+              'text-blue-800 text-green-800': currentStep > step.number,
+              'text-blue-800 text-blue-800': currentStep === step.number,
+              'text-gray-200 text-gray-500': currentStep < step.number
+            }"
             >
               {{ step.title }}
             </p>
