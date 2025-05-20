@@ -94,7 +94,7 @@ const updateCurrentPath = () => {
     };
   } else if (path.startsWith('/freelancer')) {
     currentModule.value = 'Freelance';
-    title.value = { Freelance: '/freelancer' };
+    title.value = { Freelancer: '/freelancer' };
     submodules.value = {
       'Pendaftar': '/freelancer/applications',
     };
