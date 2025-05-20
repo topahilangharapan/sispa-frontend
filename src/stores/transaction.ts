@@ -1,15 +1,14 @@
 import {defineStore} from "pinia";
 
 import type {
-  BalancePerBankInterface,
+  BalancePerBankInterface, CashFlowChartRequestInterface,
   IdTransactionInterface,
   TransactionInterface
 } from '../interfaces/transaction.interface.ts'
 import type { CommonResponseInterface } from '../interfaces/common.interface.ts'
-import type { CategoryInterface } from '../interfaces/category.interface.ts'
 import type {
   AddTransactionRequestInterface,
-  AddTransactionResponseInterface
+  AddTransactionResponseInterface, CashFlowChartInterface, TransactionCategoryInterface
 } from '../interfaces/transaction.interface.ts'
 
 const apiUrl = import.meta.env.VITE_API_LOCAL_URL;
@@ -19,8 +18,9 @@ export const useTransactionStore = defineStore ('transaction', {
     transactions: [] as TransactionInterface[],
     loading: false,
     error: null as null | string,
+    categories: [] as TransactionCategoryInterface[],
+    cashFlowCharts: [] as CashFlowChartInterface[],
     currentTransaction: null as TransactionInterface | null,
-    categories: [] as CategoryInterface[],
     balances: [] as BalancePerBankInterface[],
   }),
   actions: {
@@ -36,7 +36,7 @@ export const useTransactionStore = defineStore ('transaction', {
           },
         })
 
-        const data: CommonResponseInterface<CategoryInterface[]> = await response.json()
+        const data: CommonResponseInterface<TransactionCategoryInterface[]> = await response.json()
 
         this.categories = data.data
       } catch (err) {
@@ -82,7 +82,7 @@ export const useTransactionStore = defineStore ('transaction', {
       }
     },
 
-    async getTransactionById(token: String, body: IdTransactionInterface): Promise<TransactionInterface> {
+    async getTransactionById(token: string, body: IdTransactionInterface): Promise<TransactionInterface> {
       this.loading = true
       this.error = null
 
@@ -163,6 +163,31 @@ export const useTransactionStore = defineStore ('transaction', {
         this.error = (err as Error).message;
       } finally {
         this.loading = false;
+      }
+    },
+
+    async getCashFlowChart(token: string, body: CashFlowChartRequestInterface) {
+      this.loading = true
+      this.error = null
+
+      try {
+        const response = await fetch(apiUrl+ '/transaction/cash-flow/chart-data', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(body),
+        })
+
+        const data: CommonResponseInterface<CashFlowChartInterface[]> = await response.json()
+
+        this.cashFlowCharts = data.data
+      } catch (err) {
+        this.error = `Gagal mengambil data Cash Flow Charts: ${err}`
+        window.$toast('error', this.error);
+      } finally {
+        this.loading = false
       }
     },
   }

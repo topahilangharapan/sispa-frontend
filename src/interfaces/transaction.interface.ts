@@ -47,3 +47,15 @@ export interface TransactionInterface {
 export interface IdTransactionInterface {
   id: string;
 }
+
+export interface CashFlowChartInterface {
+  amount: number;
+  bank: string;
+  quartal: number;
+  month: number;
+  year: number;
+}
+
+export interface CashFlowChartRequestInterface {
+  accountNo: string;
+}
