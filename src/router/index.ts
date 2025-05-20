@@ -36,6 +36,8 @@ import FreelancerApplicantsView from '../views/FreelancerApplicantsView.vue'
 import FreelancerDetailView from '../views/FreelancerDetailView.vue'
 import MessageResponse from '../components/MessageResponse.vue'
 import AddTransactionView from '../views/finance/transaction/AddTransactionView.vue'
+import TransactionDetailView from '../views/finance/TransactionDetailView.vue'
+import AccountView from '../views/finance/AccountView.vue'
 import CashFlowChart from '../components/CashFlowChart.vue'
 
 const routes = [
@@ -227,7 +229,7 @@ const routes = [
   },
   {
     path: '/purchasing/item/create',
-    name: 'Cash Flow',
+    name: 'Create Item',
     component: CreateItemView,
     beforeEnter: roleGuard
   },
@@ -291,6 +293,18 @@ const routes = [
     path: '/finance/cash-flow/transaction/add',
     name: 'Add Transaction',
     component: AddTransactionView,
+    beforeEnter: roleGuard
+  },
+  {
+    path: '/finance/transaction/:id',
+    name: 'TransactionDetail',
+    component: TransactionDetailView,
+    beforeEnter: roleGuard
+  },
+  {
+    path: '/finance/account/:id',
+    name: 'AccountView',
+    component: AccountView,
     beforeEnter: roleGuard
   },
   {
