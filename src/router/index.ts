@@ -42,12 +42,6 @@ import CashFlowChart from '../components/CashFlowChart.vue'
 
 const routes = [
   {
-    path: '/',
-    name: 'Home',
-    component: HomeView,
-    beforeEnter: roleGuard
-  },
-  {
     path: '/auth/register',
     name: 'Register',
     component: RegisterView,
