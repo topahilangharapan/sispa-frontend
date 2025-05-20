@@ -142,6 +142,29 @@ export const useTransactionStore = defineStore ('transaction', {
       this.error = null;
       this.loading = false;
     },
+    async fetchExpensesByAccount(token: string, accountId: string): Promise<void> {
+      this.loading = true;
+      this.error = null;
+      try {
+        const response = await fetch(`${apiUrl}/transaction/expense/by-account/${accountId}`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+        const data: CommonResponseInterface<TransactionInterface[]> = await response.json();
+        if (response.ok) {
+          this.transactions = data.data || [];
+        } else {
+          this.error = data.message || "Failed to fetch expenses.";
+        }
+      } catch (err) {
+        this.error = (err as Error).message;
+      } finally {
+        this.loading = false;
+      }
+    },
 
     async getCashFlowChart(token: string, body: CashFlowChartRequestInterface) {
       this.loading = true

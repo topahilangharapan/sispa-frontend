@@ -152,7 +152,7 @@ onMounted(async () => {
       <p>No balance data available.</p>
     </div>
     <div v-else class="chart-wrapper">
-      <Pie :data="chartData" :options="chartOptions" />
+      <Pie :data="chartData" :options="chartOptions as any" />
     </div>
   </div>
 </template>
