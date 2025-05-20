@@ -1,17 +1,14 @@
 <script setup lang="ts" xmlns:h1="http://www.w3.org/1999/html">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, type FunctionalComponent } from 'vue'
 import { useRouter } from 'vue-router'
 import VNavbar from '../components/VNavbar.vue'
 import { useAuthStore } from '../stores/auth.ts'
 import {
   Users,
   UserPlus,
-  Archive,
-  CreditCard,
   ClipboardList,
-  Briefcase,
   Landmark,
-  ReceiptText, Package, Layers
+  ReceiptText, Package, Layers, type LucideProps
 } from 'lucide-vue-next'
 
 const authStore = useAuthStore()
@@ -19,6 +16,19 @@ const router = useRouter()
 const title = ref({ 'Dashboard': '/dashboard' })
 const userGreeting = ref('')
 const currentTime = ref(new Date())
+
+interface NavItem {
+  title: string;
+  path: string;
+  icon: FunctionalComponent<LucideProps>;
+  description: string;
+  roles: string[];
+}
+
+interface Group {
+  title: string;
+  items: NavItem[];  // pastikan items ini bertipe NavItem[]
+}
 
 // Update time for greeting
 const updateTimeAndGreeting = () => {
@@ -115,7 +125,7 @@ const filteredNavigation = computed(() => {
 
 // Group navigation cards by category
 const groupedNavigation = computed(() => {
-  const groups = {
+  const groups: Record<string, Group> = {
     finance: {
       title: 'Keuangan',
       items: []
@@ -129,14 +139,14 @@ const groupedNavigation = computed(() => {
       items: []
     },
     admin: {
-      title: 'Administrasi',
+      title: 'Manajemen',
       items: []
     }
   }
 
   filteredNavigation.value.forEach(item => {
-    if (groups[item.category]) {
-      groups[item.category].items.push(item)
+    if (groups[item.category as keyof typeof groups]) {
+      groups[item.category as keyof typeof groups].items.push(item)
     }
   })
 
@@ -235,103 +245,103 @@ onMounted(() => {
           </div>
         </div>
 
-        <!-- Quick Stats Section -->
-        <div class="mt-12 mb-8">
-          <div class="mb-4 flex items-center">
-            <h2 class="text-xl font-semibold text-brown-400">Statistik Ringkas</h2>
-            <div class="ml-4 h-px flex-grow bg-brown-100 bg-opacity-20"></div>
-          </div>
+<!--        &lt;!&ndash; Quick Stats Section &ndash;&gt;-->
+<!--        <div class="mt-12 mb-8">-->
+<!--          <div class="mb-4 flex items-center">-->
+<!--            <h2 class="text-xl font-semibold text-brown-400">Statistik Ringkas</h2>-->
+<!--            <div class="ml-4 h-px flex-grow bg-brown-100 bg-opacity-20"></div>-->
+<!--          </div>-->
 
-          <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            <!-- Stat Card 1 -->
-            <div class="bg-white-100 rounded-xl p-5 shadow-sm border border-brown-100 border-opacity-10">
-              <div class="flex justify-between">
-                <div>
-                  <p class="text-sm text-black-grey-600">Total Event</p>
-                  <h4 class="text-2xl font-bold text-black-grey-700 mt-1">24</h4>
-                </div>
-                <div class="h-12 w-12 rounded-full bg-red-175 bg-opacity-10 flex items-center justify-center">
-                  <Briefcase class="h-6 w-6 text-white-100" />
-                </div>
-              </div>
-              <div class="mt-4 flex items-center text-sm">
-                <span class="text-green-500 flex items-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
-                  </svg>
-                  <span class="ml-1">12%</span>
-                </span>
-                <span class="ml-2 text-black-grey-600">dari bulan lalu</span>
-              </div>
-            </div>
+<!--          <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">-->
+<!--            &lt;!&ndash; Stat Card 1 &ndash;&gt;-->
+<!--            <div class="bg-white-100 rounded-xl p-5 shadow-sm border border-brown-100 border-opacity-10">-->
+<!--              <div class="flex justify-between">-->
+<!--                <div>-->
+<!--                  <p class="text-sm text-black-grey-600">Total Event</p>-->
+<!--                  <h4 class="text-2xl font-bold text-black-grey-700 mt-1">24</h4>-->
+<!--                </div>-->
+<!--                <div class="h-12 w-12 rounded-full bg-red-175 bg-opacity-10 flex items-center justify-center">-->
+<!--                  <Briefcase class="h-6 w-6 text-white-100" />-->
+<!--                </div>-->
+<!--              </div>-->
+<!--              <div class="mt-4 flex items-center text-sm">-->
+<!--                <span class="text-green-500 flex items-center">-->
+<!--                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">-->
+<!--                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />-->
+<!--                  </svg>-->
+<!--                  <span class="ml-1">12%</span>-->
+<!--                </span>-->
+<!--                <span class="ml-2 text-black-grey-600">dari bulan lalu</span>-->
+<!--              </div>-->
+<!--            </div>-->
 
-            <!-- Stat Card 2 -->
-            <div class="bg-white-100 rounded-xl p-5 shadow-sm border border-brown-100 border-opacity-10">
-              <div class="flex justify-between">
-                <div>
-                  <p class="text-sm text-black-grey-600">Total Invoice</p>
-                  <h4 class="text-2xl font-bold text-black-grey-700 mt-1">18</h4>
-                </div>
-                <div class="h-12 w-12 rounded-full bg-brown-100 bg-opacity-10 flex items-center justify-center">
-                  <CreditCard class="h-6 w-6 text-white-100" />
-                </div>
-              </div>
-              <div class="mt-4 flex items-center text-sm">
-                <span class="text-green-500 flex items-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
-                  </svg>
-                  <span class="ml-1">8%</span>
-                </span>
-                <span class="ml-2 text-black-grey-600">dari bulan lalu</span>
-              </div>
-            </div>
+<!--            &lt;!&ndash; Stat Card 2 &ndash;&gt;-->
+<!--            <div class="bg-white-100 rounded-xl p-5 shadow-sm border border-brown-100 border-opacity-10">-->
+<!--              <div class="flex justify-between">-->
+<!--                <div>-->
+<!--                  <p class="text-sm text-black-grey-600">Total Invoice</p>-->
+<!--                  <h4 class="text-2xl font-bold text-black-grey-700 mt-1">18</h4>-->
+<!--                </div>-->
+<!--                <div class="h-12 w-12 rounded-full bg-brown-100 bg-opacity-10 flex items-center justify-center">-->
+<!--                  <CreditCard class="h-6 w-6 text-white-100" />-->
+<!--                </div>-->
+<!--              </div>-->
+<!--              <div class="mt-4 flex items-center text-sm">-->
+<!--                <span class="text-green-500 flex items-center">-->
+<!--                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">-->
+<!--                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />-->
+<!--                  </svg>-->
+<!--                  <span class="ml-1">8%</span>-->
+<!--                </span>-->
+<!--                <span class="ml-2 text-black-grey-600">dari bulan lalu</span>-->
+<!--              </div>-->
+<!--            </div>-->
 
-            <!-- Stat Card 3 -->
-            <div class="bg-white-100 rounded-xl p-5 shadow-sm border border-brown-100 border-opacity-10">
-              <div class="flex justify-between">
-                <div>
-                  <p class="text-sm text-black-grey-600">Total Freelancer</p>
-                  <h4 class="text-2xl font-bold text-black-grey-700 mt-1">36</h4>
-                </div>
-                <div class="h-12 w-12 rounded-full bg-red-200 bg-opacity-10 flex items-center justify-center">
-                  <Users class="h-6 w-6 text-white-100" />
-                </div>
-              </div>
-              <div class="mt-4 flex items-center text-sm">
-                <span class="text-green-500 flex items-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
-                  </svg>
-                  <span class="ml-1">24%</span>
-                </span>
-                <span class="ml-2 text-black-grey-600">dari bulan lalu</span>
-              </div>
-            </div>
+<!--            &lt;!&ndash; Stat Card 3 &ndash;&gt;-->
+<!--            <div class="bg-white-100 rounded-xl p-5 shadow-sm border border-brown-100 border-opacity-10">-->
+<!--              <div class="flex justify-between">-->
+<!--                <div>-->
+<!--                  <p class="text-sm text-black-grey-600">Total Freelancer</p>-->
+<!--                  <h4 class="text-2xl font-bold text-black-grey-700 mt-1">36</h4>-->
+<!--                </div>-->
+<!--                <div class="h-12 w-12 rounded-full bg-red-200 bg-opacity-10 flex items-center justify-center">-->
+<!--                  <Users class="h-6 w-6 text-white-100" />-->
+<!--                </div>-->
+<!--              </div>-->
+<!--              <div class="mt-4 flex items-center text-sm">-->
+<!--                <span class="text-green-500 flex items-center">-->
+<!--                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">-->
+<!--                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />-->
+<!--                  </svg>-->
+<!--                  <span class="ml-1">24%</span>-->
+<!--                </span>-->
+<!--                <span class="ml-2 text-black-grey-600">dari bulan lalu</span>-->
+<!--              </div>-->
+<!--            </div>-->
 
-            <!-- Stat Card 4 -->
-            <div class="bg-white-100 rounded-xl p-5 shadow-sm border border-brown-100 border-opacity-10">
-              <div class="flex justify-between">
-                <div>
-                  <p class="text-sm text-black-grey-600">Total Inventaris</p>
-                  <h4 class="text-2xl font-bold text-black-grey-700 mt-1">156</h4>
-                </div>
-                <div class="h-12 w-12 rounded-full bg-brown-200 bg-opacity-10 flex items-center justify-center">
-                  <Archive class="h-6 w-6 text-white-100" />
-                </div>
-              </div>
-              <div class="mt-4 flex items-center text-sm">
-                <span class="text-red-500 flex items-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-                  </svg>
-                  <span class="ml-1">3%</span>
-                </span>
-                <span class="ml-2 text-black-grey-600">dari bulan lalu</span>
-              </div>
-            </div>
-          </div>
-        </div>
+<!--            &lt;!&ndash; Stat Card 4 &ndash;&gt;-->
+<!--            <div class="bg-white-100 rounded-xl p-5 shadow-sm border border-brown-100 border-opacity-10">-->
+<!--              <div class="flex justify-between">-->
+<!--                <div>-->
+<!--                  <p class="text-sm text-black-grey-600">Total Inventaris</p>-->
+<!--                  <h4 class="text-2xl font-bold text-black-grey-700 mt-1">156</h4>-->
+<!--                </div>-->
+<!--                <div class="h-12 w-12 rounded-full bg-brown-200 bg-opacity-10 flex items-center justify-center">-->
+<!--                  <Archive class="h-6 w-6 text-white-100" />-->
+<!--                </div>-->
+<!--              </div>-->
+<!--              <div class="mt-4 flex items-center text-sm">-->
+<!--                <span class="text-red-500 flex items-center">-->
+<!--                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">-->
+<!--                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />-->
+<!--                  </svg>-->
+<!--                  <span class="ml-1">3%</span>-->
+<!--                </span>-->
+<!--                <span class="ml-2 text-black-grey-600">dari bulan lalu</span>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
       </div>
     </div>
   </section>

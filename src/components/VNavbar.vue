@@ -12,7 +12,6 @@ import {
   User,
   LogOut,
   ChevronDown,
-  Receipt,
   Landmark,
   Package,
   Layers,
