@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { ref, onMounted} from 'vue'
+import { ref, onMounted } from 'vue'
 import VNavbar from '../../components/VNavbar.vue'
 import VLoading from '../../components/VLoading.vue'
 import { useAccountStore } from '../../stores/account.js'
 import { useAuthStore } from '../../stores/auth.js'
 import { useRoute } from 'vue-router'
-import VButton from '../../components/VButton.vue'
+import { Banknote } from 'lucide-vue-next'
 
 const title = ref({ 'Cash Flow': '/finance/cash-flow' });
 const submodules = ref({
@@ -15,16 +15,15 @@ const submodules = ref({
 const accountStore = useAccountStore();
 const authStore = useAuthStore();
 const route = useRoute();
-const accountId = route.params.id as string;
+const accountId = Number(route.params.id);
 const isLoaded = ref(false);
-const transId = "I/2004/MANDIRI/20250520/0001"
 
 function formatToRupiah(amount: number | undefined): string {
   if (typeof amount !== 'number') return '-'
   return 'Rp' + amount.toLocaleString('id-ID') + ',-'
 }
 
-function formatDateTimeToIndo(isoDate: string | undefined): string {
+function formatDateTimeToIndo(isoDate: Date | undefined): string {
   if (!isoDate) return '-';
 
   const date = new Date(isoDate);
@@ -48,12 +47,12 @@ onMounted(async () => {
 
   const token = authStore.token ?? '';
   await accountStore.getAccountById(token, accountId)
-
 })
 </script>
 
 <template>
   <VNavbar :title="title" :submodules="submodules"></VNavbar>
+
   <div v-if="accountStore.loading">
     <VLoading :isDone="isLoaded" />
   </div>
@@ -62,38 +61,30 @@ onMounted(async () => {
     <div class="max-w-7xl mx-auto">
       <div class="p-6 space-y-6">
 
-    <div class="rounded-xl shadow p-4 flex items-center space-x-4">
-      <div class="w-12 h-12 bg-gray-200 rounded-full">
-      </div>
-      <div>
-        <p class="large-text-normal">{{ accountStore.currentAccount?.bank}}</p>
-        <p class="large-text-bold">{{ accountStore.currentAccount?.no}}</p>
-        <p class="large-text-normal">{{ accountStore.currentAccount?.name}}</p>
-        <p class="large-text-normal">{{ accountStore.currentAccount?.balance}}</p>
-      </div>
-      <div>
-        <div class="h-4 bg-gray-300 rounded w-32 mb-2"></div>
-        <div class="h-3 bg-gray-200 rounded w-20"></div>
-      </div>
-    </div>
-        <div class="bg-white rounded-xl shadow p-4 pr-6 flex items-center space-x-4">
-          <div class="w-12 h-12 bg-gray-200 rounded-full">
+        <!-- Card akun -->
+        <div class="bg-white rounded-xl shadow p-6 flex items-center space-x-6">
+          <!-- Icon -->
+          <div class="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center">
+            <Banknote class="w-7 h-7 text-blue-600" />
           </div>
+
+          <!-- Info akun -->
           <div>
-            <p class="large-text-bold text-red-400">{{ accountStore.currentAccount?.bank}}</p>
-            <p class="large-text-bold">{{ accountStore.currentAccount?.no}}</p>
-            <p class="large-text-normal">{{ accountStore.currentAccount?.name}}</p>
+            <p class="text-sm text-gray-500">{{ accountStore.currentAccount?.bank }}</p>
+            <p class="text-lg font-semibold text-gray-800">{{ accountStore.currentAccount?.no }}</p>
+            <p class="text-base text-gray-600">a.n. {{ accountStore.currentAccount?.name }}</p>
           </div>
-          <div class="ml-auto text-left">
-            <p class="text-2xl">{{ formatToRupiah(accountStore.currentAccount?.balance) }}</p>
-            <p class="small-text-normal text-gray-400" >Terakhir diperbarui: {{ formatDateTimeToIndo(accountStore.currentAccount?.lastUpdated) }}</p>
-          </div>
-          <div>
-            <td class="px-4 py-2 text-center">
-              <RouterLink :to="`/finance/cash-flow/transaction?id=${transId}`">
-                <VButton variant="primary" size="sm">Detail</VButton>
-              </RouterLink>
-            </td>
+
+          <!-- Balance dan waktu update -->
+          <div class="ml-auto text-right">
+            <p class="text-2xl font-bold text-brown-400">
+              {{ formatToRupiah(accountStore.currentAccount?.balance) }}
+            </p>
+            <p class="text-sm text-gray-400">
+              Terakhir diperbarui:
+              {{ formatDateTimeToIndo(accountStore.currentAccount?.lastUpdated) }}
+              <!-- ✅ casting ke string -->
+            </p>
           </div>
         </div>
 
@@ -115,12 +106,11 @@ onMounted(async () => {
         <!-- Table -->
         <div class="bg-white rounded-xl shadow p-4 overflow-x-auto">
           <table class="min-w-full table-auto">
-
+            <!-- Belum diisi -->
           </table>
         </div>
+
       </div>
     </div>
   </section>
-
 </template>
-

@@ -1,4 +1,5 @@
 import type { AccountInterface } from './account.interface.ts'
+import type { CategoryInterface } from './category.interface.ts'
 
 export interface BalancePerBankInterface {
     bankName: string;
@@ -35,8 +36,8 @@ export interface TransactionInterface {
   updatedAt: Date,
   createdBy: string,
   updatedBy: string,
-  account: AccountInterface[],
-  category: string,
+  account: AccountInterface,
+  category: CategoryInterface,
   isAdmin: boolean;
   isInterest: boolean;
 }
