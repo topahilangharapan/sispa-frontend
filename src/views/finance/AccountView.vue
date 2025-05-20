@@ -14,7 +14,6 @@ const submodules = ref({
 const accountStore = useAccountStore();
 const authStore = useAuthStore();
 const route = useRoute();
-const router = useRouter();
 const accountId = route.params.id as string;
 const isLoaded = ref(false);
 
