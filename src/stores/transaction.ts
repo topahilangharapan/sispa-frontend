@@ -1,7 +1,7 @@
 import {defineStore} from "pinia";
 
 import type {
-  BalancePerBankInterface,
+  BalancePerBankInterface, CashFlowChartRequestInterface,
   IdTransactionInterface,
   TransactionInterface
 } from '../interfaces/transaction.interface.ts'
@@ -143,16 +143,18 @@ export const useTransactionStore = defineStore ('transaction', {
       this.loading = false;
     },
 
-    async getCashFlowChart(token: string) {
+    async getCashFlowChart(token: string, body: CashFlowChartRequestInterface) {
       this.loading = true
       this.error = null
 
       try {
         const response = await fetch(apiUrl+ '/transaction/cash-flow/chart-data', {
+          method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
           },
+          body: JSON.stringify(body),
         })
 
         const data: CommonResponseInterface<CashFlowChartInterface[]> = await response.json()

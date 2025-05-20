@@ -53,3 +53,7 @@ export interface CashFlowChartInterface {
   month: number;
   year: number;
 }
+
+export interface CashFlowChartRequestInterface {
+  accountNo: string;
+}

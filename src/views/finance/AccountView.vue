@@ -6,6 +6,7 @@ import { useAccountStore } from '../../stores/account.js'
 import { useAuthStore } from '../../stores/auth.js'
 import { useRoute } from 'vue-router'
 import { Banknote } from 'lucide-vue-next'
+import CashFlowChart from '../../components/CashFlowChart.vue'
 
 const title = ref({ 'Cash Flow': '/finance/cash-flow' });
 const submodules = ref({
@@ -100,7 +101,9 @@ onMounted(async () => {
 
         <!-- Chart -->
         <div class="bg-white rounded-xl shadow p-4">
-          <canvas id="lineChart" class="w-full h-40"></canvas>
+          <CashFlowChart
+            :accountNo="accountStore.currentAccount?.no"
+          ></CashFlowChart>
         </div>
 
         <!-- Table -->

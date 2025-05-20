@@ -1,10 +1,17 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue'
 import VueApexCharts from 'vue3-apexcharts';
 import { useAuthStore } from '../stores/auth';
 import { useTransactionStore } from '../stores/transaction';
-import type { CashFlowChartInterface } from '../interfaces/transaction.interface';
+import type {
+  CashFlowChartInterface,
+  CashFlowChartRequestInterface
+} from '../interfaces/transaction.interface'
 import VDropdown from './VDropdown.vue'
+
+const props = defineProps({
+  accountNo: { type: String },
+});
 
 const authStore = useAuthStore();
 const transactionStore = useTransactionStore();
@@ -199,6 +206,28 @@ const chartOptions = computed(() => {
   };
 });
 
+const accountNoRequestDTO = ref<CashFlowChartRequestInterface>({
+  accountNo: "",
+});
+
+watch(
+  () => props.accountNo,
+  async (newVal) => {
+    if (!newVal) return;
+
+    accountNoRequestDTO.value.accountNo = newVal;
+
+    const savedAuth = localStorage.getItem('auth');
+
+    if (savedAuth) {
+      authStore.$patch(JSON.parse(savedAuth));
+    }
+
+    await loadCashFlowData();
+  },
+  { immediate: true }
+);
+
 const loadCashFlowData = async () => {
   isLoading.value = true;
   error.value = null;
@@ -208,7 +237,7 @@ const loadCashFlowData = async () => {
       throw new Error('Authentication token is missing.');
     }
 
-    await transactionStore.getCashFlowChart(authStore.token);
+    await transactionStore.getCashFlowChart(authStore.token, accountNoRequestDTO.value);
     cashFlowData.value = transactionStore.cashFlowCharts;
 
     if (cashFlowData.value.length === 0) {
@@ -221,17 +250,6 @@ const loadCashFlowData = async () => {
     isLoading.value = false;
   }
 };
-
-// Initialize component
-onMounted(async () => {
-  const savedAuth = localStorage.getItem('auth');
-
-  if (savedAuth) {
-    authStore.$patch(JSON.parse(savedAuth));
-  }
-
-  await loadCashFlowData();
-});
 
 const getCurrentBalance = () => {
   if (filteredData.value.length === 0) return 'Rp0';
@@ -260,8 +278,8 @@ const getTimePeriod = () => {
 };
 </script>
 <template>
-  <div class="w-full max-w-7xl mx-auto px-4 py-8">
-    <div class="w-full p-6 rounded-lg bg-white shadow-md">
+  <div class="px-4">
+    <div class="">
       <div class="flex flex-wrap gap-6 mb-6">
         <div class="flex flex-col gap-2 min-w-[150px]">
           <VDropdown
@@ -292,17 +310,17 @@ const getTimePeriod = () => {
       </div>
 
       <div class="flex justify-between flex-wrap gap-4 mb-6 p-4 bg-brown-100/10 rounded-md border-l-4 border-red-300" v-if="!isLoading && !error && filteredData.length > 0">
-        <div class="flex flex-col gap-1">
-          <span class="text-sm text-gray-600 font-medium">Current Balance:</span>
-          <span class="text-lg font-semibold text-gray-800">{{ getCurrentBalance() }}</span>
-        </div>
+<!--        <div class="flex flex-col gap-1">-->
+<!--          <span class="text-sm text-gray-600 font-medium">Current Balance:</span>-->
+<!--          <span class="text-lg font-semibold text-gray-800">{{ getCurrentBalance() }}</span>-->
+<!--        </div>-->
         <div class="flex flex-col gap-1">
           <span class="text-sm text-gray-600 font-medium">Time Period:</span>
           <span class="text-lg font-semibold text-gray-800">{{ getTimePeriod() }}</span>
         </div>
       </div>
 
-      <div class="relative h-[400px] w-full">
+      <div class="relative w-full">
         <div v-if="authStore.loading || transactionStore.loading" class="absolute inset-0 flex items-center justify-center bg-white bg-opacity-80">
           <p>Loading cash flow data...</p>
         </div>
