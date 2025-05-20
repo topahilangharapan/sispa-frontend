@@ -15,21 +15,27 @@ const error = ref<string | null>(null);
 
 const viewType = ref<'month' | 'quarter' | 'year'>('month');
 const selectedBank = ref('all');
+const showCumulative = ref('cumulative'); // Default to cumulative view
 
-const bankOptions = computed(() => {
-  const bankSet = new Set<string>();
-  cashFlowData.value.forEach(item => bankSet.add(item.bank));
-  const options = Array.from(bankSet)
-    .sort()
-    .map(bank => ({ label: bank, value: bank }));
-
-  return [{ label: 'ALL', value: 'all' }, ...options];
-});
+// const bankOptions = computed(() => {
+//   const bankSet = new Set<string>();
+//   cashFlowData.value.forEach(item => bankSet.add(item.bank));
+//   const options = Array.from(bankSet)
+//     .sort()
+//     .map(bank => ({ label: bank, value: bank }));
+//
+//   return [{ label: 'ALL', value: 'all' }, ...options];
+// });
 
 const timeOptions = [
   { label: 'Month', value: 'month' },
   { label: 'Quarter', value: 'quarter' },
   { label: 'Year', value: 'year' },
+];
+
+const displayOptions = [
+  { label: 'Cumulative', value: 'cumulative' },
+  { label: 'Period', value: 'period' },
 ];
 
 const filteredData = computed(() => {
@@ -68,11 +74,26 @@ const groupedData = computed(() => {
 });
 
 const series = computed(() => {
-  const values = Array.from(groupedData.value.values());
+  const entries = Array.from(groupedData.value.entries());
+  let values;
+
+  if (showCumulative.value === 'cumulative') {
+    // Calculate cumulative values
+    let cumulativeSum = 0;
+    values = entries.map(([_, value]) => {
+      cumulativeSum += value;
+      return cumulativeSum;
+    });
+  } else {
+    // Use period values
+    values = entries.map(([_, value]) => value);
+  }
 
   return [
     {
-      name: selectedBank.value === 'all' ? 'Total Cash Flow' : `${selectedBank.value} Cash Flow`,
+      name: showCumulative.value === 'cumulative'
+        ? (selectedBank.value === 'all' ? 'Cumulative Saldo' : `Cumulative Saldo ${selectedBank.value}`)
+        : (selectedBank.value === 'all' ? 'Period Saldo' : `Period Saldo ${selectedBank.value}`),
       data: values,
     },
   ];
@@ -80,6 +101,7 @@ const series = computed(() => {
 
 const chartOptions = computed(() => {
   const categories = Array.from(groupedData.value.keys());
+  const chartType = showCumulative.value ? 'Cumulative' : 'Period';
 
   return {
     chart: {
@@ -127,7 +149,7 @@ const chartOptions = computed(() => {
       }
     },
     title: {
-      text: `Cash Flow by ${viewType.value.charAt(0).toUpperCase() + viewType.value.slice(1)}`,
+      text: `${chartType} Cash Flow by ${viewType.value.charAt(0).toUpperCase() + viewType.value.slice(1)}`,
       align: 'center',
     },
     subtitle: {
@@ -211,15 +233,16 @@ onMounted(async () => {
   await loadCashFlowData();
 });
 
+const getCurrentBalance = () => {
+  if (filteredData.value.length === 0) return 'Rp0';
 
-// Helper functions for summary information
-const getTotalAmount = () => {
+  // For cumulative view, show the final balance
   const total = filteredData.value.reduce((sum, item) => sum + item.amount, 0);
+
   return new Intl.NumberFormat('id-ID', {
     style: 'currency',
     currency: 'IDR',
-    minimumFractionDigits: 3,
-    maximumFractionDigits: 3
+    minimumFractionDigits: 0,
   }).format(total);
 };
 
@@ -249,11 +272,20 @@ const getTimePeriod = () => {
           </VDropdown>
         </div>
 
+<!--        <div class="flex flex-col gap-2 min-w-[150px]">-->
+<!--          <VDropdown-->
+<!--            label="Filter by Bank:"-->
+<!--            v-model="selectedBank"-->
+<!--            :options="bankOptions"-->
+<!--          >-->
+<!--          </VDropdown>-->
+<!--        </div>-->
+
         <div class="flex flex-col gap-2 min-w-[150px]">
           <VDropdown
-            label="Filter by Bank:"
-            v-model="selectedBank"
-            :options="bankOptions"
+            label="Display Mode:"
+            v-model="showCumulative"
+            :options="displayOptions"
           >
           </VDropdown>
         </div>
@@ -261,8 +293,8 @@ const getTimePeriod = () => {
 
       <div class="flex justify-between flex-wrap gap-4 mb-6 p-4 bg-brown-100/10 rounded-md border-l-4 border-red-300" v-if="!isLoading && !error && filteredData.length > 0">
         <div class="flex flex-col gap-1">
-          <span class="text-sm text-gray-600 font-medium">Total Amount:</span>
-          <span class="text-lg font-semibold text-gray-800">{{ getTotalAmount() }}</span>
+          <span class="text-sm text-gray-600 font-medium">Current Balance:</span>
+          <span class="text-lg font-semibold text-gray-800">{{ getCurrentBalance() }}</span>
         </div>
         <div class="flex flex-col gap-1">
           <span class="text-sm text-gray-600 font-medium">Time Period:</span>
