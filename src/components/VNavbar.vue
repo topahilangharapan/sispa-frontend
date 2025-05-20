@@ -49,20 +49,20 @@ onMounted(async () => {
   const path = router.currentRoute.value.path;
 
   if (path.startsWith('/marketing')) {
-    title.value = { Marketing: '/marketing' };
+    title.value = { Marketing: '/marketing/purchase-order' };
     submodules.value = {
       'Purchase Order': '/marketing/purchase-order',
       'Final Report': '/marketing/final-report',
       'Klien': '/marketing/client',
     };
   } else if (path.startsWith('/finance')) {
-    title.value = { Keuangan: '/finance' };
+    title.value = { Keuangan: '/finance/cash-flow' };
     submodules.value = {
       'Invoice': '/finance/invoice',
       'Cash Flow': '/finance/cash-flow',
     };
   } else if (path.startsWith('/purchasing')) {
-    title.value = { Purchasing: '/purchasing' };
+    title.value = { Purchasing: '/purchasing/vendor' };
     submodules.value = {
       'Vendor': '/purchasing/vendor',
       'Item': '/purchasing/item',
