@@ -6,8 +6,9 @@ import VButton from '../../components/VButton.vue'
 import { useAccountStore } from '../../stores/account.js'
 import { useAuthStore } from '../../stores/auth.js'
 import { useTransactionStore } from '../../stores/transaction.js'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import { DataTable } from 'simple-datatables'
+import router from '../../router'
 
 const title = ref({ 'Cash Flow': '/finance/cash-flow' });
 const submodules = ref({
@@ -23,50 +24,6 @@ const isLoaded = ref(false);
 const activeTab = ref('expense'); // Default to expense tab
 const dataTableInstance = ref<DataTable | null>(null);
 
-// Mock transactions for development and testing
-// These will be shown when the API call doesn't return data
-const mockTransactions = ref([
-  {
-    id: "tx1",
-    amount: 150000,
-    description: "Pembayaran listrik",
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    createdBy: "admin",
-    updatedBy: "admin",
-    account: accountId,
-    category: "Utilities",
-    isAdmin: false,
-    isInterest: false
-  },
-  {
-    id: "tx2",
-    amount: 75000,
-    description: "Pembelian ATK",
-    createdAt: new Date(Date.now() - 86400000), // yesterday
-    updatedAt: new Date(Date.now() - 86400000),
-    createdBy: "admin",
-    updatedBy: "admin",
-    account: accountId,
-    category: "Office Supplies",
-    isAdmin: false,
-    isInterest: false
-  },
-  {
-    id: "tx3",
-    amount: 500000,
-    description: "Pembayaran internet",
-    createdAt: new Date(Date.now() - 2 * 86400000), // 2 days ago
-    updatedAt: new Date(Date.now() - 2 * 86400000),
-    createdBy: "admin",
-    updatedBy: "admin",
-    account: accountId,
-    category: "Utilities",
-    isAdmin: false,
-    isInterest: false
-  }
-]);
-
 // Date filtering
 const filters = reactive({
   startDate: '',
@@ -76,11 +33,11 @@ const filters = reactive({
 
 // Mock categories for development and testing
 const mockCategories = ref([
-  { id: 1, name: "Utilities" },
-  { id: 2, name: "Office Supplies" },
-  { id: 3, name: "Salaries" },
-  { id: 4, name: "Marketing" },
-  { id: 5, name: "Travel" }
+  { id: "1", name: "Utilities", createdAt: new Date(), updatedAt: new Date(), createdBy: "mock", updatedBy: "mock" },
+  { id: "2", name: "Office Supplies", createdAt: new Date(), updatedAt: new Date(), createdBy: "mock", updatedBy: "mock" },
+  { id: "3", name: "Salaries", createdAt: new Date(), updatedAt: new Date(), createdBy: "mock", updatedBy: "mock" },
+  { id: "4", name: "Marketing", createdAt: new Date(), updatedAt: new Date(), createdBy: "mock", updatedBy: "mock" },
+  { id: "5", name: "Travel", createdAt: new Date(), updatedAt: new Date(), createdBy: "mock", updatedBy: "mock" }
 ]);
 
 function formatRupiah(value: number) {
@@ -139,7 +96,7 @@ const applyFilters = async () => {
   }
 };
 
-const bankLogos = {
+const bankLogos: { [key: string]: string } = {
   'MANDIRI': '/src/assets/logos/mandiri.png',
   'BCA': '/src/assets/logos/bca-logo.png',
   'BNI': '/src/assets/logos/bni-logo.png',
@@ -152,30 +109,30 @@ function getBankLogo(bankName: string): string {
 
 const loadTransactions = async () => {
   const token = authStore.token ?? '';
-  await transactionStore.fetchExpensesByAccount(token, accountId);
+  await transactionStore.fetchExpensesByAccount(token, String(accountId));
   isLoaded.value = true;
 };
 
-function formatToRupiah(amount: number | undefined): string {
-  if (typeof amount !== 'number') return '-'
-  return 'Rp' + amount.toLocaleString('id-ID') + ',-'
-}
+// function formatToRupiah(amount: number | undefined): string {
+//   if (typeof amount !== 'number') return '-'
+//   return 'Rp' + amount.toLocaleString('id-ID') + ',-'
+// }
 
-function formatDateTimeToIndo(isoDate: Date | undefined): string {
-  if (!isoDate) return '-';
+// function formatDateTimeToIndo(isoDate: Date | undefined): string {
+//   if (!isoDate) return '-';
 
-  const date = new Date(isoDate);
+//   const date = new Date(isoDate);
 
-  return new Intl.DateTimeFormat('id-ID', {
-    day: '2-digit',
-    month: 'long',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-    timeZone: 'Asia/Jakarta',
-    timeZoneName: 'short'
-  }).format(date);
-}
+//   return new Intl.DateTimeFormat('id-ID', {
+//     day: '2-digit',
+//     month: 'long',
+//     year: 'numeric',
+//     hour: '2-digit',
+//     minute: '2-digit',
+//     timeZone: 'Asia/Jakarta',
+//     timeZoneName: 'short'
+//   }).format(date);
+// }
 
 onMounted(async () => {
   const savedAuth = localStorage.getItem('auth');
