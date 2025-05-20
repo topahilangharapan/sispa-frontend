@@ -1,9 +1,6 @@
 import {defineStore} from "pinia";
 
-import { useAuthStore } from './auth.ts'
-import router from '../router'
 import type { BalancePerBankInterface, TransactionInterface } from '../interfaces/transaction.interface.ts'
-import type { TransactionInterface } from '../interfaces/transaction.interface.ts'
 import type { CommonResponseInterface } from '../interfaces/common.interface.ts'
 import type {
   AddTransactionRequestInterface,
@@ -20,7 +17,6 @@ export const useTransactionStore = defineStore ('transaction', {
     categories: [] as TransactionCategoryInterface[],
     cashFlowCharts: [] as CashFlowChartInterface[],
     currentTransaction: null as TransactionInterface | null,
-    categories: [] as CategoryInterface[],
     balances: [] as BalancePerBankInterface[],
   }),
   actions: {

@@ -311,6 +311,7 @@ const routes = [
     path: '/component/cash-flow/chart',
     name: 'Cash Flow Chart Component',
     component: CashFlowChart,
+    beforeEnter: roleGuard
   },
 ]
 

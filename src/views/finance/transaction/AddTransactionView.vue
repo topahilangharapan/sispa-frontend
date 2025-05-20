@@ -12,7 +12,10 @@ import { useAccountStore } from '../../../stores/account.js'
 import { useAuthStore } from '../../../stores/auth.js'
 import type { AccountInterface } from '../../../interfaces/account.interface.ts'
 import { useTransactionStore } from '../../../stores/transaction.ts'
-import type { AddTransactionRequestInterface } from '../../../interfaces/transaction.interface.ts'
+import type {
+  AddTransactionRequestInterface,
+  TransactionCategoryInterface
+} from '../../../interfaces/transaction.interface.ts'
 
 // Form state
 const selectedAccountId = ref<string | number | undefined>(undefined);
@@ -38,7 +41,7 @@ onMounted(async () => {
     await accountStore.getAccounts(authStore.token);
 
     await transactionStore.getCategories(authStore.token);
-    transactionCategoryOption.value = transactionStore?.categories?.map((category) => ({
+    transactionCategoryOption.value = transactionStore?.categories?.map((category: TransactionCategoryInterface) => ({
       value: category.name,
       label: category.name,
     })) || [];
