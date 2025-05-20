@@ -61,7 +61,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-white-100">
+  <div class="min-h-screen">
     <VNavbar :title="title" :submodules="submodules" />
 
     <div class="pt-28 px-8 flex gap-8">

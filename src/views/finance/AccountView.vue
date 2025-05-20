@@ -8,9 +8,9 @@ import { useAuthStore } from '../../stores/auth.js'
 import { useTransactionStore } from '../../stores/transaction.js'
 import { useRoute } from 'vue-router'
 import { Banknote } from 'lucide-vue-next'
-import router from '../../router'
 import { DataTable } from 'simple-datatables'
 import router from '../../router'
+import CashFlowChart from '../../components/CashFlowChart.vue'
 
 const title = ref({ 'Cash Flow': '/finance/cash-flow' });
 const submodules = ref({ "Cash Flow": "/finance/cash-flow" });
@@ -122,7 +122,10 @@ onMounted(async () => {
   await accountStore.getAccountById(token, accountId);
 
   if (!transactionStore.categories || transactionStore.categories.length === 0) {
-    transactionStore.categories = mockCategories.value;
+    transactionStore.categories = mockCategories.value.map(cat => ({
+      id: Number(cat.id),
+      name: cat.name
+    }));
   }
 
   await loadTransactions();
@@ -178,8 +181,8 @@ function viewTransactionDetail(transactionId: string) {
             @click="switchTab('income')"
             :class="[
               'px-4 py-2 border-b-2 font-semibold',
-              activeTab === 'income' 
-                ? 'border-blue-500 text-blue-600' 
+              activeTab === 'income'
+                ? 'border-blue-500 text-blue-600'
                 : 'border-transparent text-gray-500 hover:text-gray-700'
             ]"
           >
@@ -189,8 +192,8 @@ function viewTransactionDetail(transactionId: string) {
             @click="switchTab('expense')"
             :class="[
               'px-4 py-2 border-b-2 font-semibold',
-              activeTab === 'expense' 
-                ? 'border-blue-500 text-blue-600' 
+              activeTab === 'expense'
+                ? 'border-blue-500 text-blue-600'
                 : 'border-transparent text-gray-500 hover:text-gray-700'
             ]"
           >
@@ -201,7 +204,7 @@ function viewTransactionDetail(transactionId: string) {
 
         <!-- Chart -->
         <div class="bg-white rounded-xl shadow p-4">
-          <canvas id="lineChart" class="w-full h-40"></canvas>
+          <CashFlowChart :accountNo="accountStore.currentAccount?.no" ></CashFlowChart>
         </div>
 
         <!-- Table -->
@@ -218,23 +221,23 @@ function viewTransactionDetail(transactionId: string) {
               </tr>
             </thead>
             <tbody>
-              <tr 
-                v-for="(transaction, index) in transactionStore.transactions" 
-                :key="transaction.id" 
+              <tr
+                v-for="(transaction, index) in transactionStore.transactions"
+                :key="transaction.id"
                 class="hover:bg-gray-50 border-b"
               >
                 <td class="px-4 py-3">{{ index + 1 }}</td>
                 <td class="px-4 py-3">{{ formatDateLong(transaction.createdAt) }}</td>
                 <td class="px-4 py-3">{{ transaction.category }}</td>
                 <td class="px-4 py-3">{{ transaction.description }}</td>
-                <td class="px-4 py-3 text-right font-medium" 
+                <td class="px-4 py-3 text-right font-medium"
                     :class="{'text-red-600': activeTab === 'expense', 'text-green-600': activeTab === 'income'}">
                   {{ formatRupiah(transaction.amount) }}
                 </td>
                 <td class="px-4 py-3 text-center">
-                  <VButton 
-                    variant="primary" 
-                    size="sm" 
+                  <VButton
+                    variant="primary"
+                    size="sm"
                     @click="viewTransactionDetail(transaction.id)"
                   >
                     Detail

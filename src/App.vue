@@ -29,14 +29,23 @@ onMounted(() => {
 </script>
 
 <template>
-  <div >
+  <div class="bg-gradient-to-br from-white-200 to-white-300">
     <!-- Tampilkan Sidebar jika tidak di halaman auth -->
     <VSidebar v-if="!hideSidebar" />
 
     <!-- Konten utama -->
     <div :class="hideSidebar ? 'w-full min-h-screen' : 'ml-64 p-4 min-h-screen'">
       <VToast ref="toastRef" />
-      <router-view />
+      <router-view/>
     </div>
   </div>
 </template>
+
+<style scoped>
+/* Add some delicate texture to the background */
+.bg-gradient-to-br {
+  background-image: radial-gradient(circle at center, rgba(201, 162, 103, 0.03) 0%, rgba(201, 162, 103, 0) 70%),
+  linear-gradient(to bottom right, var(--color-white-200), var(--color-white-300));
+  background-size: 20px 20px, 100% 100%;
+}
+</style>

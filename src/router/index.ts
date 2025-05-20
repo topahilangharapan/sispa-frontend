@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
 import DesignSystemView from '../views/DesignSystemView.vue'
 import ItemCategoryView from '../views/purchasing/ItemCategoryView.vue'
 import VendorView from '../views/purchasing/VendorView.vue'
@@ -38,14 +37,12 @@ import MessageResponse from '../components/MessageResponse.vue'
 import AddTransactionView from '../views/finance/transaction/AddTransactionView.vue'
 import TransactionDetailView from '../views/finance/TransactionDetailView.vue'
 import AccountView from '../views/finance/AccountView.vue'
-
+import CashFlowChart from '../components/CashFlowChart.vue'
 
 const routes = [
   {
-    path: '/',
-    name: 'Home',
-    component: HomeView,
-    beforeEnter: roleGuard
+    path: '/:pathMatch(.*)*',
+    redirect: '/dashboard',
   },
   {
     path: '/auth/register',
@@ -305,6 +302,12 @@ const routes = [
     path: '/finance/account/:id',
     name: 'AccountView',
     component: AccountView,
+    beforeEnter: roleGuard
+  },
+  {
+    path: '/component/cash-flow/chart',
+    name: 'Cash Flow Chart Component',
+    component: CashFlowChart,
     beforeEnter: roleGuard
   },
 ]

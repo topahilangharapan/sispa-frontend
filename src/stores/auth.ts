@@ -46,6 +46,7 @@ export const useAuthStore = defineStore('auth', {
             window.$toast('success', "Login successful");
             return true; // Login berhasil
           } else {
+            this.error = data.message
             window.$toast('error', "Gagal Login: " + data.message);
             return false; // Login gagal
           }
