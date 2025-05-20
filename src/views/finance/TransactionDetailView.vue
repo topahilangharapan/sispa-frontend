@@ -8,6 +8,7 @@ import { useRoute } from 'vue-router';
 import router from '../../router'
 import ConfirmationDialog from '../../components/ConfirmationDialog.vue'
 import { useTransactionStore } from '../../stores/transaction.ts'
+import type { IdTransactionInterface } from '../../interfaces/transaction.interface.ts'
 
 const title = ref({ 'Finance': '/finance' });
 const submodules = ref({
@@ -15,13 +16,34 @@ const submodules = ref({
   "Cashflow": "/finance/cash-flow",
 });
 
+function formatToRupiah(amount: number | undefined): string {
+  if (typeof amount !== 'number') return '-'
+  return 'Rp' + amount.toLocaleString('id-ID') + ',-'
+}
+
 const transactionStore = useTransactionStore()
 const authStore = useAuthStore()
-const route = useRoute();
-
+const route = useRoute()
+const transactionId = route.query.id as string
 const showDialog = ref(false);
 
 const isLoaded = ref(false);
+
+function formatDateTimeToIndo(isoDate: string | undefined): string {
+  if (!isoDate) return '-';
+
+  const date = new Date(isoDate);
+
+  return new Intl.DateTimeFormat('id-ID', {
+    day: '2-digit',
+    month: 'long',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    timeZone: 'Asia/Jakarta',
+    timeZoneName: 'short'
+  }).format(date);
+}
 
 onMounted(async () => {
   const savedAuth = localStorage.getItem('auth');
@@ -30,9 +52,8 @@ onMounted(async () => {
   }
 
   const token = authStore.token ?? '';
-  await transactionStore.getTransactionById(token, id)
-
-  isLoaded.value = true;
+  const payload: IdTransactionInterface = { id: transactionId };
+  await transactionStore.getTransactionById(token, payload);
 });
 
 </script>
@@ -45,23 +66,27 @@ onMounted(async () => {
 
   <div v-else-if="transactionStore.currentTransaction" class="p-8 min-h-screen flex flex-col items-center">
     <div class="w-full max-w-3xl mb-12 mt-16">
-      <div class="bg-white p-6 rounded-2xl shadow-lg">
+      <div class="bg-white p-6 rounded-2xl shadow-lg relative">
+
+        <!-- Judul -->
         <div class="flex items-center justify-between mb-2">
           <h2 class="heading-2">Detail Transaksi</h2>
-<!--          <div class="flex space-x-2">-->
-<!--            <VButton @click="() => (showDialog = true)" size="sm" variant="delete">-->
-<!--              Hapus-->
-<!--            </VButton>-->
-
-<!--            <ConfirmationDialog-->
-<!--              :visible="showDialog"-->
-<!--              title="Hapus Vendor"-->
-<!--              message="Apakah Anda yakin ingin menghapus vendor?"-->
-<!--              @confirm="deleteVendor"-->
-<!--              @cancel="() => (showDialog = false)"-->
-<!--            />-->
-<!--          </div>-->
         </div>
+
+        <div class="mb-4">
+          <span
+            v-if="typeof transactionStore.currentTransaction.amount === 'number'"
+            class="inline-block px-3 py-1 rounded-full text-semibold"
+            :class="{
+              'bg-pink-100 text-red-600': transactionStore.currentTransaction.amount < 0,
+              'bg-green-100 text-green-700': transactionStore.currentTransaction.amount >= 0
+            }"
+          >
+            {{ transactionStore.currentTransaction.amount < 0 ? 'Pengeluaran' : 'Pemasukan' }}
+          </span>
+        </div>
+
+
         <hr class="border-gray-300 border-t-2 mb-4" />
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -72,34 +97,43 @@ onMounted(async () => {
             </div>
             <div>
               <p class="large-text-bold">Nominal</p>
-              <p class="large-text-normal">{{  transactionStore.currentTransaction.amount }}</p>
+              <p class="large-text-normal">{{ formatToRupiah(transactionStore.currentTransaction.amount) }}</p>
             </div>
             <div>
-              <p class="large-text-bold">Deskripsi</p>
-              <p class="large-text-normal">{{ transactionStore.currentTransaction.description }}</p>
+              <p class="large-text-bold">Kategori</p>
+              <p class="large-text-normal">{{ transactionStore.currentTransaction.category.name }}</p>
             </div>
           </div>
           <div class="space-y-4">
             <div>
               <p class="large-text-bold">Nomor Rekening</p>
+              <p class="large-text-normal">{{ transactionStore.currentTransaction.account.no }}</p>
+            </div>
+            <div>
+              <p class="large-text-bold">Nama Pemilik Rekening</p>
               <p class="large-text-normal">{{ transactionStore.currentTransaction.account.name }}</p>
             </div>
             <div>
-              <p class="large-text-bold">Kategori</p>
-              <p class="large-text-normal">{{ transactionStore.currentTransaction.category }}</p>
+              <p class="large-text-bold">Bank</p>
+              <p class="large-text-normal">{{ transactionStore.currentTransaction.account.bank }}</p>
             </div>
           </div>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-          <div>
-            <p class="large-text-bold">Created By</p>
-            <p class="large-text-normal">{{ transactionStore.currentTransaction.createdBy }}</p>
-          </div>
-          <div>
-            <p class="large-text-bold">Created At</p>
-            <p class="large-text-normal">{{ new Date(transactionStore.currentTransaction.createdAt).toLocaleDateString() }}</p>
+
+        <div class="mt-6">
+          <p class="large-text-bold">Deskripsi</p>
+          <p class="large-text-normal">{{ transactionStore.currentTransaction.description }}</p>
+        </div>
+
+        <div class="flex justify-center mt-6">
+          <div class="text-center">
+            <p class="text-normal text-gray-400">
+              Dibuat oleh {{ transactionStore.currentTransaction.createdBy }} pada {{ formatDateTimeToIndo(transactionStore.currentTransaction.createdAt) }}
+            </p>
           </div>
         </div>
+
+        <!-- Tombol Kembali -->
         <div class="flex justify-center mt-8">
           <VButton
             @click="router.push('/finance/cash-flow')"
@@ -111,6 +145,7 @@ onMounted(async () => {
             Kembali
           </VButton>
         </div>
+
       </div>
     </div>
   </div>

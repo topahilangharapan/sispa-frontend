@@ -289,7 +289,7 @@ const routes = [
     beforeEnter: roleGuard
   },
   {
-    path: '/finance/transaction/:id',
+    path: '/finance/cash-flow/transaction',
     name: 'TransactionDetail',
     component: TransactionDetailView,
     beforeEnter: roleGuard

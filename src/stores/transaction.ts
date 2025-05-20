@@ -1,5 +1,12 @@
 import {defineStore} from "pinia";
 
+import { useAuthStore } from './auth.ts'
+import router from '../router'
+import type {
+  BalancePerBankInterface,
+  IdTransactionInterface,
+  TransactionInterface
+} from '../interfaces/transaction.interface.ts'
 import type { BalancePerBankInterface, TransactionInterface } from '../interfaces/transaction.interface.ts'
 import type { CommonResponseInterface } from '../interfaces/common.interface.ts'
 import type {
@@ -78,16 +85,18 @@ export const useTransactionStore = defineStore ('transaction', {
       }
     },
 
-    async getTransactionById(token: String, id: String) {
+    async getTransactionById(token: String, body: IdTransactionInterface): Promise<TransactionInterface> {
       this.loading = true
       this.error = null
 
       try {
-        const response = await fetch(apiUrl + `/transaction/detail`, {
+        const response = await fetch(`${apiUrl}/transaction/detail`, {
+          method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`
           },
+          body: JSON.stringify(body)
         })
 
         const data: CommonResponseInterface<TransactionInterface> = await response.json()
@@ -98,6 +107,7 @@ export const useTransactionStore = defineStore ('transaction', {
         this.loading = false
       }
     },
+
     async fetchBalances(token: string): Promise<boolean> {
       this.loading = true;
       this.error = null;

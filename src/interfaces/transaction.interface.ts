@@ -1,3 +1,5 @@
+import type { AccountInterface } from './account.interface.ts'
+
 export interface BalancePerBankInterface {
     bankName: string;
     totalBalance: number;
@@ -33,10 +35,14 @@ export interface TransactionInterface {
   updatedAt: Date,
   createdBy: string,
   updatedBy: string,
-  account: string,
+  account: AccountInterface[],
   category: string,
   isAdmin: boolean;
   isInterest: boolean;
+}
+
+export interface IdTransactionInterface {
+  id: string;
 }
 
 export interface CashFlowChartInterface {
