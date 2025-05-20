@@ -5,6 +5,9 @@ import VLoading from '../components/VLoading.vue'
 import BalancePieChart from '../components/BalancePieChart.vue'
 import { useAuthStore } from '../stores/auth.ts'
 import { useTransactionStore } from '../stores/transaction.ts'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
 const title = ref({ 'Cash Flow': '/finance/cash-flow' })
 const submodules = ref({ "Cash Flow": "/finance/cash-flow" })
@@ -30,8 +33,30 @@ function generateColors(count: number) {
   return colors
 }
 
-const balances = computed(() => balanceStore.balances || [])
+// Bank logos mapping
+const bankLogos = {
+  'MANDIRI': '/src/assets/logos/mandiri.png',
+  'BCA': '/src/assets/logos/bca-logo.png',
+  'BNI': '/src/assets/logos/bni-logo.png',
+  'BRI': '/src/assets/logos/bri-logo.png',
+}
+
+// Sample data for demonstration
+const sampleBalances = ref([
+  { bankName: 'Mandiri', totalBalance: 15000000 },
+  { bankName: 'BCA', totalBalance: 8750000 },
+  { bankName: 'BNI', totalBalance: 5200000 },
+])
+
+const balances = computed(() => balanceStore.balances || sampleBalances.value)
 const colors = computed(() => generateColors(balances.value.length))
+
+function navigateToAccount(accountId: number) {
+  router.push(`/finance/account/${accountId}`)
+}
+function getBankLogo(bankName: string): string {
+  return bankLogos[bankName as keyof typeof bankLogos] || '/src/assets/logos/default-bank-logo.png'
+}
 
 onMounted(() => {
   const authStore = useAuthStore()
@@ -48,20 +73,33 @@ onMounted(() => {
 
   <div class="content-container">
     <h2>Balance Per Bank</h2>
-    <div class="chart-wrapper">
-      <div class="left-chart">
-        <BalancePieChart />
+    <div class="dashboard-layout">
+      <div class="chart-wrapper">
+        <div class="chart-container">
+          <BalancePieChart :data="balances" :colors="colors" />
+        </div>
       </div>
-      <div class="right-content">
-        <ul>
-          <li v-for="(item, index) in balances" :key="index">
-            <span class="color-box" :style="{ backgroundColor: colors[index] }"></span>
-            {{ item.bankName }} : {{ formatRupiah(item.totalBalance) }}
-          </li>
-          <li v-if="balances.length === 0" style="color: #999;">
-            No balance data available.
-          </li>
-        </ul>
+
+      <div class="banks-container">
+        <div
+          class="bank-card"
+          v-for="(item, index) in balances"
+          :key="index"
+          @click="navigateToAccount(item.accountId)"
+        >
+          <div class="bank-logo">
+            <img :src="getBankLogo(item.bankName)" />
+          </div>
+          <div class="bank-info">
+            <div class="bank-name">
+              {{ item.bankName }} - {{ item.accountNumber}}
+            </div>
+            <div class="bank-balance">{{ formatRupiah(item.totalBalance) }}</div>
+          </div>
+        </div>
+        <div v-if="balances.length === 0" class="empty-state">
+          No balance data available.
+        </div>
       </div>
     </div>
   </div>
@@ -80,52 +118,97 @@ h2 {
   margin-bottom: 1.5rem;
 }
 
+.dashboard-layout {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+}
+
 .chart-wrapper {
   background-color: white;
   border-radius: 0.375rem;
   box-shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
   padding: 1.5rem;
-
-  display: flex;
-  gap: 2rem;
-  max-width: 800px;
-  width: 40%;
+  width: 320px;
 }
 
-.left-chart {
-  flex: 0 0 250px;
+.chart-title {
+  text-align: center;
+  font-weight: 500;
+  color: #666;
+  margin-bottom: 1rem;
+}
+
+.chart-container {
   height: 250px;
+  width: 250px;
+  margin: 0 auto;
 }
 
-.right-content {
-  flex: 1;
-  color: #333;
-  font-size: 1rem;
-
+.banks-container {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: flex-start;
-  padding-left: 0;
+  gap: 0.5rem;
+  flex: 1;
+  padding-top: 0.5rem;
 }
 
-.right-content ul {
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
-}
-
-.right-content li {
-  margin-bottom: 0.6rem;
+.bank-card {
   display: flex;
   align-items: center;
+  padding: 1rem;
+  border-radius: 0.375rem;
+  background-color: #f9f9f9;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  border-left: 4px solid transparent;
+  width: 10cm;
 }
 
-.color-box {
-  display: inline-block;
-  width: 16px;
-  height: 16px;
-  margin-right: 0.75rem;
-  border-radius: 3px;
+.bank-card:hover {
+  transform: translateX(4px);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+
+.bank-logo {
+  width: 70px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 1rem;
+}
+
+.bank-logo {
+  width: 80px;         /* Adjust size as needed */
+  height: 60px;        /* Adjust size as needed */
+  object-fit: cover;   /* Zooms/crops the image to fill the box */
+  border-radius: 12px; /* Optional: rounded corners */
+}
+
+.bank-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.bank-name {
+  font-size: 1.125rem;
+  font-weight: 500;
+  color: #333;
+}
+
+.bank-balance {
+  font-size: 1rem;
+  color: #666;
+}
+
+
+.empty-state {
+  text-align: center;
+  color: #666;
+  padding: 2rem 0;
 }
 </style>
