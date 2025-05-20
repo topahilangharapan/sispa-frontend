@@ -41,6 +41,10 @@ import CashFlowChart from '../components/CashFlowChart.vue'
 
 const routes = [
   {
+    path: '/:pathMatch(.*)*',
+    redirect: '/dashboard',
+  },
+  {
     path: '/auth/register',
     name: 'Register',
     component: RegisterView,
