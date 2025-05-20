@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, computed, watch } from 'vue'
 import VueApexCharts from 'vue3-apexcharts';
 import { useAuthStore } from '../stores/auth';
 import { useTransactionStore } from '../stores/transaction';
@@ -251,18 +251,18 @@ const loadCashFlowData = async () => {
   }
 };
 
-const getCurrentBalance = () => {
-  if (filteredData.value.length === 0) return 'Rp0';
-
-  // For cumulative view, show the final balance
-  const total = filteredData.value.reduce((sum, item) => sum + item.amount, 0);
-
-  return new Intl.NumberFormat('id-ID', {
-    style: 'currency',
-    currency: 'IDR',
-    minimumFractionDigits: 0,
-  }).format(total);
-};
+// const getCurrentBalance = () => {
+//   if (filteredData.value.length === 0) return 'Rp0';
+//
+//   // For cumulative view, show the final balance
+//   const total = filteredData.value.reduce((sum, item) => sum + item.amount, 0);
+//
+//   return new Intl.NumberFormat('id-ID', {
+//     style: 'currency',
+//     currency: 'IDR',
+//     minimumFractionDigits: 0,
+//   }).format(total);
+// };
 
 const getTimePeriod = () => {
   if (filteredData.value.length === 0) return 'N/A';

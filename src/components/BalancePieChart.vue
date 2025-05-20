@@ -76,10 +76,10 @@ const chartOptions = {
   maintainAspectRatio: false,
   plugins: {
     legend: {
-      position: 'bottom',
+      position: 'bottom' as const,
       labels: {
-        boxWidth: 10, 
-        padding: 10, 
+        boxWidth: 10,
+        padding: 10,
         font: {
           size: 11
         }
@@ -98,7 +98,7 @@ const chartOptions = {
     },
     tooltip: {
       titleFont: {
-        size: 12 
+        size: 12
       },
       bodyFont: {
         size: 11
@@ -160,8 +160,8 @@ onMounted(async () => {
 <style scoped>
 .chart-container {
   position: relative;
-  width: 250px;  
-  height: 250px; 
+  width: 250px;
+  height: 250px;
   margin: 0 auto;
 }
 .chart-wrapper {
