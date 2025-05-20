@@ -73,7 +73,7 @@ onMounted(async () => {
           </div>
           <div class="ml-auto text-left">
             <p class="text-2xl">{{ formatToRupiah(accountStore.currentAccount?.balance) }}</p>
-            <p class="small-text-normal text-gray-400" >Terakhir diperbarui: {{ formatDateTimeToIndo(accountStore.currentAccount?.updatedAt) }}</p>
+            <p class="small-text-normal text-gray-400" >Terakhir diperbarui: {{ formatDateTimeToIndo(accountStore.currentAccount?.lastUpdated) }}</p>
           </div>
           <div>
             <td class="px-4 py-2 text-center">
