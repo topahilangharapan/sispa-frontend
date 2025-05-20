@@ -6,5 +6,5 @@ export interface AccountInterface {
   balance: number;
   adminFee: number;
   interestRate: number;
-  updatedAt: Date;
+  lastUpdated: Date;
 }
