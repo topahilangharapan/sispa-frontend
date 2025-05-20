@@ -1,7 +1,5 @@
 import {defineStore} from "pinia";
 
-import { useAuthStore } from './auth.ts'
-import router from '../router'
 import type {
   BalancePerBankInterface,
   IdTransactionInterface,
@@ -100,8 +98,10 @@ export const useTransactionStore = defineStore ('transaction', {
 
         const data: CommonResponseInterface<TransactionInterface> = await response.json()
         this.currentTransaction = data.data
+        return data.data
       } catch (err) {
         this.error = `Failed to fetch transaction ${err}`
+        throw err
       } finally {
         this.loading = false
       }
