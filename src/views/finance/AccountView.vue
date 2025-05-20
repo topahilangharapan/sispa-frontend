@@ -8,9 +8,9 @@ import { useAuthStore } from '../../stores/auth.js'
 import { useTransactionStore } from '../../stores/transaction.js'
 import { useRoute } from 'vue-router'
 import { Banknote } from 'lucide-vue-next'
-import router from '../../router'
 import { DataTable } from 'simple-datatables'
 import router from '../../router'
+import CashFlowChart from '../../components/CashFlowChart.vue'
 
 const title = ref({ 'Cash Flow': '/finance/cash-flow' });
 const submodules = ref({ "Cash Flow": "/finance/cash-flow" });
@@ -122,7 +122,10 @@ onMounted(async () => {
   await accountStore.getAccountById(token, accountId);
 
   if (!transactionStore.categories || transactionStore.categories.length === 0) {
-    transactionStore.categories = mockCategories.value;
+    transactionStore.categories = mockCategories.value.map(cat => ({
+      id: Number(cat.id),
+      name: cat.name
+    }));
   }
 
   await loadTransactions();
@@ -201,7 +204,7 @@ function viewTransactionDetail(transactionId: string) {
 
         <!-- Chart -->
         <div class="bg-white rounded-xl shadow p-4">
-          <canvas id="lineChart" class="w-full h-40"></canvas>
+          <CashFlowChart :accountNo="accountStore.currentAccount?.no" ></CashFlowChart>
         </div>
 
         <!-- Table -->
