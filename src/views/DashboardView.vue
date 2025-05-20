@@ -214,7 +214,7 @@ onMounted(() => {
                 'bg-red-175': group.title === 'Keuangan',
                 'bg-brown-100': group.title === 'Marketing',
                 'bg-red-200': group.title === 'Purchasing',
-                'bg-brown-200': group.title === 'Administrasi'
+                'bg-brown-200': group.title === 'Manajemen'
               }"></div>
 
               <div class="p-6 flex items-start gap-5">
@@ -224,7 +224,7 @@ onMounted(() => {
                     'bg-red-175 bg-opacity-10 text-red-175': group.title === 'Keuangan',
                     'bg-brown-100 bg-opacity-10 text-brown-100': group.title === 'Marketing',
                     'bg-red-200 bg-opacity-10 text-red-200': group.title === 'Purchasing',
-                    'bg-brown-200 bg-opacity-10 text-brown-200': group.title === 'Administrasi'
+                    'bg-brown-200 bg-opacity-10 text-brown-200': group.title === 'Manajemen'
                   }">
                   <!-- Fix #2: Update how the icons are rendered -->
                   <component :is="nav.icon" class="h-6 w-6 text-white" />
