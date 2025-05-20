@@ -38,3 +38,7 @@ export interface TransactionInterface {
   isAdmin: boolean;
   isInterest: boolean;
 }
+
+export interface IdTransactionInterface {
+  id: string;
+}

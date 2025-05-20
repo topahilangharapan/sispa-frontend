@@ -46,8 +46,6 @@ export const useAccountStore = defineStore ('account', {
           },
         })
 
-        console.log(response)
-
         const data: CommonResponseInterface<AccountInterface> = await response.json()
         this.currentAccount = data.data
       } catch (err) {
