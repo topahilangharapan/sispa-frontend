@@ -8,6 +8,7 @@ import { useRoute } from 'vue-router';
 import router from '../../router'
 import ConfirmationDialog from '../../components/ConfirmationDialog.vue'
 import { useTransactionStore } from '../../stores/transaction.ts'
+import type { IdTransactionInterface } from '../../interfaces/transaction.interface.ts'
 
 const title = ref({ 'Finance': '/finance' });
 const submodules = ref({
@@ -15,13 +16,34 @@ const submodules = ref({
   "Cashflow": "/finance/cash-flow",
 });
 
+function formatToRupiah(amount: number | undefined): string {
+  if (typeof amount !== 'number') return '-'
+  return 'Rp' + amount.toLocaleString('id-ID') + ',-'
+}
+
 const transactionStore = useTransactionStore()
 const authStore = useAuthStore()
-const route = useRoute();
-
+const route = useRoute()
+const transactionId = route.query.id as string
 const showDialog = ref(false);
 
 const isLoaded = ref(false);
+
+function formatDateTimeToIndo(isoDate: string | undefined): string {
+  if (!isoDate) return '-';
+
+  const date = new Date(isoDate);
+
+  return new Intl.DateTimeFormat('id-ID', {
+    day: '2-digit',
+    month: 'long',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    timeZone: 'Asia/Jakarta',
+    timeZoneName: 'short'
+  }).format(date);
+}
 
 onMounted(async () => {
   const savedAuth = localStorage.getItem('auth');
@@ -30,9 +52,8 @@ onMounted(async () => {
   }
 
   const token = authStore.token ?? '';
-  await transactionStore.getTransactionById(token, id)
-
-  isLoaded.value = true;
+  const payload: IdTransactionInterface = { id: transactionId };
+  await transactionStore.getTransactionById(token, payload);
 });
 
 </script>
@@ -72,7 +93,7 @@ onMounted(async () => {
             </div>
             <div>
               <p class="large-text-bold">Nominal</p>
-              <p class="large-text-normal">{{  transactionStore.currentTransaction.amount }}</p>
+              <p class="large-text-normal">{{ formatToRupiah(transactionStore.currentTransaction.amount) }}</p>
             </div>
             <div>
               <p class="large-text-bold">Deskripsi</p>
@@ -82,22 +103,26 @@ onMounted(async () => {
           <div class="space-y-4">
             <div>
               <p class="large-text-bold">Nomor Rekening</p>
+              <p class="large-text-normal">{{ transactionStore.currentTransaction.account.no }}</p>
+            </div>
+            <div>
+              <p class="large-text-bold">Nama Pemilik Rekening</p>
               <p class="large-text-normal">{{ transactionStore.currentTransaction.account.name }}</p>
             </div>
             <div>
               <p class="large-text-bold">Kategori</p>
-              <p class="large-text-normal">{{ transactionStore.currentTransaction.category }}</p>
+              <p class="large-text-normal">{{ transactionStore.currentTransaction.category.name }}</p>
             </div>
           </div>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
           <div>
-            <p class="large-text-bold">Created By</p>
+            <p class="large-text-bold">Dibuat Oleh</p>
             <p class="large-text-normal">{{ transactionStore.currentTransaction.createdBy }}</p>
           </div>
           <div>
-            <p class="large-text-bold">Created At</p>
-            <p class="large-text-normal">{{ new Date(transactionStore.currentTransaction.createdAt).toLocaleDateString() }}</p>
+            <p class="large-text-bold">Waktu Dibuat</p>
+            <p class="large-text-normal">{{ formatDateTimeToIndo(transactionStore.currentTransaction.createdAt) }}</p>
           </div>
         </div>
         <div class="flex justify-center mt-8">
