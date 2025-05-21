@@ -1,4 +1,5 @@
 <script setup lang="ts">
+//Create Final Report
 import { useAuthStore } from '../../../stores/auth.ts'
 import { useRouter } from 'vue-router'
 import { useFinalReportStore } from '../../../stores/finalReport.ts'

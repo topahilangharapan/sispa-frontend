@@ -299,7 +299,7 @@ const routes = [
     beforeEnter: roleGuard
   },
   {
-    path: '/finance/account/:id',
+    path: '/finance/cash-flow/account/:id',
     name: 'AccountView',
     component: AccountView,
     beforeEnter: roleGuard

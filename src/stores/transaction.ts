@@ -98,6 +98,7 @@ export const useTransactionStore = defineStore ('transaction', {
 
         const data: CommonResponseInterface<TransactionInterface> = await response.json()
         this.currentTransaction = data.data
+        console.log(data.data)
         return data.data
       } catch (err) {
         this.error = `Failed to fetch transaction ${err}`
