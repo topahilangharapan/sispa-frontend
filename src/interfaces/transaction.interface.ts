@@ -58,4 +58,5 @@ export interface CashFlowChartInterface {
 
 export interface CashFlowChartRequestInterface {
   accountNo: string;
+  type: string;
 }

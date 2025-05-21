@@ -50,7 +50,7 @@ const updateTimeAndGreeting = () => {
 const roleBasedNavigation = ref([
     {
       title: 'Manajemen Arus Kas',
-      path: '/finance/cashflow',
+      path: '/finance/cash-flow',
       icon: Landmark,
       description: 'Lihat dan kelola arus kas perusahaan',
       roles: ['finance', 'admin', 'manajemen'],
