@@ -106,9 +106,25 @@ onMounted(() => {
       <div class="lg:col-span-5">
         <div class="chart-card bg-white-200 rounded-xl shadow-md p-6">
           <h3 class="text-lg font-medium text-black-grey-700 mb-4">Balance Distribution</h3>
-          <div class="chart-container flex justify-center">
-            <BalancePieChart :data="balances" :colors="colors" />
+          <div class="chart-container flex flex-row justify-center items-start gap-6">
+            <div class="pie w-[280px] h-[280px] flex-shrink-0">
+              <BalancePieChart :data="balances" :colors="colors" />
+            </div>
+            <div class="legend space-y-2 pt-4">
+              <div
+                v-for="(item, index) in balances"
+                :key="index"
+                class="flex items-center gap-2"
+              >
+                <div
+                  class="w-4 h-4 rounded-full"
+                  :style="{ backgroundColor: colors[index] }"
+                ></div>
+                <span class="text-sm text-black-grey-700">{{ item.bankName }}</span>
+              </div>
+            </div>
           </div>
+
         </div>
       </div>
 

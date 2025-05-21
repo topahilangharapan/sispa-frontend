@@ -12,19 +12,7 @@ const hasError = ref(false)
 const hasData = ref(false)
 
 // test doang
-const testData = {
-  labels: ['Bank A', 'Bank B', 'Bank C'],
-  datasets: [
-    {
-      label: 'Current Balance',
-      data: [150000, 75000, 50000],
-      backgroundColor: [
-        '#FF6384', '#36A2EB', '#FFCE56'
-      ],
-      hoverOffset: 10,
-    }
-  ]
-}
+
 
 function generateColors(count: number) {
   const baseColors = [
@@ -55,27 +43,27 @@ const chartData = computed(() => {
       ]
     }
   }
-  if (import.meta.env.DEV) {
-    return testData
-  }
+  // Jika tidak ada data, tampilkan satu slice putih saja
   return {
-    labels: [],
+    labels: ['No Data'],
     datasets: [
       {
         label: 'Current Balance',
-        data: [],
-        backgroundColor: [],
+        data: [1], // agar chart muncul
+        backgroundColor: ['#808080'], // putih
         hoverOffset: 8,
       }
     ]
   }
 })
 
+
 const chartOptions = {
   responsive: true,
   maintainAspectRatio: false,
   plugins: {
     legend: {
+      display: false,
       position: 'bottom' as const,
       labels: {
         boxWidth: 10,
@@ -111,6 +99,7 @@ const chartOptions = {
   },
   cutout: '0%'
 }
+
 
 onMounted(async () => {
   try {
