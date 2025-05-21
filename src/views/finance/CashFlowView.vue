@@ -79,6 +79,7 @@ function exportToExcel() {
     Kategori: t.category,
     Deskripsi: t.description,
     Jumlah: t.amount,
+    Rekening: t.account,
   }))
 
   const worksheet = XLSX.utils.json_to_sheet(data)
