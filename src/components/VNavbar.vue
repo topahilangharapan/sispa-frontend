@@ -15,7 +15,7 @@ import {
   Landmark,
   Package,
   Layers,
-  Grid, ReceiptText
+  ReceiptText
 } from 'lucide-vue-next'
 
 const showDropdown = ref(false);
