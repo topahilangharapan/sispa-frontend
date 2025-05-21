@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router';
-import { FileText, ArrowLeft, Building, Wallet, CreditCard, Tag, Clock, User } from 'lucide-vue-next'
+import { FileText, ArrowLeft, Building, CreditCard, Tag, Text, User } from 'lucide-vue-next'
 import type { IdTransactionInterface } from '../../../interfaces/transaction.interface.ts'
 import { useTransactionStore } from '../../../stores/transaction.ts'
 import { useAuthStore } from '../../../stores/auth.ts'
@@ -66,26 +66,29 @@ function goBack() {
 
     <div v-else-if="transactionStore.currentTransaction" class="bg-white w-11/12 max-w-4xl rounded-lg shadow-md mt-8 p-8">
       <!-- Header -->
-      <div class="flex items-center gap-3 mb-4">
-        <FileText class="text-[#8F2527]" :size="24" />
-        <h2 class="text-2xl font-bold text-[#3E1011]">Detail Transaksi</h2>
+      <div>
+        <div class="flex items-center justify-between mb-4">
+          <!-- Judul dan Icon -->
+          <div class="flex items-center gap-3">
+            <FileText class="text-[#8F2527]" :size="24" />
+            <h2 class="text-2xl font-bold text-[#3E1011]">Detail Transaksi</h2>
+          </div>
+
+          <!-- Badge (Label) -->
+          <span
+            v-if="typeof transactionStore.currentTransaction.amount === 'number'"
+            class="px-3 py-1 rounded-full text-sm font-semibold"
+            :class="{
+        'bg-[#FFE0E0] text-[#8F2527]': transactionStore.currentTransaction.amount >= 0,
+        'bg-[#E0FFEA] text-[#0B8A3F]': transactionStore.currentTransaction.amount < 0
+      }"
+          >
+      {{ transactionStore.currentTransaction.amount > 0 ? 'PENGELUARAN' : 'PEMASUKAN' }}
+    </span>
+        </div>
       </div>
 
       <div class="h-px bg-gradient-to-r from-[#C9A267] via-[#8F2527] to-[#C9A267] opacity-60 my-4"></div>
-
-      <!-- Transaction Type Badge -->
-      <div class="mb-6">
-        <span
-          v-if="typeof transactionStore.currentTransaction.amount === 'number'"
-          class="px-3 py-1 rounded-full text-sm font-semibold"
-          :class="{
-            'bg-[#FFE0E0] text-[#8F2527]': transactionStore.currentTransaction.amount < 0,
-            'bg-[#E0FFEA] text-[#0B8A3F]': transactionStore.currentTransaction.amount >= 0
-          }"
-        >
-          {{ transactionStore.currentTransaction.amount < 0 ? 'Pengeluaran' : 'Pemasukan' }}
-        </span>
-      </div>
 
       <!-- Main Transaction Info -->
       <div class="bg-[#F7F8FA] rounded-lg p-5 border border-[#D8D8D8] mb-6">
@@ -115,7 +118,7 @@ function goBack() {
         <div class="mt-4">
           <span class="text-xs font-semibold uppercase tracking-wider text-[#595959] block mb-1">Deskripsi</span>
           <div class="bg-white p-3 rounded-md border border-[#D8D8D8] text-[#2E2E2E] flex items-center">
-            <Tag :size="14" class="mr-2 text-[#9C804F]" />
+            <Text :size="14" class="mr-2 text-[#9C804F]" />
             {{ transactionStore.currentTransaction.description }}
           </div>
         </div>
