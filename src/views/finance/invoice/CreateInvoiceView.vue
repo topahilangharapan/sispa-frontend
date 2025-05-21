@@ -23,7 +23,8 @@ import {
   FileText,
   Save,
   AlertTriangle,
-  Info
+  Info,
+  ReceiptText
 } from 'lucide-vue-next'
 
 const authStore = useAuthStore();
@@ -141,7 +142,7 @@ const formatCurrency = (value: number) => {
   <VNavbar />
   <VLoading v-if="purchaseOrderStore.loading || invoiceStore.loading" class="flex" />
 
-  <div v-else class="bg-[#F7F8FA] min-h-screen pt-16 pb-8 px-4">
+  <div v-else class="min-h-screen pt-16 pb-8 px-4">
     <div class="max-w-screen-lg mx-auto">
       <!-- Page Header -->
       <div class="mb-6">
@@ -155,7 +156,7 @@ const formatCurrency = (value: number) => {
         <div class="flex flex-col md:flex-row md:items-center justify-between mt-4">
           <div>
             <h1 class="text-2xl md:text-3xl font-bold text-[#2E2E2E] flex items-center">
-              <FileInvoice class="h-7 w-7 mr-2 text-[#B32225]" />
+              <ReceiptText :size="50" class="mr-4 text-[#B32225]" />
               Tambah Invoice Baru
             </h1>
             <div class="flex items-center text-[#595959] mt-2">

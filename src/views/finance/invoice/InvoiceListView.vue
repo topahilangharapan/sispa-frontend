@@ -220,10 +220,10 @@ function updateDisplayedData() {
 <template>
   <VNavbar />
   <div class="p-4 md:p-8 min-h-screen">
-    <div class="max-w-screen-xl mx-auto mt-16">
+    <div class="max-w-full mx-auto mt-14">
       <!-- Page Header -->
       <div class="mb-6">
-        <h1 class="text-2xl md:text-3xl font-bold text-[#2E2E2E]">Manajemen Invoice</h1>
+        <h1 class="text-2xl md:text-3xl font-bold text-[#2E2E2E]">Invoice Dashboard</h1>
         <div class="flex items-center text-[#595959] mt-1">
           <span>Finance</span>
           <ChevronsRight class="h-4 w-4 mx-1" />
