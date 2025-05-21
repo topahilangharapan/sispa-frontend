@@ -87,7 +87,6 @@ onMounted(() => {
       <div class="flex items-center justify-between mb-6">
         <div>
           <h1 class="text-2xl font-bold text-black-grey-800">Cash Flow Dashboard</h1>
-          <p class="text-black-grey-600">Ringkasan dari Cash Flow milik perusahaan</p>
         </div>
         <VButton @click="openAddTransactionModal"
                 class="add-transaction-btn flex items-center gap-2 px-4 py-2 rounded-lg transition-all">

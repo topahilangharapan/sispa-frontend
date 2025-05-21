@@ -100,7 +100,7 @@ const deleteInvoice = async () => {
 
         <div class="flex items-center gap-2 mt-2">
           <Landmark :size="18" class="text-[#8F2527]" />
-          <h3 class="text-lg font-semibold text-[#2E2E2E]">Payment Information</h3>
+          <h3 class="text-lg font-semibold text-[#2E2E2E]">Informasi Pembayaran</h3>
         </div>
 
         <div class="bg-[#F7F8FA] rounded-lg p-5 border border-[#D8D8D8] flex flex-col gap-4">
@@ -138,7 +138,7 @@ const deleteInvoice = async () => {
 
         <div class="flex items-center gap-2 mt-2">
           <PenTool :size="18" class="text-[#8F2527]" />
-          <h3 class="text-lg font-semibold text-[#2E2E2E]">Signature Details</h3>
+          <h3 class="text-lg font-semibold text-[#2E2E2E]">Informas Tanda Tangan</h3>
         </div>
 
         <div class="bg-[#F7F8FA] rounded-lg p-5 border border-[#D8D8D8] flex flex-col gap-4">
