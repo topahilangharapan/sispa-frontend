@@ -142,6 +142,7 @@ export const useTransactionStore = defineStore ('transaction', {
       this.error = null;
       this.loading = false;
     },
+
     async fetchExpensesByAccount(token: string, accountId: string): Promise<void> {
       this.loading = true;
       this.error = null;
