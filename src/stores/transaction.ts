@@ -159,7 +159,79 @@ export const useTransactionStore = defineStore ('transaction', {
         if (response.ok) {
           this.transactions = data.data || [];
         } else {
-          this.error = data.message || "Failed to fetch expenses.";
+          this.error = data.message || "Failed to fetch list of expenses by account ID.";
+        }
+      } catch (err) {
+        this.error = (err as Error).message;
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    async fetchIncomesByAccount(token: string, accountId: string): Promise<void> {
+      this.loading = true;
+      this.error = null;
+      try {
+        const response = await fetch(`${apiUrl}/transaction/income/by-account/${accountId}`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+        const data: CommonResponseInterface<TransactionInterface[]> = await response.json();
+        if (response.ok) {
+          this.transactions = data.data || [];
+        } else {
+          this.error = data.message || "Failed to fetch list of incomes by account ID.";
+        }
+      } catch (err) {
+        this.error = (err as Error).message;
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    async fetchAllExpenses(token: string): Promise<void> {
+      this.loading = true;
+      this.error = null;
+      try {
+        const response = await fetch(`${apiUrl}/transaction/expense/all`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+        const data: CommonResponseInterface<TransactionInterface[]> = await response.json();
+        if (response.ok) {
+          this.transactions = data.data || [];
+        } else {
+          this.error = data.message || "Failed to fetch list of expenses.";
+        }
+      } catch (err) {
+        this.error = (err as Error).message;
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    async fetchAllIncomes(token: string): Promise<void> {
+      this.loading = true;
+      this.error = null;
+      try {
+        const response = await fetch(`${apiUrl}/transaction/income/all`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+        const data: CommonResponseInterface<TransactionInterface[]> = await response.json();
+        if (response.ok) {
+          this.transactions = data.data || [];
+        } else {
+          this.error = data.message || "Failed to fetch list of incomes.";
         }
       } catch (err) {
         this.error = (err as Error).message;
