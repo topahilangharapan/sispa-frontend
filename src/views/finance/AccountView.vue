@@ -205,6 +205,7 @@ function viewTransactionDetail(transactionId: string) {
         <!-- Chart -->
         <div class="bg-white rounded-xl shadow p-4">
           <CashFlowChart
+            v-if="!accountStore.loading"
             :key="activeTab"
             :accountNo="accountStore.currentAccount?.no"
             :type="activeTab"

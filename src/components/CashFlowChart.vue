@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import VueApexCharts from 'vue3-apexcharts';
 import { useAuthStore } from '../stores/auth';
 import { useTransactionStore } from '../stores/transaction';
@@ -208,8 +208,8 @@ const chartOptions = computed(() => {
 });
 
 const accountNoRequestDTO = ref<CashFlowChartRequestInterface>({
-  accountNo: props.accountNo,
-  type: props.type,
+  accountNo: props.accountNo ?? '',
+  type: props.type ?? '',
 });
 
 onMounted(async () => {
@@ -233,10 +233,8 @@ const loadCashFlowData = async () => {
     }
 
     await transactionStore.getCashFlowChart(authStore.token, accountNoRequestDTO.value);
-    cashFlowData.value = await transactionStore.cashFlowCharts;
+    cashFlowData.value = transactionStore.cashFlowCharts;
 
-    console.log("test"+cashFlowData.value)
-    console.log(cashFlowData.value === null)
     if (cashFlowData.value === null) {
       error.value = 'No cash flow data available.';
     } else if (cashFlowData.value.length === 0) {
@@ -319,7 +317,7 @@ const getTimePeriod = () => {
       </div>
 
       <div class="w-full">
-        <div v-if="authStore.loading || transactionStore.loading" class="absolute inset-0 flex items-center justify-center bg-white bg-opacity-80">
+        <div v-if="authStore.loading || transactionStore.loading" class="inset-0 flex items-center justify-center bg-white bg-opacity-80 mt-8 mb-4">
           <p>Loading cash flow data...</p>
         </div>
         <div v-else-if="error" class="inset-0 flex items-center justify-center bg-white bg-opacity-80 mt-8 mb-4">
