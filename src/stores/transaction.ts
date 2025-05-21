@@ -166,7 +166,7 @@ export const useTransactionStore = defineStore ('transaction', {
       }
     },
 
-    async getCashFlowChart(token: string, body: CashFlowChartRequestInterface) {
+    async getCashFlowChart(token: string, body: CashFlowChartRequestInterface):Promise<CashFlowChartInterface> {
       this.loading = true
       this.error = null
 
