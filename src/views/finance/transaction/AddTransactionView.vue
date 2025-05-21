@@ -187,9 +187,6 @@ const submitForm = async () => {
       if (selectedAccountId.value !== undefined) {
         sessionStorage.setItem('selectedAccountId', String(selectedAccountId.value));
       }
-
-      // Reload halaman
-      window.location.reload();
     }
   }
 };

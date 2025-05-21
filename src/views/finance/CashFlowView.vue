@@ -6,6 +6,8 @@ import BalancePieChart from '../../components/BalancePieChart.vue'
 import { useAuthStore } from '../../stores/auth.ts'
 import { useTransactionStore } from '../../stores/transaction.ts'
 import { useRouter } from 'vue-router'
+import { Plus, ArrowUpRight } from 'lucide-vue-next'
+import VButton from '../../components/VButton.vue'
 
 const router = useRouter()
 
@@ -21,10 +23,10 @@ function formatRupiah(value: number) {
 
 function generateColors(count: number) {
   const baseColors = [
-    '#C9A267',
-    '#3E1011',
-    '#8F2527',
-    '#725D39',
+    '#C9A267', // brown-100
+    '#3E1011', // red-400
+    '#8F2527', // red-200
+    '#9C804F', // brown-200
   ]
   const colors = []
   for (let i = 0; i < count; i++) {
@@ -43,19 +45,27 @@ const bankLogos = {
 
 // Sample data for demonstration
 const sampleBalances = ref([
-  { bankName: 'Mandiri', totalBalance: 15000000 },
-  { bankName: 'BCA', totalBalance: 8750000 },
-  { bankName: 'BNI', totalBalance: 5200000 },
+  { bankName: 'Mandiri', totalBalance: 15000000, accountNumber: '1234567890' },
+  { bankName: 'BCA', totalBalance: 8750000, accountNumber: '0987654321' },
+  { bankName: 'BNI', totalBalance: 5200000, accountNumber: '1122334455' },
 ])
 
 const balances = computed(() => balanceStore.balances || sampleBalances.value)
 const colors = computed(() => generateColors(balances.value.length))
+const totalBalance = computed(() => {
+  return balances.value.reduce((sum, account) => sum + account.totalBalance, 0)
+})
 
 function navigateToAccount(accountId: number) {
   router.push(`/finance/account/${accountId}`)
 }
+
 function getBankLogo(bankName: string): string {
   return bankLogos[bankName as keyof typeof bankLogos] || '/src/assets/logos/default-bank-logo.png'
+}
+
+function openAddTransactionModal() {
+  router.push('/finance/cash-flow/transaction/add')
 }
 
 onMounted(() => {
@@ -72,34 +82,81 @@ onMounted(() => {
   <VLoading :isDone="isLoaded" />
 
   <div class="content-container">
-    <h2>Balance Per Bank</h2>
-    <div class="dashboard-layout">
-      <div class="chart-wrapper">
-        <div class="chart-container">
-          <BalancePieChart :data="balances" :colors="colors" />
+    <!-- Top section with total balance and add transaction button -->
+    <div class="header-section">
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <h1 class="text-2xl font-bold text-black-grey-800">Cash Flow Dashboard</h1>
+          <p class="text-black-grey-600">Ringkasan dari financial perusahaan</p>
+        </div>
+        <VButton @click="openAddTransactionModal"
+                class="add-transaction-btn flex items-center gap-2 px-4 py-2 rounded-lg transition-all">
+          <Plus :size="18" />
+          <span>Add Transaction</span>
+        </VButton>
+      </div>
+      <div class="total-balance-card bg-red-400 text-white-100 p-6 rounded-xl shadow-md mb-6">
+        <p class="text-white-400 mb-2">Total Balance</p>
+        <h2 class="text-3xl font-bold">{{ formatRupiah(totalBalance) }}</h2>
+      </div>
+    </div>
+
+    <!-- First row: two columns layout -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-8">
+      <!-- Left column: Pie chart -->
+      <div class="lg:col-span-5">
+        <div class="chart-card bg-white-200 rounded-xl shadow-md p-6">
+          <h3 class="text-lg font-medium text-black-grey-700 mb-4">Balance Distribution</h3>
+          <div class="chart-container flex justify-center">
+            <BalancePieChart :data="balances" :colors="colors" />
+          </div>
         </div>
       </div>
 
-      <div class="banks-container">
-        <div
-          class="bank-card"
-          v-for="(item, index) in balances"
-          :key="index"
-          @click="navigateToAccount(item.accountId)"
-        >
-          <div class="bank-logo">
-            <img :src="getBankLogo(item.bankName)" />
-          </div>
-          <div class="bank-info">
-            <div class="bank-name">
-              {{ item.bankName }} - {{ item.accountNumber}}
+      <!-- Right column: Bank cards -->
+      <div class="lg:col-span-7">
+        <div class="bank-accounts-card bg-white-200 rounded-xl shadow-md p-6">
+          <h3 class="text-lg font-medium text-black-grey-700 mb-4">Bank Accounts</h3>
+          <div class="bank-cards-container space-y-3">
+            <div
+              v-for="(item, index) in balances"
+              :key="index"
+              class="bank-card bg-white-300 rounded-lg p-4 flex items-center justify-between hover:shadow-md transition-all duration-200 cursor-pointer border-l-4"
+              :style="{ borderLeftColor: colors[index] }"
+              @click="navigateToAccount(item.accountId)"
+            >
+              <div class="flex items-center gap-4">
+                <div class="bank-logo bg-white-200 p-2 rounded-lg">
+                  <img :src="getBankLogo(item.bankName)" class="h-8 w-auto object-contain" />
+                </div>
+                <div>
+                  <p class="font-medium text-black-grey-800">{{ item.bankName }}</p>
+                  <p class="text-sm text-black-grey-600">{{ item.accountNumber }}</p>
+                </div>
+              </div>
+              <div class="flex items-center gap-3">
+                <div class="text-right">
+                  <p class="font-bold text-black-grey-800">{{ formatRupiah(item.totalBalance) }}</p>
+                </div>
+                <ArrowUpRight :size="16" class="text-brown-200" />
+              </div>
             </div>
-            <div class="bank-balance">{{ formatRupiah(item.totalBalance) }}</div>
+            <div v-if="balances.length === 0" class="empty-state text-center py-8 text-black-grey-600">
+              No bank accounts available.
+            </div>
           </div>
         </div>
-        <div v-if="balances.length === 0" class="empty-state">
-          No balance data available.
-        </div>
+      </div>
+    </div>
+
+    <!-- Second row: Data table section -->
+    <div class="transactions-section bg-white-200 rounded-xl shadow-md p-6 mb-6">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg font-medium text-black-grey-700">Transactions</h3>
+      </div>
+      <div class="bg-white-300 rounded-lg p-4 text-center text-black-grey-600">
+        <!-- Data table will be inserted here -->
+        <p class="py-10">Transaction data table component will be placed here</p>
       </div>
     </div>
   </div>
@@ -107,108 +164,47 @@ onMounted(() => {
 
 <style scoped>
 .content-container {
-  margin-left: 1rem;
-  margin-top: 4rem;
-  padding: 1.5rem;
-}
-
-h2 {
-  font-size: 1.5rem;
-  font-weight: bold;
-  margin-bottom: 1.5rem;
-}
-
-.dashboard-layout {
-  display: flex;
-  gap: 2rem;
-  align-items: flex-start;
-}
-
-.chart-wrapper {
-  background-color: white;
-  border-radius: 0.375rem;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
-  padding: 1.5rem;
-  width: 320px;
-}
-
-.chart-title {
-  text-align: center;
-  font-weight: 500;
-  color: #666;
-  margin-bottom: 1rem;
+  min-height: 100vh;
+  padding: 2rem;
+  padding-top: 5rem;
 }
 
 .chart-container {
-  height: 250px;
-  width: 250px;
+  height: 280px;
+  width: 280px;
   margin: 0 auto;
 }
 
-.banks-container {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  flex: 1;
-  padding-top: 0.5rem;
+.header-section {
+  animation: fadeIn 0.5s ease-out;
 }
 
-.bank-card {
-  display: flex;
-  align-items: center;
-  padding: 1rem;
-  border-radius: 0.375rem;
-  background-color: #f9f9f9;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-  border-left: 4px solid transparent;
-  width: 10cm;
+.chart-card, .bank-accounts-card, .transactions-section {
+  animation: slideUp 0.5s ease-out;
 }
 
-.bank-card:hover {
-  transform: translateX(4px);
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
-
-.bank-logo {
-  width: 70px;
-  height: 30px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-right: 1rem;
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
 }
 
-.bank-logo {
-  width: 80px;         /* Adjust size as needed */
-  height: 60px;        /* Adjust size as needed */
-  object-fit: cover;   /* Zooms/crops the image to fill the box */
-  border-radius: 12px; /* Optional: rounded corners */
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .chart-container {
+    height: 220px;
+    width: 220px;
+  }
 }
 
-.bank-info {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
-.bank-name {
-  font-size: 1.125rem;
-  font-weight: 500;
-  color: #333;
-}
-
-.bank-balance {
-  font-size: 1rem;
-  color: #666;
-}
-
-
-.empty-state {
-  text-align: center;
-  color: #666;
-  padding: 2rem 0;
+@media (max-width: 640px) {
+  .content-container {
+    padding: 1rem;
+    padding-top: 4.5rem;
+  }
 }
 </style>
