@@ -22,7 +22,7 @@ const containerClass = computed(() => {
     <div v-if="show" :class="['z-50', containerClass]">
       <div class="flex flex-col items-center">
         <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#8F2527]"></div>
-        <span class="ml-3 text-[#595959]">Memuat data...</span>
+        <span class="mt-4 ml-3 text-[#595959]">Loading...</span>
       </div>
     </div>
   </transition>

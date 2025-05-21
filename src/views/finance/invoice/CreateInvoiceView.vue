@@ -159,13 +159,6 @@ const formatCurrency = (value: number) => {
               <ReceiptText :size="50" class="mr-4 text-[#B32225]" />
               Tambah Invoice Baru
             </h1>
-            <div class="flex items-center text-[#595959] mt-2">
-              <span>Finance</span>
-              <ChevronsRight class="h-4 w-4 mx-1" />
-              <span>Invoice</span>
-              <ChevronsRight class="h-4 w-4 mx-1" />
-              <span class="text-[#8F2527] font-medium">Tambah Invoice</span>
-            </div>
           </div>
         </div>
       </div>
