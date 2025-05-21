@@ -7,7 +7,6 @@ import { useAccountStore } from '../../stores/account.js'
 import { useAuthStore } from '../../stores/auth.js'
 import { useTransactionStore } from '../../stores/transaction.js'
 import { useRoute } from 'vue-router'
-import { Banknote } from 'lucide-vue-next'
 import { DataTable } from 'simple-datatables'
 import CashFlowChart from '../../components/CashFlowChart.vue'
 
@@ -148,27 +147,21 @@ onMounted(async () => {
       <div class="p-6 space-y-6">
 
         <!-- Card akun -->
-        <div class="bg-white rounded-xl shadow p-6 flex items-center space-x-6">
-          <!-- Icon -->
-          <div class="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center">
-            <Banknote class="w-7 h-7 text-blue-600" />
-          </div>
-
+        <div class="bg-gradient-to-b from-red-300 to-red-400 text-white p-4 rounded-xl shadow-md mb-4 flex justify-between items-center">
           <!-- Info akun -->
           <div>
-            <p class="text-sm text-gray-500">{{ accountStore.currentAccount?.bank }}</p>
-            <p class="text-lg font-semibold text-gray-800">{{ accountStore.currentAccount?.no }}</p>
-            <p class="text-base text-gray-600">a.n. {{ accountStore.currentAccount?.name }}</p>
+            <p class="text-sm text-brown-100">{{ accountStore.currentAccount?.bank }}</p>
+            <p class="font-semibold text-white">{{ accountStore.currentAccount?.no }}</p>
+            <p class="text-xs text-white">a.n. {{ accountStore.currentAccount?.name }}</p>
           </div>
 
           <!-- Balance dan waktu update -->
-          <div class="ml-auto text-right">
-            <p class="text-2xl font-bold text-brown-400">
+          <div class="text-right">
+            <p class="text-xl font-bold text-white">
               {{ formatToRupiah(accountStore.currentAccount?.accountBalance) }}
             </p>
-            <p class="text-sm text-gray-400">
-              Terakhir diperbarui:
-              {{ formatDateTimeToIndo(accountStore.currentAccount?.lastUpdated) }}
+            <p class="text-xs text-brown-100">
+              Terakhir diperbarui: {{ formatDateTimeToIndo(accountStore.currentAccount?.lastUpdated) }}
             </p>
           </div>
         </div>
