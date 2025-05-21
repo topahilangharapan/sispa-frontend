@@ -120,7 +120,7 @@ watch([selectedAccountId, transaction.value.amount, transactionType, transaction
   if (transaction.value.isInterest) {
     const interestRate = selectedAccount.value?.interestRate ?? 0;
     const balance = selectedAccount.value?.balance ?? 0;
-    transaction.value.amount = interestRate * balance;
+    transaction.value.amount = interestRate/12 * balance;
     transaction.value.category = "BUNGA BANK";
   }
 
@@ -153,7 +153,7 @@ watch(() => transaction.value.isAdmin, () => {
 
 watch(() => transaction.value.isInterest, () => {
   if (selectedAccount.value) {
-    transaction.value.amount = selectedAccount.value?.interestRate * selectedAccount.value?.balance;
+    transaction.value.amount = selectedAccount.value?.interestRate/12 * selectedAccount.value?.balance;
     transaction.value.category = "BUNGA BANK"
   }
 });
@@ -187,9 +187,6 @@ const submitForm = async () => {
       if (selectedAccountId.value !== undefined) {
         sessionStorage.setItem('selectedAccountId', String(selectedAccountId.value));
       }
-
-      // Reload halaman
-      window.location.reload();
     }
   }
 };

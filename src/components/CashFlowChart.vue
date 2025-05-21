@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import VueApexCharts from 'vue3-apexcharts';
 import { useAuthStore } from '../stores/auth';
 import { useTransactionStore } from '../stores/transaction';
@@ -11,6 +11,7 @@ import VDropdown from './VDropdown.vue'
 
 const props = defineProps({
   accountNo: { type: String },
+  type: { type: String },
 });
 
 const authStore = useAuthStore();
@@ -22,7 +23,7 @@ const error = ref<string | null>(null);
 
 const viewType = ref<'month' | 'quarter' | 'year'>('month');
 const selectedBank = ref('all');
-const showCumulative = ref('cumulative'); // Default to cumulative view
+const showCumulative = ref('period'); // Default to cumulative view
 
 // const bankOptions = computed(() => {
 //   const bankSet = new Set<string>();
@@ -41,8 +42,8 @@ const timeOptions = [
 ];
 
 const displayOptions = [
-  { label: 'Cumulative', value: 'cumulative' },
   { label: 'Period', value: 'period' },
+  { label: 'Cumulative', value: 'cumulative' },
 ];
 
 const filteredData = computed(() => {
@@ -99,8 +100,8 @@ const series = computed(() => {
   return [
     {
       name: showCumulative.value === 'cumulative'
-        ? (selectedBank.value === 'all' ? 'Cumulative Saldo' : `Cumulative Saldo ${selectedBank.value}`)
-        : (selectedBank.value === 'all' ? 'Period Saldo' : `Period Saldo ${selectedBank.value}`),
+        ? (props.type === 'income' ? 'Cumulative Income' : `Cumulative Expense`)
+        : (props.type === 'income' ? 'Period Income' : `Period Expense`),
       data: values,
     },
   ];
@@ -108,7 +109,7 @@ const series = computed(() => {
 
 const chartOptions = computed(() => {
   const categories = Array.from(groupedData.value.keys());
-  const chartType = showCumulative.value ? 'Cumulative' : 'Period';
+  const chartType = showCumulative.value === 'cumulative' ? 'Cumulative' : 'Period';
 
   return {
     chart: {
@@ -160,7 +161,7 @@ const chartOptions = computed(() => {
       align: 'center',
     },
     subtitle: {
-      text: selectedBank.value === 'all' ? 'All Banks' : `Bank: ${selectedBank.value}`,
+      text: props.type === 'income' ? 'Income' : `Expense`,
       align: 'center',
     },
     xaxis: {
@@ -207,26 +208,20 @@ const chartOptions = computed(() => {
 });
 
 const accountNoRequestDTO = ref<CashFlowChartRequestInterface>({
-  accountNo: "",
+  accountNo: props.accountNo ?? '',
+  type: props.type ?? '',
 });
 
-watch(
-  () => props.accountNo,
-  async (newVal) => {
-    if (!newVal) return;
+onMounted(async () => {
+  const savedAuth = localStorage.getItem('auth');
 
-    accountNoRequestDTO.value.accountNo = newVal;
+  if (savedAuth) {
+    authStore.$patch(JSON.parse(savedAuth));
+  }
 
-    const savedAuth = localStorage.getItem('auth');
+  await loadCashFlowData();
+});
 
-    if (savedAuth) {
-      authStore.$patch(JSON.parse(savedAuth));
-    }
-
-    await loadCashFlowData();
-  },
-  { immediate: true }
-);
 
 const loadCashFlowData = async () => {
   isLoading.value = true;
@@ -240,7 +235,9 @@ const loadCashFlowData = async () => {
     await transactionStore.getCashFlowChart(authStore.token, accountNoRequestDTO.value);
     cashFlowData.value = transactionStore.cashFlowCharts;
 
-    if (cashFlowData.value.length === 0) {
+    if (cashFlowData.value === null) {
+      error.value = 'No cash flow data available.';
+    } else if (cashFlowData.value.length === 0) {
       error.value = 'No cash flow data available.';
     }
   } catch (err) {
@@ -279,7 +276,6 @@ const getTimePeriod = () => {
 </script>
 <template>
   <div class="px-4">
-    <div class="">
       <div class="flex flex-wrap gap-6 mb-6">
         <div class="flex flex-col gap-2 min-w-[150px]">
           <VDropdown
@@ -320,11 +316,11 @@ const getTimePeriod = () => {
         </div>
       </div>
 
-      <div class="relative w-full">
-        <div v-if="authStore.loading || transactionStore.loading" class="absolute inset-0 flex items-center justify-center bg-white bg-opacity-80">
+      <div class="w-full">
+        <div v-if="authStore.loading || transactionStore.loading" class="inset-0 flex items-center justify-center bg-white bg-opacity-80 mt-8 mb-4">
           <p>Loading cash flow data...</p>
         </div>
-        <div v-else-if="error" class="absolute inset-0 flex items-center justify-center bg-white bg-opacity-80">
+        <div v-else-if="error" class="inset-0 flex items-center justify-center bg-white bg-opacity-80 mt-8 mb-4">
           <p class="text-red-600">{{ error }}</p>
         </div>
         <VueApexCharts
@@ -335,6 +331,5 @@ const getTimePeriod = () => {
           :series="series"
         ></VueApexCharts>
       </div>
-    </div>
   </div>
 </template>
