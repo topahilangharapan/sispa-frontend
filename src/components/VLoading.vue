@@ -21,8 +21,8 @@ const containerClass = computed(() => {
   <transition name="fade">
     <div v-if="show" :class="['z-50', containerClass]">
       <div class="flex flex-col items-center">
-        <div class="w-10 h-10 border-4 border-t-transparent border-black-grey-600 rounded-full animate-spin"></div>
-        <p class="mt-2 text-black-grey-600 text-normal">Loading...</p>
+        <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#8F2527]"></div>
+        <span class="ml-3 text-[#595959]">Memuat data...</span>
       </div>
     </div>
   </transition>
