@@ -11,7 +11,6 @@ const title = ref({ 'Purchasing': '/purchasing' });
 const submodules = ref({
   "Vendor": "/purchasing/vendor",
   "Item": "/purchasing/item",
-  "Kategori": "/purchasing/category"
 });
 const itemStore = useItemStore()
 const authStore = useAuthStore()
@@ -146,6 +145,14 @@ onMounted(async () => {
                   class="px-4 py-2.5 rounded-lg flex items-center justify-center transition duration-200 shadow-sm">
                   <Plus class="h-4 w-4 mr-2" />
                   Tambah Item
+                </VButton>
+              </RouterLink>
+              <RouterLink :to="`/purchasing/item/category`">
+                <VButton
+                  variant="primary"
+                  class="px-4 py-2.5 rounded-lg flex items-center justify-center transition duration-200 shadow-sm">
+                  <Plus class="h-4 w-4 mr-2" />
+                  Tambah Kategori
                 </VButton>
               </RouterLink>
             </div>

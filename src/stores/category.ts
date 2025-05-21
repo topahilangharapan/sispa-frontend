@@ -13,7 +13,7 @@ export const useCategoryStore = defineStore('category', {
   }),
   actions: {
 
-    async create(body: CategoryInterface, token: string): Promise<boolean> {
+    async create(body: CategoryRequestResponseInterface, token: string): Promise<boolean> {
       this.loading = true;
       this.error = null;
 
