@@ -174,13 +174,13 @@ onMounted(() => {
 <template>
   <VNavbar :title="title" />
 
-  <section class="pt-16 min-h-screen">
+  <section class="p-4 md:p-8 min-h-screen">
     <!-- Dashboard Header -->
-    <div class="mb-8 pt-8 px-8">
-      <div class="max-w-7xl mx-auto">
+    <div class="mt-14">
+      <div class="max-w-full mx-auto">
         <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
           <div>
-            <h1 class="text-3xl font-bold text-red-400 mb-2">{{ userGreeting }}, {{ authStore.user?.name }}</h1>
+            <h1 class="text-3xl font-bold">{{ userGreeting }}, {{ authStore.user?.name }}</h1>
             <p class="text-black-grey-600">Selamat datang di Dashboard SiSPA. Apa yang ingin Anda kelola hari ini?</p>
           </div>
           <div class="mt-4 md:mt-0 bg-white-100 rounded-xl px-4 py-2 shadow-sm border border-brown-100 border-opacity-20">
@@ -193,8 +193,8 @@ onMounted(() => {
     </div>
 
     <!-- Dashboard Content -->
-    <div class="px-8 pb-12">
-      <div class="max-w-7xl mx-auto">
+    <div>
+      <div class="max-w-full mx-auto">
         <!-- Navigation Categories -->
         <div v-for="(group, groupIndex) in groupedNavigation" :key="groupIndex" class="mb-10">
           <div class="mb-4 flex items-center">

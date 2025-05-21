@@ -48,4 +48,5 @@ onMounted(() => {
   linear-gradient(to bottom right, var(--color-white-200), var(--color-white-300));
   background-size: 20px 20px, 100% 100%;
 }
+
 </style>
