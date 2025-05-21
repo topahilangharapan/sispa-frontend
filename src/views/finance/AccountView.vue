@@ -9,7 +9,6 @@ import { useTransactionStore } from '../../stores/transaction.js'
 import { useRoute } from 'vue-router'
 import { Banknote } from 'lucide-vue-next'
 import { DataTable } from 'simple-datatables'
-import router from '../../router'
 import CashFlowChart from '../../components/CashFlowChart.vue'
 
 const title = ref({ 'Cash Flow': '/finance/cash-flow' });
@@ -135,9 +134,6 @@ onMounted(async () => {
   initDataTable();
 });
 
-function viewTransactionDetail(transactionId: string) {
-  router.push(`/finance/transaction/${transactionId}`);
-}
 </script>
 
 <template>
@@ -218,7 +214,7 @@ function viewTransactionDetail(transactionId: string) {
           <table id="transaction-table" class="w-full">
             <thead>
               <tr class="bg-gray-100">
-                <th class="px-4 py-2 text-left">No.</th>
+                <th class="px-4 py-2 text-left">No</th>
                 <th class="px-4 py-2 text-left">Tanggal</th>
                 <th class="px-4 py-2 text-left">Kategori</th>
                 <th class="px-4 py-2 text-left">Deskripsi</th>
@@ -241,13 +237,11 @@ function viewTransactionDetail(transactionId: string) {
                   {{ formatRupiah(transaction.amount) }}
                 </td>
                 <td class="px-4 py-3 text-center">
-                  <VButton
-                    variant="primary"
-                    size="sm"
-                    @click="viewTransactionDetail(transaction.id)"
-                  >
-                    Detail
-                  </VButton>
+                  <div class="ml-4">
+                    <RouterLink :to="`/finance/cash-flow/transaction?id=${transaction.id}`">
+                      <VButton variant="primary" size="sm">Detail</VButton>
+                    </RouterLink>
+                  </div>
                 </td>
               </tr>
               <tr v-if="transactionStore.transactions.length === 0">
