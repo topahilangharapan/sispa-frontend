@@ -4,6 +4,7 @@ export interface AccountInterface {
   no: string;
   bank: string;
   balance: number;
+  accountBalance: number;
   adminFee: number;
   interestRate: number;
   lastUpdated: Date;
