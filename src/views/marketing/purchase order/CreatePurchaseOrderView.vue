@@ -301,10 +301,10 @@ const formatCurrency = (value: number) => {
       <div class="flex items-center space-x-3">
         <button @click="goBack"
                 class="flex items-center justify-center w-8 h-8 rounded-full hover:bg-black-grey-175 transition-colors">
-          <ArrowLeft :size="18" class="text-black-grey-700" />
+          <ArrowLeft :size="28" class="text-black-grey-700" />
         </button>
         <h1 class="text-2xl font-bold text-black-grey-800 flex items-center">
-          <FilePlus :size="24" class="mr-2 text-red-200" />
+          <FilePlus :size="48" class="mr-4 text-red-200" />
           Buat Purchase Order Baru
         </h1>
       </div>
@@ -316,7 +316,7 @@ const formatCurrency = (value: number) => {
       <div class="bg-white-200 rounded-xl shadow-sm border border-black-grey-175">
         <div class="p-4 bg-white-300 border-b border-black-grey-175 flex justify-between items-center">
           <h2 class="text-lg font-semibold text-black-grey-800 flex items-center">
-            <Building :size="18" class="mr-2 text-red-200" />
+            <Building :size="26" class="mr-4 text-red-200" />
             Pilih Penerima Purchase Order
           </h2>
           <button @click="toggleRecipientCard" class="text-black-grey-400 hover:text-black-grey-600">
@@ -428,7 +428,7 @@ const formatCurrency = (value: number) => {
           <div class="bg-white-200 rounded-xl shadow-sm border border-black-grey-175 h-full">
             <div class="p-4 bg-white-300 border-b border-black-grey-175">
               <h2 class="text-lg font-semibold text-black-grey-800 flex items-center">
-                <FileText :size="18" class="mr-2 text-red-200" />
+                <FileText :size="26" class="mr-4 text-red-200" />
                 Detail Purchase Order
               </h2>
             </div>
@@ -542,7 +542,7 @@ const formatCurrency = (value: number) => {
           <div class="bg-white-200 rounded-xl shadow-sm border border-black-grey-175 h-full">
             <div class="p-4 bg-white-300 border-b border-black-grey-175 flex justify-between items-center">
               <h2 class="text-lg font-semibold text-black-grey-800 flex items-center">
-                <ShoppingCart :size="18" class="mr-2 text-red-200" />
+                <ShoppingCart :size="26" class="mr-4 text-red-200" />
                 Daftar Item
               </h2>
               <VButton
