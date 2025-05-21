@@ -5,12 +5,14 @@ import VLoading from '../../components/VLoading.vue'
 import BalancePieChart from '../../components/BalancePieChart.vue'
 import { useAuthStore } from '../../stores/auth.ts'
 import { useTransactionStore } from '../../stores/transaction.ts'
+import { useAccountStore } from '../../stores/account.ts'
 import { useRouter } from 'vue-router'
 import { Plus, ArrowUpRight, Download } from 'lucide-vue-next'
 import VButton from '../../components/VButton.vue'
 import * as XLSX from 'xlsx'
 
 const authStore = useAuthStore()
+const accountStore = useAccountStore()
 const balanceStore = useTransactionStore()
 const currentPage = ref(1)
 const perPage = ref(10)
@@ -79,6 +81,7 @@ function exportToExcel() {
     Kategori: t.category,
     Deskripsi: t.description,
     Jumlah: t.amount,
+    Rekening: t.account,
   }))
 
   const worksheet = XLSX.utils.json_to_sheet(data)
