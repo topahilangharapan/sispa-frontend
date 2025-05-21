@@ -38,6 +38,7 @@ import AddTransactionView from '../views/finance/transaction/AddTransactionView.
 import TransactionDetailView from '../views/finance/transaction/TransactionDetailView.vue'
 import AccountView from '../views/finance/AccountView.vue'
 import CashFlowChart from '../components/CashFlowChart.vue'
+import DetailTransactionView from '../views/finance/transaction/DetailTransactionView.vue'
 
 const routes = [
   {
@@ -295,7 +296,7 @@ const routes = [
   {
     path: '/finance/cash-flow/transaction',
     name: 'TransactionDetail',
-    component: TransactionDetailView,
+    component: DetailTransactionView,
     beforeEnter: roleGuard
   },
   {

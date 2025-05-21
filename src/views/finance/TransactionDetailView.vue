@@ -71,7 +71,7 @@ onMounted(async () => {
         <div class="flex items-center justify-between mb-6">
           <div class="flex items-center space-x-3">
             <FileText class="w-6 h-6 text-brown-400" />
-            <h2 class="text-xl font-bold text-gray-800">Detail Transaksi</h2>
+            <h2 class="text-xl font-bold text-gray-800">Detail Trans</h2>
           </div>
         </div>
 
