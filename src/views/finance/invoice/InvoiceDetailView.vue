@@ -205,7 +205,7 @@ const deleteInvoice = async () => {
           </div>
           <div v-if="!invoiceStore.selectedInvoice.items?.length" class="flex flex-col items-center justify-center py-12 px-4">
             <PackageX :size="32" class="text-[#ADADAD] mb-4" />
-            <p class="text-[#838383]">No items in this invoice</p>
+            <p class="text-[#838383]">Invoice ini tidak memiliki Item</p>
           </div>
         </div>
 
