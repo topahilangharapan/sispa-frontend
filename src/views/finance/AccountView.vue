@@ -128,19 +128,20 @@ const switchTab = async (tab: string) => {
 
 function exportToExcel() {
   const isIncome = activeTab.value === 'income'
+  const bankName = accountStore.currentAccount?.bank || 'Unknown'
   const data = transactionStore.transactions.map((t, index) => ({
     No: index + 1,
     Tanggal: formatDateLong(t.createdAt),
     Kategori: t.category,
     Deskripsi: t.description,
     Jumlah: t.amount,
+    Rekening: t.account,
   }))
 
   const worksheet = XLSX.utils.json_to_sheet(data)
   const workbook = XLSX.utils.book_new()
   XLSX.utils.book_append_sheet(workbook, worksheet, isIncome ? 'Pemasukan' : 'Pengeluaran')
 
-  const bankName = accountStore.currentAccount?.bank || 'Unknown'
 
   const fileName = `Laporan Keuangan ${bankName} - Transaksi ${isIncome ? 'Pemasukan' : 'Pengeluaran'}.xlsx`
   XLSX.writeFile(workbook, fileName)
