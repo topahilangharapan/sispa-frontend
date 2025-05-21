@@ -6,7 +6,7 @@ import { useRouter } from 'vue-router'
 import VNavbar from '../../../components/VNavbar.vue'
 import VButton from '../../../components/VButton.vue'
 import ConfirmationDialog from '../../../components/ConfirmationDialog.vue'
-import { Search, FileText, Download, Trash2, Plus, ChevronsRight, FilePlus, Calendar, Tag, AlertCircle } from 'lucide-vue-next'
+import { Search, FileText, Download, Trash2, Plus, ReceiptText, FilePlus, Calendar, Tag, AlertCircle } from 'lucide-vue-next'
 import type { InvoiceInterface } from '../../../interfaces/invoice.interface.ts'
 
 const invoiceStore = useInvoiceStore()
@@ -223,11 +223,9 @@ function updateDisplayedData() {
     <div class="max-w-full mx-auto mt-14">
       <!-- Page Header -->
       <div class="mb-6">
-        <h1 class="text-2xl md:text-3xl font-bold text-[#2E2E2E]">Invoice Dashboard</h1>
-        <div class="flex items-center text-[#595959] mt-1">
-          <span>Finance</span>
-          <ChevronsRight class="h-4 w-4 mx-1" />
-          <span class="text-[#8F2527] font-medium">Invoice</span>
+        <h1 class="text-2xl md:text-3xl font-bold text-black-grey-800">Invoice Dashboard</h1>
+        <div class="flex items-center text-[#595959]">
+          Ringkasan dari Invoice milik perusahaan
         </div>
       </div>
 
@@ -238,7 +236,7 @@ function updateDisplayedData() {
           <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div class="flex items-center">
               <div class="p-2 bg-[#FEF6F6] rounded-lg mr-3">
-                <FileText class="h-5 w-5 text-[#8F2527]" />
+                <ReceiptText class="h-5 w-5 text-[#8F2527]" />
               </div>
               <h2 class="text-xl font-bold text-[#2E2E2E]">Daftar Invoice</h2>
             </div>
@@ -451,4 +449,5 @@ function updateDisplayedData() {
 
 <style scoped>
 /* No longer need to hide DataTable's pagination since we're not using it */
+
 </style>

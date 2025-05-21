@@ -87,7 +87,7 @@ onMounted(() => {
       <div class="flex items-center justify-between mb-6">
         <div>
           <h1 class="text-2xl font-bold text-black-grey-800">Cash Flow Dashboard</h1>
-          <p class="text-black-grey-600">Ringkasan dari financial perusahaan</p>
+          <p class="text-black-grey-600">Ringkasan dari Cash Flow milik perusahaan</p>
         </div>
         <VButton @click="openAddTransactionModal"
                 class="add-transaction-btn flex items-center gap-2 px-4 py-2 rounded-lg transition-all">
@@ -173,24 +173,6 @@ onMounted(() => {
   height: 280px;
   width: 280px;
   margin: 0 auto;
-}
-
-.header-section {
-  animation: fadeIn 0.5s ease-out;
-}
-
-.chart-card, .bank-accounts-card, .transactions-section {
-  animation: slideUp 0.5s ease-out;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes slideUp {
-  from { transform: translateY(20px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
 }
 
 /* Responsive adjustments */
