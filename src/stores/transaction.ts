@@ -192,5 +192,40 @@ export const useTransactionStore = defineStore ('transaction', {
         this.loading = false
       }
     },
+    async deleteTransaction(token: string, body: IdTransactionInterface): Promise<boolean> {
+      this.loading = true
+      this.error = null
+
+      try {
+        const response = await fetch(`${apiUrl}/transaction/delete`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify(body)
+        });
+
+        if (response.ok) {
+          this.transactions = this.transactions.filter(t => t.id !== body.id);
+          window.$toast('success', `Berhasil menghapus transaksi dengan ID ${body.id}`);
+          return true;
+        } else {
+          const data = await response.json();
+          window.$toast('error', `Gagal menghapus transaksi: ${data.message}`);
+          return false;
+        }
+      } catch (err) {
+        this.error = (err as Error).message;
+        window.$toast('error', `Gagal menghapus transaksi: ${this.error}`);
+        return false;
+      } finally {
+        this.loading = false;
+      }
+    }
+  
+
+
+    
   }
 })

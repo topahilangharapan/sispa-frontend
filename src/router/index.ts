@@ -39,6 +39,7 @@ import AccountView from '../views/finance/AccountView.vue'
 import CashFlowChart from '../components/CashFlowChart.vue'
 import DetailTransactionView from '../views/finance/transaction/DetailTransactionView.vue'
 
+
 const routes = [
   {
     path: '/:pathMatch(.*)*',

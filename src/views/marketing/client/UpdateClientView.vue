@@ -1,26 +1,26 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue'
 import { useClientStore } from '../../../stores/client.ts'
 import { useAuthStore } from '../../../stores/auth.ts'
-import { useRoute } from 'vue-router'
-import router from '../../../router'
+import { computed, ref, watch, onMounted } from 'vue'
+import VNavbar from '../../../components/VNavbar.vue'
+import VLoading from '../../../components/VLoading.vue'
 import VInputField from '../../../components/VInputField.vue'
 import VTextArea from '../../../components/VTextArea.vue'
 import VButton from '../../../components/VButton.vue'
-import VLoading from '../../../components/VLoading.vue'
-import VNavbar from '../../../components/VNavbar.vue'
-
-const title = ref({ 'Marketing': '/marketing' });
-const submodules = ref({
-  "Purchase Order": "/marketing/purchase-order",
-  "Klien": "/marketing/client",
-});
+import { useRouter, useRoute } from 'vue-router'
+import { ArrowLeft, FileText, Building2, Phone, Mail, MapPin, Briefcase, ClipboardList, Save } from 'lucide-vue-next'
 
 const clientStore = useClientStore()
 const authStore = useAuthStore()
+const router = useRouter()
 const route = useRoute()
-
 const clientId = ref('')
+const emailError = ref(false)
+const isDataLoaded = ref(false)
+const originalContact = ref('')
+const phoneChanged = ref(false)
+const phoneExistsError = ref(false)
+
 const formData = ref({
   name: '',
   contact: '',
@@ -30,51 +30,22 @@ const formData = ref({
   description: '',
 })
 
-const originalContact = ref('')
-const phoneChanged = ref(false)
-const phoneExistsError = ref(false)
-const emailError = ref(false);
+const hasErrors = ref<{ [key: string]: boolean }>({
+  name: false,
+  contact: true,
+  email: true,
+  address: true,
+  industry: true,
+  description: true,
+});
 
-
-
-// Update the watch for email validation with proper type handling
 watch(() => formData.value.email, (newVal) => {
-  // Ensure we're assigning a boolean value
   if (typeof newVal === 'string' && newVal.trim() !== '') {
     emailError.value = !newVal.includes('@');
   } else {
-    emailError.value = false; // No error if there's no email (will be caught by isEmpty validation)
+    emailError.value = false;
   }
 });
-
-const isDataLoaded = ref(false)
-onMounted(async () => {
-  clientId.value = route.params.id as string
-  if (!authStore.token) {
-    console.error('Token tidak tersedia');
-    return;
-  }
-  await clientStore.getClients(authStore.token)
-  await clientStore.getClientById(authStore.token, clientId.value)
-  console.log(clientId.value)
-
-  if (clientStore.currentClient) {
-    formData.value = {
-      name: clientStore.currentClient.name,
-      contact: clientStore.currentClient.contact,
-      email: clientStore.currentClient.email,
-      address: clientStore.currentClient.address,
-      industry: clientStore.currentClient.industry,
-      description: clientStore.currentClient.description,
-    }
-    originalContact.value = clientStore.currentClient.contact
-    isDataLoaded.value = true
-    console.log(formData.value);
-
-  } else {
-    console.log('Data client tidak ditemukan')
-  }
-})
 
 watch(() => formData.value.contact, async (newVal) => {
   if (isDataLoaded.value && newVal !== originalContact.value) {
@@ -91,19 +62,33 @@ watch(() => formData.value.contact, async (newVal) => {
   }
 })
 
-
-
-const hasErrors = ref<{ [key: string]: boolean }>({
-  contact: true,
-  email: true,
-  address: true,
-  industry: true,
-  description: true,
-});
+onMounted(async () => {
+  clientId.value = route.params.id as string
+  if (!authStore.token) {
+    console.error('Token tidak tersedia');
+    return;
+  }
+  await clientStore.getClients(authStore.token)
+  await clientStore.getClientById(authStore.token, clientId.value)
+  
+  if (clientStore.currentClient) {
+    formData.value = {
+      name: clientStore.currentClient.name,
+      contact: clientStore.currentClient.contact,
+      email: clientStore.currentClient.email,
+      address: clientStore.currentClient.address,
+      industry: clientStore.currentClient.industry,
+      description: clientStore.currentClient.description,
+    }
+    originalContact.value = clientStore.currentClient.contact
+    isDataLoaded.value = true
+  } else {
+    console.log('Data client tidak ditemukan')
+  }
+})
 
 const updateErrorStatus = (field: string, isError: boolean) => {
   hasErrors.value[field] = isError;
-  console.log(`Field ${field} error status:`, isError);
 };
 
 const isFormValid = computed(() => {
@@ -112,30 +97,20 @@ const isFormValid = computed(() => {
 });
 
 const submitForm = async () => {
-  console.log('Submitting form...');
   if (!isFormValid.value) {
-    console.log('Form is not valid. Aborting submit.');
-    
     if (phoneExistsError.value) {
       window.$toast('error', 'Nomor telepon sudah digunakan oleh klien lain.')
     }
-
     if (emailError.value) {
       window.$toast('error', 'Email harus mengandung karakter @!');
     }
-    
     return;
   }
-
+  
   try {
-    console.log('Form data to submit:', formData.value);
     const isSuccess = await clientStore.updateClient(formData.value, clientId.value);
-
     if (isSuccess) {
-      console.log('Update successful. Redirecting...');
       router.push(`/marketing/client/${clientId.value}`);
-    } else {
-      console.log('Update failed.');
     }
   } catch (error) {
     console.error('Error during submit:', error);
@@ -146,82 +121,155 @@ const submitForm = async () => {
 </script>
 
 <template>
-  <VNavbar :title="title" :submodules="submodules"></VNavbar>
-  <main class="w-full h-screen flex justify-center items-center">
-    <VLoading v-if="authStore.loading || clientStore.loading" class="flex mr-64"/>
+  <VNavbar class="fixed top-0 left-0 w-full z-50"></VNavbar>
 
-    <div v-else class="w-[100%] flex flex-col gap-2 divide-y-2 bg-white drop-shadow-xl p-6 rounded-xl">
-      <div class="w-full flex justify-between">
-        <h2 class="mb-2 heading-2">Update Klien</h2>
-        <hr class="border-gray-300 border-t-2 mb-4" />
+  <div class="min-h-screen pt-20 pb-12 px-4 md:px-8">
+    <!-- Loading state -->
+    <VLoading v-if="authStore.loading || clientStore.loading" class="flex"/>
+
+    <div v-else class="max-w-5xl mx-auto">
+      <div class="max-w-screen-lg mx-auto">
+        <!-- Page Header -->
+        <div class="mb-6">
+          <div class="flex items-center space-x-2">
+            <button @click="router.back()" class="flex items-center text-[#595959] hover:text-[#2E2E2E] transition duration-200">
+              <ArrowLeft class="h-4 w-4 mr-1" />
+              <span>Kembali</span>
+            </button>
+          </div>
+
+          <div class="flex flex-col md:flex-row md:items-center justify-between mt-4">
+            <div>
+              <h1 class="text-2xl md:text-3xl font-bold text-[#2E2E2E] flex items-center">
+                <FileText :size="50" class="mr-4 text-[#B32225]" />
+                Update Klien
+              </h1>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <form @submit.prevent="submitForm" class="flex flex-col gap-2 py-2">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <div class="flex flex-col">
-              <label class="mb-1 text-black-grey-700 text-semibold">Nama</label>
-              <p class="px-3 py-2 border rounded-lg bg-gray-100">{{ formData.name }}</p>
+      <!-- Form Card -->
+      <div class="bg-white rounded-xl shadow-md overflow-hidden border border-[#D8D8D8]">
+        <!-- Card Header -->
+        <div class="bg-gradient-to-r from-[#5D1D1E] to-[#8F2527] py-4 px-6">
+          <h2 class="text-[#FFFFFF] text-lg font-medium">Detail Klien</h2>
+        </div>
+
+        <!-- Form Content -->
+        <div class="p-6">
+          <form @submit.prevent="submitForm">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <!-- Name (Readonly) -->
+              <div class="relative">
+                <label class="block text-sm font-medium text-[#595959] mb-1">Nama</label>
+                <div class="px-3 py-2 border rounded-lg bg-gray-100 text-[#2E2E2E]">{{ formData.name }}</div>
+                <Building2 class="absolute right-3 top-9 text-[#9C804F] w-5 h-5" />
+              </div>
+
+              <!-- Contact -->
+              <div class="relative">
+                <VInputField
+                  v-model="formData.contact"
+                  label="Kontak"
+                  placeholder="Masukkan kontak disini"
+                  :isNumberOnly="true"
+                  :isEmpty="true"
+                  @update:hasError="updateErrorStatus('contact', $event)"
+                />
+                <Phone class="absolute right-3 top-9 text-[#9C804F] w-5 h-5" />
+                <p v-if="phoneExistsError" class="text-red-500 text-sm mt-1">
+                  Nomor telepon sudah digunakan oleh klien lain.
+                </p>
+              </div>
+
+              <!-- Email -->
+              <div class="relative">
+                <VInputField
+                  v-model="formData.email"
+                  label="Email"
+                  placeholder="Masukkan email disini"
+                  :isEmpty="true"
+                  :isEmail="true"
+                  @update:hasError="updateErrorStatus('email', $event)"
+                />
+                <Mail class="absolute right-3 top-9 text-[#9C804F] w-5 h-5" />
+              </div>
+
+              <!-- Industry -->
+              <div class="relative">
+                <VInputField
+                  v-model="formData.industry"
+                  label="Industri"
+                  placeholder="Masukkan industri disini"
+                  :isEmpty="true"
+                  @update:hasError="updateErrorStatus('industry', $event)"
+                />
+                <Briefcase class="absolute right-3 top-9 text-[#9C804F] w-5 h-5" />
+              </div>
             </div>
-            <div class="flex flex-col">
+
+            <!-- Address -->
+            <div class="mt-6 relative">
               <VInputField
-                v-model="formData.contact"
-                label="Kontak"
-                placeholder="Masukkan kontak disini"
-                :isNumberOnly="true"
+                v-model="formData.address"
+                label="Alamat"
+                placeholder="Masukkan alamat disini"
                 :isEmpty="true"
-                @update:hasError="updateErrorStatus('contact', $event)"
+                @update:hasError="updateErrorStatus('address', $event)"
               />
-              <p v-if="phoneExistsError" class="text-red-500 text-sm mt-1">
-                Nomor telepon sudah digunakan oleh klien lain.
-              </p>
+              <MapPin class="absolute right-3 top-9 text-[#9C804F] w-5 h-5" />
             </div>
-          </div>
-          <div>
-            <VInputField
-              v-model="formData.email"
-              label="Email"
-              placeholder="Enter text here"
-              :isEmpty="true"
-              :isEmail="true"
-              @update:hasError="updateErrorStatus('email', $event)"
-            />
-            <VInputField
-              v-model="formData.industry"
-              label="Industri"
-              placeholder="Masukkan industri disini"
-              :isEmpty="true"
-              @update:hasError="updateErrorStatus('industry', $event)"
-            />
-          </div>
-        </div>
 
-        <div>
-          <VInputField
-            v-model="formData.address"
-            label="Alamat"
-            placeholder="Masukkan alamat disini"
-            :isEmpty="true"
-            @update:hasError="updateErrorStatus('address', $event)"
-          />
-          <VTextArea
-            v-model="formData.description"
-            label="Deskripsi"
-            placeholder="Masukkan deskripsi disini"
-            :isEmpty="true"
-            @update:hasError="updateErrorStatus('description', $event)"
-          />
-        </div>
+            <!-- Description -->
+            <div class="mt-6 relative">
+              <VTextArea
+                v-model="formData.description"
+                label="Deskripsi"
+                placeholder="Masukkan deskripsi disini"
+                :isEmpty="true"
+                @update:hasError="updateErrorStatus('description', $event)"
+              />
+              <ClipboardList class="absolute right-3 top-9 text-[#9C804F] w-5 h-5" />
+            </div>
 
-        <div class="flex justify-center gap-2 py-2">
-          <VButton @click="router.back()" type="button" variant="delete" class="bg-slate-600 hover:bg-slate-800 text-white">
-            Kembali
-          </VButton>
-          <VButton variant="primary" @click="submitForm" :disabled="!isFormValid">
-            Update
-          </VButton>
+            <!-- Action Buttons -->
+            <div class="flex justify-end mt-8">
+              <VButton
+                variant="primary"
+                @click="submitForm"
+                :disabled="!isFormValid"
+                size="lg"
+                class="flex items-center justify-center"
+              >
+                <Save class="mr-2"/>
+                Update
+              </VButton>
+            </div>
+          </form>
         </div>
-      </form>
+      </div>
     </div>
-  </main>
+  </div>
 </template>
+
+<style scoped>
+:deep(.v-input) {
+  border-color: #D8D8D8;
+  transition: all 0.3s ease;
+}
+
+:deep(.v-input:focus-within) {
+  border-color: #9C804F;
+  box-shadow: 0 0 0 2px rgba(156, 128, 79, 0.1);
+}
+
+:deep(.v-button) {
+  transition: all 0.3s ease;
+}
+
+:deep(.v-button:disabled) {
+  background-color: #ADADAD;
+  opacity: 0.7;
+}
+</style>
