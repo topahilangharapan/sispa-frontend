@@ -13,7 +13,9 @@ import router from '../../router'
 import CashFlowChart from '../../components/CashFlowChart.vue'
 
 const title = ref({ 'Cash Flow': '/finance/cash-flow' });
-const submodules = ref({ "Cash Flow": "/finance/cash-flow" });
+const submodules = ref({
+  "Cash Flow": "/finance/cash-flow"
+});
 
 const accountStore = useAccountStore();
 const authStore = useAuthStore();
@@ -42,10 +44,11 @@ function formatRupiah(value: number) {
   return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(value);
 }
 
-
 function formatDateTimeToIndo(isoDate: Date | undefined): string {
   if (!isoDate) return '-';
+
   const date = new Date(isoDate);
+
   return new Intl.DateTimeFormat('id-ID', {
     day: '2-digit',
     month: 'long',
@@ -119,7 +122,7 @@ onMounted(async () => {
   }
 
   const token = authStore.token ?? '';
-  await accountStore.getAccountById(token, accountId);
+  await accountStore.getAccountById(token, accountId)
 
   if (!transactionStore.categories || transactionStore.categories.length === 0) {
     transactionStore.categories = mockCategories.value.map(cat => ({
@@ -136,7 +139,6 @@ function viewTransactionDetail(transactionId: string) {
   router.push(`/finance/transaction/${transactionId}`);
 }
 </script>
-
 
 <template>
   <VNavbar :title="title" :submodules="submodules"></VNavbar>
@@ -166,7 +168,7 @@ function viewTransactionDetail(transactionId: string) {
           <!-- Balance dan waktu update -->
           <div class="ml-auto text-right">
             <p class="text-2xl font-bold text-brown-400">
-              {{ formatToRupiah(accountStore.currentAccount?.balance) }}
+              {{ formatToRupiah(accountStore.currentAccount?.accountBalance) }}
             </p>
             <p class="text-sm text-gray-400">
               Terakhir diperbarui:
@@ -200,7 +202,6 @@ function viewTransactionDetail(transactionId: string) {
             Pengeluaran
           </button>
         </div>
-
 
         <!-- Chart -->
         <div class="bg-white rounded-xl shadow p-4">
@@ -260,6 +261,6 @@ function viewTransactionDetail(transactionId: string) {
       </div>
     </div>
   </section>
-</template>
 
+</template>
 
