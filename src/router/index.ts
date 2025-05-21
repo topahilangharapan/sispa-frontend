@@ -35,9 +35,9 @@ import FreelancerApplicantsView from '../views/FreelancerApplicantsView.vue'
 import FreelancerDetailView from '../views/FreelancerDetailView.vue'
 import MessageResponse from '../components/MessageResponse.vue'
 import AddTransactionView from '../views/finance/transaction/AddTransactionView.vue'
-import TransactionDetailView from '../views/finance/transaction/TransactionDetailView.vue'
 import AccountView from '../views/finance/AccountView.vue'
 import CashFlowChart from '../components/CashFlowChart.vue'
+import DetailTransactionView from '../views/finance/transaction/DetailTransactionView.vue'
 
 const routes = [
   {
@@ -295,7 +295,7 @@ const routes = [
   {
     path: '/finance/cash-flow/transaction',
     name: 'TransactionDetail',
-    component: TransactionDetailView,
+    component: DetailTransactionView,
     beforeEnter: roleGuard
   },
   {
