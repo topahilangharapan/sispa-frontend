@@ -113,7 +113,7 @@ const submitItem = async () => {
           <div class="flex flex-col md:flex-row md:items-center justify-between mt-4">
             <div>
               <h1 class="text-2xl md:text-3xl font-bold text-black-grey-700 flex items-center">
-                <Package size="40" class="mr-4 text-red-200" />
+                <Package :size="40" class="mr-4 text-red-200" />
                 Tambah Item Baru
               </h1>
             </div>
