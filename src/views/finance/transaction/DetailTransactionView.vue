@@ -79,11 +79,11 @@ function goBack() {
             v-if="typeof transactionStore.currentTransaction.amount === 'number'"
             class="px-3 py-1 rounded-full text-sm font-semibold"
             :class="{
-        'bg-[#FFE0E0] text-[#8F2527]': transactionStore.currentTransaction.amount >= 0,
-        'bg-[#E0FFEA] text-[#0B8A3F]': transactionStore.currentTransaction.amount < 0
+        'bg-[#FFE0E0] text-[#8F2527]': transactionStore.currentTransaction.amount < 0,
+        'bg-[#E0FFEA] text-[#0B8A3F]': transactionStore.currentTransaction.amount >= 0
       }"
           >
-      {{ transactionStore.currentTransaction.amount > 0 ? 'PENGELUARAN' : 'PEMASUKAN' }}
+      {{ transactionStore.currentTransaction.amount < 0 ? 'PENGELUARAN' : 'PEMASUKAN' }}
     </span>
         </div>
       </div>

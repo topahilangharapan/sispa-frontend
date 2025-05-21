@@ -227,9 +227,6 @@ function updateDisplayedData() {
       <!-- Page Header -->
       <div class="mb-6">
         <h1 class="text-2xl md:text-3xl font-bold text-black-grey-800">Purchase Order Dashboard</h1>
-        <div class="flex items-center text-[#595959]">
-          Ringkasan dari Purchase Order milik perusahaan
-        </div>
       </div>
 
       <!-- Main Content Card -->
