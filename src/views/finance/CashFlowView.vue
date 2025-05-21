@@ -57,7 +57,7 @@ const totalBalance = computed(() => {
 })
 
 function navigateToAccount(accountId: number) {
-  router.push(`/finance/account/${accountId}`)
+  router.push(`/finance/cash-flow/account/${accountId}`)
 }
 
 function getBankLogo(bankName: string): string {
