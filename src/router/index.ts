@@ -93,7 +93,7 @@ const routes = [
     beforeEnter: roleGuard
   },
   {
-    path: '/purchasing/category',
+    path: '/purchasing/item/category',
     name: 'Category View',
     component: ItemCategoryView,
     beforeEnter: roleGuard

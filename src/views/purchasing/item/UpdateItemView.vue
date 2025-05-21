@@ -50,9 +50,9 @@ const hasErrors = ref({
 watch(() => itemModel.value.title, async (newVal) => {
   if (isDataLoaded.value && newVal !== originalTitle.value) {
     titleChanged.value = true
-    
+
     if (newVal.trim() !== '') {
-      titleExistsError.value = false 
+      titleExistsError.value = false
     } else {
       titleExistsError.value = false
     }
@@ -65,24 +65,25 @@ watch(() => itemModel.value.title, async (newVal) => {
 onMounted(async () => {
   const savedAuth = localStorage.getItem('auth')
   itemId.value = route.params.id as string
-  
+
   if (savedAuth) {
     authStore.$patch(JSON.parse(savedAuth))
   }
-  
+
   if (!authStore.token) {
     console.error("Token tidak tersedia");
     return;
   }
-  
+
   await itemStore.getItemCategories(authStore.token)
+
   if (itemStore.itemCategories) {
     itemCategoriesOption.value = itemStore.itemCategories.map(category => ({
       value: String(category.name),
       label: String(category.name),
     }));
   }
-  
+
   if (itemId.value) {
     await itemStore.getItemById(authStore.token, itemId.value);
     if (itemStore.currentItem) {
@@ -93,7 +94,7 @@ onMounted(async () => {
         description: itemStore.currentItem.description,
         category: itemStore.currentItem.category
       };
-      
+
       originalTitle.value = itemStore.currentItem.title
       isDataLoaded.value = true
     }
@@ -116,13 +117,13 @@ const submitItem = async () => {
     }
     return;
   }
-  
+
   if (!itemModel.value.description.trim()) itemModel.value.description = "-";
-  
+
   if (!authStore.token) {
     throw new Error('Token is missing');
   }
-  
+
   try {
     const success = await itemStore.updateItem(itemModel.value, itemId.value, authStore.token);
     if (success) {
@@ -142,11 +143,11 @@ const submitItem = async () => {
 
 <template>
   <VNavbar :title="title" :submodules="submodules" class="fixed top-0 left-0 w-full z-50"></VNavbar>
-  
+
   <div class="min-h-screen pt-20 pb-12 px-4 md:px-8">
     <!-- Loading state -->
     <VLoading v-if="authStore.loading || itemStore.loading" class="flex"/>
-    
+
     <div v-else class="max-w-5xl mx-auto">
       <div class="max-w-screen-lg mx-auto">
         <!-- Page Header -->
@@ -167,14 +168,14 @@ const submitItem = async () => {
           </div>
         </div>
       </div>
-      
+
       <!-- Form Card -->
       <div class="bg-white rounded-xl shadow-md overflow-hidden border border-[#D8D8D8]">
         <!-- Card Header -->
         <div class="bg-gradient-to-r from-[#5D1D1E] to-[#8F2527] py-4 px-6">
           <h2 class="text-[#FFFFFF] text-lg font-medium">Detail Item</h2>
         </div>
-        
+
         <!-- Form Content -->
         <div class="p-6">
           <form @submit.prevent="submitItem">
@@ -193,7 +194,7 @@ const submitItem = async () => {
                   Nama item sudah digunakan.
                 </p>
               </div>
-              
+
               <!-- Unit -->
               <div class="relative">
                 <VInputField
@@ -205,7 +206,7 @@ const submitItem = async () => {
                 />
                 <Tag class="absolute right-3 top-9 text-[#9C804F] w-5 h-5" />
               </div>
-              
+
               <!-- Price Per Unit -->
               <div class="relative">
                 <VInputField
@@ -220,7 +221,7 @@ const submitItem = async () => {
                 />
                 <DollarSign class="absolute right-3 top-9 text-[#9C804F] w-5 h-5" />
               </div>
-              
+
               <!-- Category -->
               <div class="relative">
                 <VDropdown
@@ -234,7 +235,7 @@ const submitItem = async () => {
                 <Layers class="absolute right-3 top-9 text-[#9C804F] w-5 h-5" />
               </div>
             </div>
-            
+
             <!-- Description -->
             <div class="mt-6 relative">
               <VTextArea
@@ -246,7 +247,7 @@ const submitItem = async () => {
               />
               <ClipboardList class="absolute right-3 top-9 text-[#9C804F] w-5 h-5" />
             </div>
-            
+
             <!-- Action Buttons -->
             <div class="flex justify-end mt-8">
               <VButton
