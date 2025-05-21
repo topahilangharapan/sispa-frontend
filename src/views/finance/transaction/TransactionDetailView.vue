@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import VNavbar from '../../components/VNavbar.vue'
+import VNavbar from '../../../components/VNavbar.vue'
 import { onMounted, ref } from 'vue'
-import VLoading from '../../components/VLoading.vue'
-import VButton from '../../components/VButton.vue'
-import { useAuthStore } from '../../stores/auth.ts'
+import VLoading from '../../../components/VLoading.vue'
+import VButton from '../../../components/VButton.vue'
+import { useAuthStore } from '../../../stores/auth.ts'
 import { useRoute } from 'vue-router';
-import router from '../../router'
-import { useTransactionStore } from '../../stores/transaction.ts'
-import type { IdTransactionInterface } from '../../interfaces/transaction.interface.ts'
+import router from '../../../router'
+import { useTransactionStore } from '../../../stores/transaction.ts'
+import type { IdTransactionInterface } from '../../../interfaces/transaction.interface.ts'
 import { FileText } from 'lucide-vue-next'
 
 const title = ref({ 'Finance': '/finance' });

@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
-import VNavbar from '../components/VNavbar.vue'
-import VLoading from '../components/VLoading.vue'
-import BalancePieChart from '../components/BalancePieChart.vue'
-import { useAuthStore } from '../stores/auth.ts'
-import { useTransactionStore } from '../stores/transaction.ts'
+import VNavbar from '../../components/VNavbar.vue'
+import VLoading from '../../components/VLoading.vue'
+import BalancePieChart from '../../components/BalancePieChart.vue'
+import { useAuthStore } from '../../stores/auth.ts'
+import { useTransactionStore } from '../../stores/transaction.ts'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
