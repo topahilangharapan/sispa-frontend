@@ -3,7 +3,7 @@
     <VNavbar :title="title" :submodules="submodules"></VNavbar>
 
     <div class="freelancer-card">
-      <h2>Freelancer Detail</h2>
+      <h2>Detail Freelancer</h2>
 
       <p v-if="freelancerStore.loading">Loading...</p>
       <p v-if="freelancerStore.error" style="color:red;">
@@ -59,21 +59,6 @@
           </div>
 
           <div class="detail-field">
-            <label>Status Bekerja</label>
-            <div class="status-container">
-              <p>{{ selectedFreelancer.isWorking ? 'Tersedia' : 'Tidak Tersedia' }}</p>
-              <VButton 
-                :variant="selectedFreelancer.isWorking ? 'outline' : 'primary'" 
-                size="sm" 
-                @click="updateWorkingStatus"
-                :disabled="updateStatusLoading"
-              >
-                {{ updateStatusLoading ? 'Updating...' : 'Ubah Status' }}
-              </VButton>
-            </div>
-          </div>
-
-          <div class="detail-field">
             <label>Alasan Bergabung</label>
             <p>{{ selectedFreelancer.reason }}</p>
           </div>
@@ -111,6 +96,21 @@
           </div>
           <p v-else>Tidak memiliki pengalaman kerja</p>
         </div>
+
+        <div class="detail-field">
+            <label>Status Bekerja</label>
+            <div class="status-container">
+              <p>{{ selectedFreelancer.isWorking ? 'Tidak Tersedia' : 'Tersedia' }}</p>
+              <VButton 
+                :variant="selectedFreelancer.isWorking ? 'outline' : 'primary'" 
+                size="sm" 
+                @click="updateWorkingStatus"
+                :disabled="updateStatusLoading"
+              >
+                {{ updateStatusLoading ? 'Updating...' : 'Ubah Status' }}
+              </VButton>
+            </div>
+          </div>
 
         <div class="actions">
           <VButton variant="primary" size="md" @click="goBack">

@@ -3,7 +3,7 @@
       <VNavbar :title="title" :submodules="submodules"></VNavbar>
   
       <div class="freelancer-card">
-        <h2>Freelancer Detail</h2>
+        <h2>Detail PendaftarFreelancer</h2>
   
         <p v-if="freelancerStore.loading">Loading...</p>
         <p v-if="freelancerStore.error" style="color:red;">
