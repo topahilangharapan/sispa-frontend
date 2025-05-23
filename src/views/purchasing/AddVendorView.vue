@@ -10,6 +10,11 @@ import VInputField from '../../components/VInputField.vue'
 import VButton from '../../components/VButton.vue'
 import { ArrowLeft, FileText, Building2, Phone, Mail, MapPin, Briefcase, ClipboardList, Save } from 'lucide-vue-next'
 
+const title = ref({ 'Purchasing': '/purchasing' });
+const submodules = ref({
+  "Vendor": "/purchasing/vendor",
+  "Item": "/purchasing/item",
+});
 const vendorStore = useVendorStore()
 const authStore = useAuthStore()
 const emailError = ref(false);
@@ -77,7 +82,7 @@ const submitForm = async () => {
 </script>
 
 <template>
-  <VNavbar class="fixed top-0 left-0 w-full z-50"></VNavbar>
+  <VNavbar :title="title" :submodules="submodules" class="fixed top-0 left-0 w-full z-50"></VNavbar>
 
   <div class="min-h-screen pt-20 pb-12 px-4 md:px-8">
     <!-- Loading state -->

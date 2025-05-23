@@ -15,7 +15,7 @@ import {
   Landmark,
   Package,
   Layers,
-  Grid, ReceiptText
+  ReceiptText
 } from 'lucide-vue-next'
 
 const showDropdown = ref(false);
@@ -35,7 +35,6 @@ const submoduleIcons = {
   'Cash Flow': Landmark,
   'Vendor': Package,
   'Item': Layers,
-  'Kategori': Grid,
   'Pendaftar': Users,
 };
 
@@ -90,7 +89,6 @@ const updateCurrentPath = () => {
     submodules.value = {
       'Vendor': '/purchasing/vendor',
       'Item': '/purchasing/item',
-      'Kategori': '/purchasing/category',
     };
   } else if (path.startsWith('/freelancer')) {
     currentModule.value = 'Freelance';

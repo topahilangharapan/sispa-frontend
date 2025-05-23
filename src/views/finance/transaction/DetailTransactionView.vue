@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router';
-import { FileText, ArrowLeft, Building, CreditCard, Tag, Text, User } from 'lucide-vue-next'
+import { FileText, ArrowLeft, Building, CreditCard, Tag, Text, User, Trash2 } from 'lucide-vue-next'
 import type { IdTransactionInterface } from '../../../interfaces/transaction.interface.ts'
 import { useTransactionStore } from '../../../stores/transaction.ts'
 import { useAuthStore } from '../../../stores/auth.ts'
 import router from '../../../router'
 import VNavbar from '../../../components/VNavbar.vue'
 import VLoading from '../../../components/VLoading.vue'
+import ConfirmationDialog from '../../../components/ConfirmationDialog.vue'
 
 const title = ref({ 'Finance': '/finance' });
 const submodules = ref({
@@ -25,6 +26,7 @@ const authStore = useAuthStore()
 const route = useRoute()
 const transactionId = route.query.id as string
 const isLoaded = ref(false);
+const showDialog = ref(false)
 
 function formatDateTimeToIndo(isoDate: Date | undefined): string {
   if (!isoDate) return '-';
@@ -38,6 +40,23 @@ function formatDateTimeToIndo(isoDate: Date | undefined): string {
     timeZone: 'Asia/Jakarta',
     timeZoneName: 'short'
   }).format(date);
+}
+
+async function handleDelete() {
+  if (!authStore.token || !transactionStore.currentTransaction) {
+    window.$toast('error', 'Token atau transaksi tidak tersedia.')
+    showDialog.value = false
+    return
+  }
+
+  const success = await transactionStore.deleteTransaction(authStore.token, { id: transactionStore.currentTransaction.id })
+  showDialog.value = false
+
+  if (success) {
+    router.push('/finance/cash-flow')
+  } else {
+    window.$toast('error', 'Gagal menghapus transaksi.')
+  }
 }
 
 onMounted(async () => {
@@ -171,7 +190,22 @@ function goBack() {
           <ArrowLeft :size="16" class="mr-1" />
           Kembali ke list
         </VButton>
+          <VButton
+            @click="() => (showDialog = true)"
+            size="sm"
+            variant="delete"
+            class="flex items-center bg-[#8F2527] hover:bg-[#3E1011] text-white px-4 py-2 rounded-md border-none transition-colors duration-200">
+            <Trash2 :size="16" class="mr-1" />
+            Hapus
+          </VButton>
       </div>
+      <ConfirmationDialog
+        :visible="showDialog"
+        title="Hapus Transaksi"
+        message="Apakah Anda yakin ingin menghapus transaksi?"
+        @confirm="handleDelete"
+        @cancel="() => (showDialog = false)"
+      />
     </div>
   </div>
 </template>

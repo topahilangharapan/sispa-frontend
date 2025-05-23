@@ -39,6 +39,7 @@ import AccountView from '../views/finance/AccountView.vue'
 import CashFlowChart from '../components/CashFlowChart.vue'
 import DetailTransactionView from '../views/finance/transaction/DetailTransactionView.vue'
 
+
 const routes = [
   {
     path: '/:pathMatch(.*)*',
@@ -92,7 +93,7 @@ const routes = [
     beforeEnter: roleGuard
   },
   {
-    path: '/purchasing/category',
+    path: '/purchasing/item/category',
     name: 'Category View',
     component: ItemCategoryView,
     beforeEnter: roleGuard
