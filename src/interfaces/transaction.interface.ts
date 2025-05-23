@@ -10,6 +10,7 @@ export interface BalancePerBankInterface {
 export interface AddTransactionRequestInterface {
   amount: number;
   description: string;
+  transactionDate: string;
   account: string;
   category: string;
   isAdmin: boolean;
@@ -19,6 +20,7 @@ export interface AddTransactionRequestInterface {
 export interface AddTransactionResponseInterface {
   amount: number;
   description: string;
+  transactionDate: string;
   account: string;
   category: string;
   isAdmin: boolean;
@@ -34,6 +36,7 @@ export interface TransactionInterface {
   id: string;
   amount: number;
   description: string;
+  transactionDate: string;
   createdAt: Date,
   updatedAt: Date,
   createdBy: string,
