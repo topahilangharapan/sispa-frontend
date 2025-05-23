@@ -119,6 +119,7 @@ const submitForm = async () => {
             label="Alamat Email"
             placeholder="Masukkan alamat email Anda"
             :isEmpty="true"
+            :isEmail="true"
             :minLength="5"
             @update:hasError="updateErrorStatus('email', $event)"
           />

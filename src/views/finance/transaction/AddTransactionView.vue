@@ -16,6 +16,7 @@ import type {
   AddTransactionRequestInterface,
   TransactionCategoryInterface
 } from '../../../interfaces/transaction.interface.ts'
+import VInputDateField from '../../../components/VInputDateField.vue'
 
 // Form state
 const selectedAccountId = ref<string | number | undefined>(undefined);
@@ -61,11 +62,14 @@ onMounted(async () => {
   }
 });
 
+const today = new Date().toISOString().split('T')[0]
+
 const transaction = ref<AddTransactionRequestInterface>({
   amount: 0,
   description: "",
   account: "",
   category: "",
+  transactionDate: today,
 
   isAdmin: false,
 
@@ -80,6 +84,7 @@ const hasErrors = ref<HasErrors>({
   amount: true,
   account: true,
   category: true,
+  transactionDate: false,
 });
 
 const accountOptions = computed(() => {
@@ -145,16 +150,20 @@ watch(() => transactionType.value, () => {
 });
 
 watch(() => transaction.value.isAdmin, () => {
-  if (selectedAccount.value) {
+  if (selectedAccount.value && transaction.value.isAdmin) {
     transaction.value.amount = selectedAccount.value?.adminFee;
     transaction.value.category = "ADMINISTRASI BANK"
+  } else {
+    transaction.value.amount = 0;
   }
 });
 
 watch(() => transaction.value.isInterest, () => {
-  if (selectedAccount.value) {
+  if (selectedAccount.value && transaction.value.isInterest) {
     transaction.value.amount = selectedAccount.value?.interestRate/12 * selectedAccount.value?.balance;
     transaction.value.category = "BUNGA BANK"
+  } else {
+    transaction.value.amount = 0;
   }
 });
 
@@ -183,10 +192,13 @@ const submitForm = async () => {
         selectedAccount.value.balance += Number(payload.amount)
       }
 
-      // Simpan selectedAccountId ke sessionStorage
       if (selectedAccountId.value !== undefined) {
         sessionStorage.setItem('selectedAccountId', String(selectedAccountId.value));
       }
+
+      transaction.value.isAdmin = false;
+      transaction.value.isInterest = false;
+      transaction.value.amount = 0;
     }
   }
 };
@@ -296,6 +308,16 @@ const submitForm = async () => {
                 <p v-if="amountError" class="text-red-175 small-text-normal mt-1">
                   Jumlah melebihi saldo akun!
                 </p>
+              </div>
+
+              <div>
+                <VInputDateField
+                  v-model="transaction.transactionDate"
+                  label="Tanggal Transaksi"
+                  :isEmpty="true"
+                  :maxDate="today"
+                  @update:hasError="updateErrorStatus('transactionDate', $event)"
+                />
               </div>
 
               <!-- Category -->
