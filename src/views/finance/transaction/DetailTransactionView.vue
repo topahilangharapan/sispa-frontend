@@ -131,7 +131,7 @@ function goBack() {
           <div>
             <span class="text-xs font-semibold uppercase tracking-wider text-[#595959] block mb-1">Tanggal Transaksi</span>
             <div class="bg-white p-3 rounded-md border border-[#D8D8D8] text-[#2E2E2E]">
-              {{ formatDateTimeToIndo(transactionStore.currentTransaction.transactionDate) }}
+              {{ transactionStore.currentTransaction.transactionDate }}
             </div>
           </div>
           <div>

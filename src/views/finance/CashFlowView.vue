@@ -1,14 +1,15 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 import VNavbar from '../../components/VNavbar.vue'
 import VLoading from '../../components/VLoading.vue'
 import BalancePieChart from '../../components/BalancePieChart.vue'
 import { useAuthStore } from '../../stores/auth.ts'
 import { useTransactionStore } from '../../stores/transaction.ts'
 import { useRouter } from 'vue-router'
-import { Plus, ArrowUpRight, Download } from 'lucide-vue-next'
+import { Plus, ArrowUpRight, Download, Search } from 'lucide-vue-next'
 import VButton from '../../components/VButton.vue'
 import * as XLSX from 'xlsx'
+import type { TransactionInterface } from '../../interfaces/transaction.interface.ts'
 
 const authStore = useAuthStore()
 const balanceStore = useTransactionStore()
@@ -16,18 +17,21 @@ const currentPage = ref(1)
 const perPage = ref(10)
 const activeTab = ref('income')
 const isLoaded = ref(false)
+const isLoading = ref(false)
+const searchQuery = ref('')
+const filteredTransactions = ref<TransactionInterface[]>([]);
 const router = useRouter()
 
 const title = ref({ 'Cash Flow': '/finance/cash-flow' })
 const submodules = ref({ 'Cash Flow': '/finance/cash-flow' })
 
-const totalRows = computed(() => balanceStore.transactions.length)
+const totalRows = computed(() => filteredTransactions.value.length)
 const totalPages = computed(() => Math.ceil(totalRows.value / perPage.value))
 const startRow = computed(() => ((currentPage.value - 1) * perPage.value) + 1)
 const endRow = computed(() => Math.min(currentPage.value * perPage.value, totalRows.value))
 const displayedTransactions = computed(() => {
   const start = (currentPage.value - 1) * perPage.value
-  return balanceStore.transactions.slice(start, start + perPage.value)
+  return filteredTransactions.value.slice(start, start + perPage.value)
 })
 
 const balances = computed(() => balanceStore.balances || [])
@@ -46,6 +50,16 @@ const bankLogos: Record<string, string> = {
   BNI: '/src/assets/logos/bni-logo.png',
   BRI: '/src/assets/logos/bri-logo.png',
 }
+
+// Watch for changes in transaction data
+watch(() => balanceStore.transactions, () => {
+  filterData()
+}, { deep: true })
+
+// Watch for changes in pagination settings
+watch([currentPage, perPage], () => {
+  // Page change is handled by computed property
+})
 
 function formatRupiah(value: number) {
   return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(value)
@@ -75,7 +89,7 @@ function exportToExcel() {
   const isIncome = activeTab.value === 'income'
   const data = balanceStore.transactions.map((t, index) => ({
     No: index + 1,
-    Tanggal: formatDateLong(t.createdAt),
+    Tanggal: formatDateLong(t.transactionDate),
     Kategori: t.category,
     Deskripsi: t.description,
     Jumlah: t.amount,
@@ -124,15 +138,70 @@ function updatePerPage(event: Event) {
   currentPage.value = 1;
 }
 
+const handleSearch = (event: Event) => {
+  searchQuery.value = (event.target as HTMLInputElement).value
+  filterData()
+  currentPage.value = 1
+}
+
+function filterData() {
+  const query = searchQuery.value.toLowerCase().trim()
+  if (!query) {
+    filteredTransactions.value = [...balanceStore.transactions]
+  } else {
+    filteredTransactions.value = balanceStore.transactions.filter(transaction => {
+      // Handle category field - check if it's an object with name or just a string
+      const categoryText = typeof transaction.category === 'object' && transaction.category?.name
+        ? transaction.category.name.toLowerCase()
+        : String(transaction.category || '').toLowerCase()
+
+      // Handle account field - check if it's an object with name or just a string
+      const accountText = typeof transaction.account === 'object' && transaction.account?.name
+        ? transaction.account.name.toLowerCase()
+        : String(transaction.account || '').toLowerCase()
+
+      // Handle description field
+      const descriptionText = String(transaction.description || '').toLowerCase()
+
+      // Handle date field
+      const dateText = formatDateLong(transaction.transactionDate).toLowerCase()
+
+      return categoryText.includes(query) ||
+        descriptionText.includes(query) ||
+        accountText.includes(query) ||
+        dateText.includes(query)
+    })
+  }
+}
+
+function refreshData() {
+  isLoading.value = true
+  const token = authStore.token ?? ''
+
+  Promise.all([
+    balanceStore.fetchAllIncomes(token),
+    balanceStore.fetchAllExpenses(token)
+  ]).then(() => {
+    // Reset search and pagination state
+    searchQuery.value = ''
+    currentPage.value = 1
+    filterData()
+  }).finally(() => {
+    isLoading.value = false
+  })
+}
+
 const switchTab = async (tab: string) => {
   activeTab.value = tab
   currentPage.value = 1
+  searchQuery.value = ''
   const token = authStore.token ?? ''
   if (tab === 'income') {
     await balanceStore.fetchAllIncomes(token)
   } else {
     await balanceStore.fetchAllExpenses(token)
   }
+  filterData()
 }
 
 onMounted(async () => {
@@ -148,17 +217,12 @@ onMounted(async () => {
   <VLoading :isDone="isLoaded" />
 
   <div class="content-container">
-    <!-- Top section with total balance and add transaction button -->
+    <!-- Top section with total balance -->
     <div class="header-section">
       <div class="flex items-center justify-between mb-6">
         <div>
           <h1 class="text-2xl font-bold text-black-grey-800">Cash Flow Dashboard</h1>
         </div>
-        <VButton @click="openAddTransactionModal"
-                class="add-transaction-btn flex items-center gap-2 px-4 py-2 rounded-lg transition-all">
-          <Plus :size="18" />
-          <span>Tambah Transaction</span>
-        </VButton>
       </div>
       <div class="total-balance-card bg-red-400 text-white-100 p-6 rounded-xl shadow-md mb-6">
         <p class="text-white-400 mb-2">Total Balance</p>
@@ -240,8 +304,43 @@ onMounted(async () => {
           <span>Unduh File Excel (.xlsx)</span>
         </button>
       </div>
+      <div class="flex flex-col md:flex-row gap-3 mb-4">
+        <!-- Search Input -->
+        <div class="relative">
+          <input
+            type="text"
+            placeholder="Cari transaksi..."
+            v-model="searchQuery"
+            @input="handleSearch"
+            class="pl-10 pr-4 py-2.5 border border-[#D8D8D8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#B32225] focus:border-transparent w-full md:w-64 text-[#595959] bg-[#FCFCFC] transition-all duration-200"
+          />
+          <Search class="h-4 w-4 text-[#838383] absolute left-3 top-1/2 transform -translate-y-1/2" />
+        </div>
+
+        <!-- Refresh Button -->
+        <button
+          @click="refreshData"
+          class="px-4 py-2.5 rounded-lg border border-[#D8D8D8] bg-white hover:bg-gray-50 text-[#595959] flex items-center justify-center transition duration-200"
+          :class="{'animate-spin': isLoading}"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path>
+            <path d="M21 3v5h-5"></path>
+            <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path>
+            <path d="M3 21v-5h5"></path>
+          </svg>
+        </button>
+
+        <!-- Add Button -->
+        <VButton @click="openAddTransactionModal"
+                 class="add-transaction-btn flex items-center gap-2 px-4 py-2 rounded-lg transition-all">
+          <Plus :size="18" />
+          <span>Tambah Transaction</span>
+        </VButton>
+      </div>
+
       <!-- Tab switcher -->
-      <div class="flex space-x-4 border-b">
+      <div class="flex space-x-4 border-b mb-4">
         <button @click="switchTab('income')" :class="[ 'px-4 py-2 border-b-2 font-semibold', activeTab === 'income' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700']">
           Pemasukan
         </button>
@@ -250,40 +349,46 @@ onMounted(async () => {
         </button>
       </div>
       <div class="bg-white-300 rounded-lg p-4 text-center text-black-grey-600">
-          <!-- Table -->
-          <div class="overflow-x-auto">
-            <table class="min-w-full text-sm text-left text-black-grey-700">
-              <thead class="bg-white-300 text-black-grey-600 uppercase text-xs">
-              <tr>
-                <th class="px-4 py-2">No</th>
-                <th class="px-4 py-2">Tanggal</th>
-                <th class="px-4 py-2">Kategori</th>
-                <th class="px-4 py-2">Deskripsi</th>
-                <th class="px-4 py-2">Jumlah</th>
-                <th class="px-4 py-2">Aksi</th>
-              </tr>
-              </thead>
-              <tbody>
-              <tr v-for="(transaction, index) in displayedTransactions" :key="index" class="border-b bg-white hover:bg-gray-50">
-                <td class="px-4 py-2">{{ index + 1 }}</td>
-                <td class="px-4 py-2">{{ formatDateLong(transaction.createdAt) }}</td>
-                <td class="px-4 py-2">{{ transaction.category }}</td>
-                <td class="px-4 py-2">{{ transaction.description }}</td>
-                <td class="px-4 py-2">{{ formatRupiah(transaction.amount) }}</td>
-                <td class="px-4 py-2">
-                  <div class="ml-4">
-                    <RouterLink :to="`/finance/cash-flow/transaction?id=${transaction.id}`">
-                      <VButton variant="primary" size="sm">Detail</VButton>
-                    </RouterLink>
-                  </div>
-                </td>
-              </tr>
-              <tr v-if="displayedTransactions.length === 0">
-                <td colspan="5" class="text-center py-6 text-black-grey-600">No transactions found.</td>
-              </tr>
-              </tbody>
-            </table>
-          </div>
+        <!-- Table -->
+        <div class="overflow-x-auto">
+          <table class="min-w-full text-sm text-left text-black-grey-700">
+            <thead class="bg-white-300 text-black-grey-600 uppercase text-xs">
+            <tr>
+              <th class="px-4 py-2">No</th>
+              <th class="px-4 py-2">Tanggal</th>
+              <th class="px-4 py-2">Kategori</th>
+              <th class="px-4 py-2">Deskripsi</th>
+              <th class="px-4 py-2">Jumlah</th>
+              <th class="px-4 py-2">Aksi</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr v-for="(transaction, index) in displayedTransactions" :key="index" class="border-b bg-white hover:bg-gray-50">
+              <td class="px-4 py-2">{{ ((currentPage - 1) * perPage) + index + 1 }}</td>
+              <td class="px-4 py-2">{{ formatDateLong(transaction.transactionDate) }}</td>
+              <td class="px-4 py-2">{{
+                  typeof transaction.category === 'object' && transaction.category?.name
+                    ? transaction.category.name
+                    : transaction.category
+                }}</td>
+              <td class="px-4 py-2">{{ transaction.description }}</td>
+              <td class="px-4 py-2">{{ formatRupiah(transaction.amount) }}</td>
+              <td class="px-4 py-2">
+                <div class="ml-4">
+                  <RouterLink :to="`/finance/cash-flow/transaction?id=${transaction.id}`">
+                    <VButton variant="primary" size="sm">Detail</VButton>
+                  </RouterLink>
+                </div>
+              </td>
+            </tr>
+            <tr v-if="displayedTransactions.length === 0">
+              <td colspan="6" class="text-center py-6 text-black-grey-600">
+                {{ searchQuery ? 'Tidak ada transaksi yang sesuai dengan pencarian' : 'No transactions found.' }}
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
         <!-- Custom Pagination in Table Footer -->
         <div class="p-4 border-t border-[#ECECEC] bg-[#FCFCFC]">
           <div class="flex flex-col md:flex-row items-center justify-between gap-3">
