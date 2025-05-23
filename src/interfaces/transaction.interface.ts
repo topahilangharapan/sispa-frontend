@@ -2,10 +2,10 @@ import type { AccountInterface } from './account.interface.ts'
 import type { CategoryInterface } from './category.interface.ts'
 
 export interface BalancePerBankInterface {
-    bankName: string;
-    totalBalance: number;
-    accountNumber: string;
-    accountId: number;
+  bankName: string;
+  totalBalance: number;
+  accountNumber: string;
+  accountId: number;
 }
 export interface AddTransactionRequestInterface {
   amount: number;
