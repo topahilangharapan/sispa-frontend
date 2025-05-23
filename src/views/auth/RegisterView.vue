@@ -181,7 +181,7 @@ const submitForm = async () => {
 
   <!-- Footer -->
   <div class="absolute bottom-4 text-center text-white/70 text-sm w-full">
-    SiSPA. Dibuat dengan <3 oleh Radiant.
+    SiSPA. Made w/ <3 by Radiant.
   </div>
 </template>
 

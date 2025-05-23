@@ -621,6 +621,9 @@ const submitForm = async () => {
       </form>
     </div>
   </div>
+  <div class="absolute bottom-4 text-center text-white/70 text-sm w-full">
+    SiSPA. Made w/ <3 by Radiant.
+  </div>
 </template>
 
 <style scoped>

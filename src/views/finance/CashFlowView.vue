@@ -91,7 +91,7 @@ onMounted(() => {
         <VButton @click="openAddTransactionModal"
                 class="add-transaction-btn flex items-center gap-2 px-4 py-2 rounded-lg transition-all">
           <Plus :size="18" />
-          <span>Add Transaction</span>
+          <span>Tambah Transaction</span>
         </VButton>
       </div>
       <div class="total-balance-card bg-red-400 text-white-100 p-6 rounded-xl shadow-md mb-6">
