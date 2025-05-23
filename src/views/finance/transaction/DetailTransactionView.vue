@@ -127,12 +127,23 @@ function goBack() {
           </div>
         </div>
 
-        <div class="mt-4">
-          <span class="text-xs font-semibold uppercase tracking-wider text-[#595959] block mb-1">Kategori</span>
-          <div class="bg-white p-3 rounded-md border border-[#D8D8D8] text-[#2E2E2E] flex items-center">
-            <Tag :size="14" class="mr-2 text-[#9C804F]" />
-            {{ transactionStore.currentTransaction.category.name }}
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <span class="text-xs font-semibold uppercase tracking-wider text-[#595959] block mb-1">Tanggal Transaksi</span>
+            <div class="bg-white p-3 rounded-md border border-[#D8D8D8] text-[#2E2E2E]">
+              {{ formatDateTimeToIndo(transactionStore.currentTransaction.transactionDate) }}
+            </div>
           </div>
+          <div>
+            <span class="text-xs font-semibold uppercase tracking-wider text-[#595959] block mb-1">Kategori</span>
+            <div class="bg-white p-3 rounded-md border border-[#D8D8D8] text-[#2E2E2E] flex items-center">
+              <Tag :size="14" class="mr-2 text-[#9C804F]" />
+              {{ transactionStore.currentTransaction.category.name }}
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-4">
           </div>
         <div class="mt-4">
           <span class="text-xs font-semibold uppercase tracking-wider text-[#595959] block mb-1">Deskripsi</span>
