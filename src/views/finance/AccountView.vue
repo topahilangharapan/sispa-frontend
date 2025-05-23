@@ -193,7 +193,7 @@ const switchTab = async (tab: string) => {
 function exportToExcel() {
   const isIncome = activeTab.value === 'income'
   const bankName = accountStore.currentAccount?.bank || 'Unknown'
-  const data = transactionStore.transactions.map((t, index) => ({
+  const data = filteredTransactions.value.map((t, index) => ({
     No: index + 1,
     Tanggal: formatDateLong(t.transactionDate),
     Kategori: t.category,
