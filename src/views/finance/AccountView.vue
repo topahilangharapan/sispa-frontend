@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 import VNavbar from '../../components/VNavbar.vue'
 import VLoading from '../../components/VLoading.vue'
 import VButton from '../../components/VButton.vue'
@@ -9,7 +9,8 @@ import { useTransactionStore } from '../../stores/transaction.js'
 import { useRoute } from 'vue-router'
 import CashFlowChart from '../../components/CashFlowChart.vue'
 import * as XLSX from 'xlsx';
-import { Download } from 'lucide-vue-next'
+import { Download, Search } from 'lucide-vue-next'
+import type { TransactionInterface } from '../../interfaces/transaction.interface.ts'
 
 const title = ref({ 'Cash Flow': '/finance/cash-flow' });
 const submodules = ref({ "Cash Flow": "/finance/cash-flow" });
@@ -21,18 +22,21 @@ const route = useRoute();
 const accountId = Number(route.params.id);
 const isLoaded = ref(false);
 const activeTab = ref('income');
+const isLoading = ref(false);
+const searchQuery = ref('');
+const filteredTransactions = ref<TransactionInterface[]>([]);
 
 // Pagination state
 const currentPage = ref(1)
 const perPage = ref(10)
+const totalRows = computed(() => filteredTransactions.value.length)
 const startRow = computed(() => ((currentPage.value - 1) * perPage.value) + 1)
 const endRow = computed(() => Math.min(currentPage.value * perPage.value, totalRows.value))
-const totalRows = computed(() => transactionStore.transactions.length)
 
 const displayedTransactions = computed(() => {
   const start = (currentPage.value - 1) * perPage.value
   const end = start + perPage.value
-  return transactionStore.transactions.slice(start, end)
+  return filteredTransactions.value.slice(start, end)
 })
 
 const totalPages = computed(() => Math.ceil(totalRows.value / perPage.value))
@@ -58,6 +62,16 @@ const displayedPages = computed(() => {
   }
 
   return pages
+})
+
+// Watch for changes in transaction data
+watch(() => transactionStore.transactions, () => {
+  filterData()
+}, { deep: true })
+
+// Watch for changes in pagination settings
+watch([currentPage, perPage], () => {
+  // Page change is handled by computed property
 })
 
 function updatePerPage(event: Event) {
@@ -111,6 +125,53 @@ function formatDateLong(dateInput: string | Date | undefined): string {
   });
 }
 
+const handleSearch = (event: Event) => {
+  searchQuery.value = (event.target as HTMLInputElement).value
+  filterData()
+  currentPage.value = 1
+}
+
+function filterData() {
+  const query = searchQuery.value.toLowerCase().trim()
+  if (!query) {
+    filteredTransactions.value = [...transactionStore.transactions]
+  } else {
+    filteredTransactions.value = transactionStore.transactions.filter(transaction => {
+      const categoryText = typeof transaction.category === 'object' && transaction.category?.name
+        ? transaction.category.name.toLowerCase()
+        : String(transaction.category || '').toLowerCase()
+
+      const accountText = typeof transaction.account === 'object' && transaction.account?.name
+        ? transaction.account.name.toLowerCase()
+        : String(transaction.account || '').toLowerCase()
+
+      const descriptionText = String(transaction.description || '').toLowerCase()
+
+      const dateText = formatDateLong(transaction.transactionDate).toLowerCase()
+
+      return categoryText.includes(query) ||
+        descriptionText.includes(query) ||
+        accountText.includes(query) ||
+        dateText.includes(query)
+    })
+  }
+}
+
+function refreshData() {
+  isLoading.value = true
+
+  Promise.all([
+    switchTab(activeTab.value)
+  ]).then(() => {
+    // Reset search and pagination state
+    searchQuery.value = ''
+    currentPage.value = 1
+    filterData()
+  }).finally(() => {
+    isLoading.value = false
+  })
+}
+
 const loadTransactions = async () => {
   await switchTab(activeTab.value);
   isLoaded.value = true;
@@ -118,20 +179,23 @@ const loadTransactions = async () => {
 
 const switchTab = async (tab: string) => {
   activeTab.value = tab;
+  currentPage.value = 1;
+  searchQuery.value = '';
   const token = authStore.token ?? '';
   if (tab === 'income') {
     await transactionStore.fetchIncomesByAccount(token, String(accountId));
   } else {
     await transactionStore.fetchExpensesByAccount(token, String(accountId));
   }
+  filterData();
 };
 
 function exportToExcel() {
   const isIncome = activeTab.value === 'income'
   const bankName = accountStore.currentAccount?.bank || 'Unknown'
-  const data = transactionStore.transactions.map((t, index) => ({
+  const data = filteredTransactions.value.map((t, index) => ({
     No: index + 1,
-    Tanggal: formatDateLong(t.createdAt),
+    Tanggal: formatDateLong(t.transactionDate),
     Kategori: t.category,
     Deskripsi: t.description,
     Jumlah: t.amount,
@@ -202,12 +266,41 @@ onMounted(async () => {
           <CashFlowChart v-if="!accountStore.loading" :key="activeTab" :accountNo="accountStore.currentAccount?.no" :type="activeTab" />
         </div>
 
-        <!-- Export Button -->
-        <button @click="exportToExcel"
-                class="flex items-center h-9 justify-center bg-[#5D1D1E] hover:bg-[#8F2527] text-white px-3 py-1.5 rounded-md transition duration-200 shadow-sm">
-          <Download class="h-4 w-4 mr-1" />
-          <span>Unduh File Excel (.xlsx)</span>
-        </button>
+        <!-- Search and Controls Section -->
+        <div class="flex flex-col md:flex-row gap-3 mb-4">
+          <!-- Search Input -->
+          <div class="relative">
+            <input
+              type="text"
+              placeholder="Cari transaksi..."
+              v-model="searchQuery"
+              @input="handleSearch"
+              class="pl-10 pr-4 py-2.5 border border-[#D8D8D8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#B32225] focus:border-transparent w-full md:w-64 text-[#595959] bg-[#FCFCFC] transition-all duration-200"
+            />
+            <Search class="h-4 w-4 text-[#838383] absolute left-3 top-1/2 transform -translate-y-1/2" />
+          </div>
+
+          <!-- Refresh Button -->
+          <button
+            @click="refreshData"
+            class="px-4 py-2.5 rounded-lg border border-[#D8D8D8] bg-white hover:bg-gray-50 text-[#595959] flex items-center justify-center transition duration-200"
+            :class="{'animate-spin': isLoading}"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path>
+              <path d="M21 3v5h-5"></path>
+              <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path>
+              <path d="M3 21v-5h5"></path>
+            </svg>
+          </button>
+
+          <!-- Export Button -->
+          <button @click="exportToExcel"
+                  class="flex items-center h-9 justify-center bg-[#5D1D1E] hover:bg-[#8F2527] text-white px-3 py-1.5 rounded-md transition duration-200 shadow-sm">
+            <Download class="h-4 w-4 mr-1" />
+            <span>Unduh File Excel (.xlsx)</span>
+          </button>
+        </div>
 
         <!-- Table -->
         <div class="bg-white rounded-xl shadow p-4 overflow-x-auto">
@@ -224,8 +317,8 @@ onMounted(async () => {
             </thead>
             <tbody>
             <tr v-for="(transaction, index) in displayedTransactions" :key="transaction.id" class="hover:bg-gray-50 border-b">
-            <td class="px-4 py-3">{{ index + 1 }}</td>
-              <td class="px-4 py-3">{{ formatDateLong(transaction.createdAt) }}</td>
+              <td class="px-4 py-3">{{ ((currentPage - 1) * perPage) + index + 1 }}</td>
+              <td class="px-4 py-3">{{ formatDateLong(transaction.transactionDate) }}</td>
               <td class="px-4 py-3">{{ transaction.category }}</td>
               <td class="px-4 py-3">{{ transaction.description }}</td>
               <td class="px-4 py-3 text-right font-medium" :class="{ 'text-red-600': activeTab === 'expense', 'text-green-600': activeTab === 'income' }">
@@ -237,9 +330,9 @@ onMounted(async () => {
                 </RouterLink>
               </td>
             </tr>
-            <tr v-if="isLoaded && transactionStore.transactions.length === 0">
-              <td colspan="6" class="px-4 py-6 text-center text-gray-500">
-                Tidak ada data {{ activeTab === 'expense' ? 'pengeluaran' : 'pemasukan' }} untuk ditampilkan.
+            <tr v-if="displayedTransactions.length === 0">
+              <td colspan="6" class="text-center py-6 text-black-grey-600">
+                {{ searchQuery ? 'Tidak ada transaksi yang sesuai dengan pencarian' : `Tidak ada data ${activeTab === 'expense' ? 'pengeluaran' : 'pemasukan'} untuk ditampilkan.` }}
               </td>
             </tr>
             </tbody>
