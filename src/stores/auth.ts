@@ -151,7 +151,6 @@ export const useAuthStore = defineStore('auth', {
         this.error = null
 
         try {
-          console.log(`Bearer ${this.token}`)
           const response = await fetch(apiUrl + '/role/all',
             {
               method: 'GET',
