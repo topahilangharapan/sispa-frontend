@@ -43,16 +43,16 @@ const isActive = (label: string) => {
 
 // Menu items with improved icons for an event organizer
 const menuItems = [
-  { label: "Dashboard", path: "/dashboard", icon: "layout-dashboard", roles: ["admin", "management", "purchasing", "finance", "hr", "marketing"] },
-  { label: "Keuangan", path: "/finance/invoice", icon: "receipt", roles: ["admin","management", "finance"] },
-  { label: "Marketing", path: "/marketing/purchase-order", icon: "megaphone", roles: ["admin", "management", "marketing"] },
-  { label: "Purchasing", path: "/purchasing/vendor", icon: "shopping-bag", roles: ["admin", "management", "purchasing"] },
-  { label: "Freelancer", path: "/freelancer", icon: "users", roles: ["admin", "management"] },
+  { label: "Dashboard", path: "/dashboard", icon: "layout-dashboard", roles: ["admin", "manajemen", "purchasing", "finance", "hr", "marketing"] },
+  { label: "Keuangan", path: "/finance/invoice", icon: "receipt", roles: ["admin","manajemen", "finance"] },
+  { label: "Marketing", path: "/marketing/purchase-order", icon: "megaphone", roles: ["admin", "manajemen", "marketing"] },
+  { label: "Purchasing", path: "/purchasing/vendor", icon: "shopping-bag", roles: ["admin", "manajemen", "purchasing"] },
+  { label: "Freelancer", path: "/freelancer", icon: "users", roles: ["admin", "manajemen"] },
 ];
 
 const settingsItems = [
   { label: "Daftarkan Akun", path: "/auth/register", icon: "user-plus", roles: ["admin"] },
-  { label: "Logout", icon: "log-out", action: () => logout(), roles: ["admin", "management", "purchasing", "finance", "hr", "marketing", "freelancer"] },
+  { label: "Logout", icon: "log-out", action: () => logout(), roles: ["admin", "manajemen", "purchasing", "finance", "hr", "marketing", "freelancer"] },
 ];
 
 const userRoles = computed<string[]>(() => authStore.user?.role?.toLowerCase().split(',') || []);
