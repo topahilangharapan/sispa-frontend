@@ -44,13 +44,6 @@ const generateColors = (count: number) => {
 
 const colors = computed(() => generateColors(balances.value.length))
 
-const bankLogos: Record<string, string> = {
-  MANDIRI: '/src/assets/logos/mandiri.png',
-  BCA: '/src/assets/logos/bca-logo.png',
-  BNI: '/src/assets/logos/bni-logo.png',
-  BRI: '/src/assets/logos/bri-logo.png',
-}
-
 // Watch for changes in transaction data
 watch(() => balanceStore.transactions, () => {
   filterData()
@@ -71,10 +64,6 @@ function formatDateLong(dateInput: string | Date | undefined): string {
   return isNaN(date.getTime()) ? '-' : date.toLocaleDateString('id-ID', {
     day: '2-digit', month: 'long', year: 'numeric'
   })
-}
-
-function getBankLogo(bankName: string) {
-  return bankLogos[bankName.toUpperCase()] || '/src/assets/logos/default-bank-logo.png'
 }
 
 function navigateToAccount(accountId: number) {
@@ -271,9 +260,6 @@ onMounted(async () => {
               @click="navigateToAccount(item.accountId)"
             >
               <div class="flex items-center gap-4">
-                <div class="bank-logo bg-white-200 p-2 rounded-lg">
-                  <img :src="getBankLogo(item.bankName)" class="h-8 w-auto object-contain" />
-                </div>
                 <div>
                   <p class="font-medium text-black-grey-800">{{ item.bankName }}</p>
                   <p class="text-sm text-black-grey-600">{{ item.accountNumber }}</p>
